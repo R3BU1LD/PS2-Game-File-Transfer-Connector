@@ -1,87 +1,191 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
-using FluentFTP;
+using Microsoft.Win32;
 
 namespace PS2FTPCONNECTOR
 {
     public partial class MainWindow : Window
     {
-        // Nu gekoppeld aan de juiste FluentFTP asynchrone klasse
-        private AsyncFtpClient _ftpClient;
-
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private async void ConnectButton_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Wordt uitgevoerd als je op de 'Bladeren...' knop klikt.
+        /// </summary>
+        private void BtnBrowse_Click(object sender, RoutedEventArgs e)
         {
-            string ip = IpTextBox.Text;
-            int port = int.Parse(PortTextBox.Text);
-
-            // Correcte initialisatie van de Async Client
-            _ftpClient = new AsyncFtpClient(ip, "anonymous", "anonymous", port);
-
-            _ftpClient.Config.EncryptionMode = FtpEncryptionMode.None;
-            _ftpClient.Config.DataConnectionType = FtpDataConnectionType.PASV;
-            _ftpClient.Config.ConnectTimeout = 15000;
-
-            try
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                StatusLabel.Content = "Verbinden met PS2...";
+                Filter = "PS2 ISO Bestanden (*.iso)|*.iso",
+                Title = "Selecteer een PS2 Game ISO"
+            };
 
-                // Maakt asynchroon verbinding met de PS2
-                await _ftpClient.Connect();
-
-                StatusLabel.Content = "PS2FTPCONNECTOR: Verbonden!";
-
-                await LoadDirectoryListing();
-            }
-            catch (Exception ex)
+            if (openFileDialog.ShowDialog() == true)
             {
-                StatusLabel.Content = $"Fout: {ex.Message}";
-            }
-        }
+                string selectedIso = openFileDialog.FileName;
+                TxtIsoPath.Text = selectedIso;
 
-        private async Task LoadDirectoryListing()
-        {
-            FileListBox.Items.Clear();
+                // Haal automatisch de bestandsnaam (zonder .iso) op als voorgestelde titel
+                TxtGameTitle.Text = Path.GetFileNameWithoutExtension(selectedIso);
 
-            // Haalt asynchroon de mappenlijst op
-            var items = await _ftpClient.GetListing();
+                // Probeer de Game ID (bijv. SLES_504.22) automatisch uit de ISO te vissen
+                StatusText.Text = "Game ID scannen...";
+                string gameId = ExtractGameIdFromIso(selectedIso);
 
-            foreach (var item in items)
-            {
-                FileListBox.Items.Add($"[{item.Type}] {item.Name}");
+                if (!string.IsNullOrEmpty(gameId))
+                {
+                    TxtGameId.Text = gameId;
+                    StatusText.Text = "ISO succesvol geladen.";
+                }
+                else
+                {
+                    TxtGameId.Text = "";
+                    StatusText.Text = "ISO geladen, maar Game ID niet gevonden. Vul deze handmatig in.";
+                }
             }
         }
 
-        private async void UploadButton_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Wordt uitgevoerd als je op 'Start Installatie' klikt.
+        /// </summary>
+        private async void BtnInstall_Click(object sender, RoutedEventArgs e)
         {
-            if (_ftpClient == null || !_ftpClient.IsConnected)
+            string ip = TxtIpAddress.Text.Trim();
+            string isoPath = TxtIsoPath.Text.Trim();
+            string title = TxtGameTitle.Text.Trim();
+            string gameId = TxtGameId.Text.Trim();
+
+            // Validatie van invoervelden
+            if (string.IsNullOrEmpty(ip) || string.IsNullOrEmpty(isoPath) || string.IsNullOrEmpty(title) || string.IsNullOrEmpty(gameId))
             {
-                MessageBox.Show("Maak eerst verbinding met de PS2!");
+                MessageBox.Show("Vul alstublieft alle velden in voordat u de installatie start.", "Invoer ontbreekt", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            string localPath = @"C:\Games\PS2Game.iso";
-            string remotePath = "/hdd0:/DVD/PS2Game.iso";
+            // Knoppen uitschakelen tijdens installatie om dubbel klikken te voorkomen
+            BtnInstall.IsEnabled = false;
+            BtnBrowse.IsEnabled = false;
+            StatusText.Text = "Verbinding maken en installatie starten...";
+            MyProgressBar.Value = 0;
+            PercentageText.Text = "0%";
 
-            StatusLabel.Content = "Uploaden naar PS2...";
+            // Start de installatie op de achtergrond zodat de UI soepel blijft draaien
+            await Task.Run(() => RunHdlDump(ip, isoPath, title, gameId));
 
-            // Upload asynchroon het bestand naar de console
-            var status = await _ftpClient.UploadFile(localPath, remotePath);
+            // Knoppen weer inschakelen na voltooiing
+            BtnInstall.IsEnabled = true;
+            BtnBrowse.IsEnabled = true;
+        }
 
-            if (status == FtpStatus.Success)
+        /// <summary>
+        /// Stuurt hdl_dump aan en leest de progressie uit via de console-output.
+        /// </summary>
+        private void RunHdlDump(string ip, string isoPath, string title, string gameId)
+        {
+            try
             {
-                StatusLabel.Content = "Upload voltooid!";
-                await LoadDirectoryListing();
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "hdl_dump.exe", // Zorg dat hdl_dump.exe in de build-map (bin/Debug of bin/Release) staat!
+                    Arguments = $"inject_dvd {ip} \"{isoPath}\" \"{title}\" {gameId}",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using (Process process = new Process { StartInfo = startInfo })
+                {
+                    process.OutputDataReceived += (sender, e) =>
+                    {
+                        if (!string.IsNullOrEmpty(e.Data))
+                        {
+                            // Zoek naar een percentage in de output (bijv: "45%")
+                            var match = Regex.Match(e.Data, @"(\d+)%");
+                            if (match.Success)
+                            {
+                                int percentage = int.Parse(match.Groups[1].Value);
+
+                                // Update de WPF UI elementen veilig vanaf de achtergrond-thread
+                                Dispatcher.Invoke(() =>
+                                {
+                                    MyProgressBar.Value = percentage;
+                                    PercentageText.Text = $"{percentage}%";
+                                    StatusText.Text = $"Bezig met overdragen van data...";
+                                });
+                            }
+                        }
+                    };
+
+                    process.Start();
+                    process.BeginOutputReadLine();
+                    process.WaitForExit();
+
+                    // Afhandeling op basis van hoe het proces is geëindigd
+                    Dispatcher.Invoke(() =>
+                    {
+                        if (process.ExitCode == 0)
+                        {
+                            MyProgressBar.Value = 100;
+                            PercentageText.Text = "100%";
+                            StatusText.Text = "Installatie succesvol voltooid!";
+                            MessageBox.Show("De game is succesvol op de PS2 geïnstalleerd!", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        else
+                        {
+                            StatusText.Text = $"Fout opgetreden tijdens installatie (Code: {process.ExitCode}).";
+                            MessageBox.Show("Er is een fout opgetreden. Controleer het IP-adres en of de PS2 server actief is.", "Fout", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    });
+                }
             }
-            else
+            catch (Exception ex)
             {
-                StatusLabel.Content = "Upload mislukt.";
+                Dispatcher.Invoke(() =>
+                {
+                    StatusText.Text = "Kan hdl_dump.exe niet uitvoeren.";
+                    MessageBox.Show($"Fout bij starten van hdl_dump: {ex.Message}\n\nZorg ervoor dat hdl_dump.exe in dezelfde map staat als dit programma.", "Opstartfout", MessageBoxButton.OK, MessageBoxImage.Error);
+                    BtnInstall.IsEnabled = true;
+                    BtnBrowse.IsEnabled = true;
+                });
             }
+        }
+
+        /// <summary>
+        /// Scant de eerste sectoren van de ISO om de PS2 Game ID (SYSTEM.CNF) te vinden.
+        /// </summary>
+        private string ExtractGameIdFromIso(string isoPath)
+        {
+            try
+            {
+                using (FileStream fs = new FileStream(isoPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    // PS2 ISO's hebben hun systeembestanden vaak rond sector 16 (0x8000) liggen.
+                    // We scannen de eerste paar megabytes om de SYSTEM.CNF tekst te vinden.
+                    byte[] buffer = new byte[1024 * 1024 * 4]; // 4 MB buffer
+                    int bytesRead = fs.Read(buffer, 0, buffer.Length);
+                    string text = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+
+                    // Zoek naar patronen zoals SLES_123.45, SLUS_123.45, SCUS_123.45, etc.
+                    var match = Regex.Match(text, @"(SLES|SLUS|SCUS|SCDH|SLPM|SLPS|SCPM)_[0-9]{3}\.[0-9]{2}");
+                    if (match.Success)
+                    {
+                        return match.Value;
+                    }
+                }
+            }
+            catch
+            {
+                // Mocht het lezen falen, return null zodat de gebruiker het zelf kan invullen
+            }
+            return null;
         }
     }
 }

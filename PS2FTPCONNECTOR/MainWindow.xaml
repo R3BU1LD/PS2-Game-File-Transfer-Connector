@@ -5,29 +5,118 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PS2FTPCONNECTOR"
         mc:Ignorable="d"
-        Title="PS2FTPCONNECTOR" Height="350" Width="400">
-    <Grid Margin="10">
+        Title="PS2FTPCONNECTOR" 
+        Height="600" 
+        Width="650"
+        Background="#1E1E24"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize">
+
+    <Grid Margin="25">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Verbindingsbalk -->
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
-            <TextBox x:Name="IpTextBox" Text="192.168.1.100" Width="120" Margin="0,0,5,0"/>
-            <TextBox x:Name="PortTextBox" Text="21" Width="40" Margin="0,0,5,0"/>
-            <Button x:Name="ConnectButton" Content="Verbind" Click="ConnectButton_Click" Width="75"/>
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="PS2 Network Installer" 
+                       Foreground="#FFFFFF" 
+                       FontSize="26" 
+                       FontWeight="Bold"/>
+            <TextBlock Text="Installeer ISO-bestanden rechtstreeks op je PS2 harde schijf via het netwerk" 
+                       Foreground="#8A8A93" 
+                       FontSize="13" 
+                       Margin="0,4,0,0"/>
         </StackPanel>
 
-        <!-- Status -->
-        <Label x:Name="StatusLabel" Content="Niet verbonden" Grid.Row="1" FontWeight="Bold"/>
+        <!-- Hoofdcontent (Invoerformulieren) -->
+        <StackPanel Grid.Row="1" VerticalAlignment="Top">
 
-        <!-- Bestandenlijst -->
-        <ListBox x:Name="FileListBox" Grid.Row="2" Margin="0,5,0,5"/>
+            <!-- Netwerkinstellingen -->
+            <Border Background="#2A2A32" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
 
-        <!-- Acties -->
-        <Button x:Name="UploadButton" Content="Upload naar PS2" Click="UploadButton_Click" Grid.Row="3" Height="30"/>
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="PS2 IP-Adres" Foreground="#FFFFFF" FontWeight="SemiBold" FontSize="14"/>
+                        <TextBlock Text="Het IP van de HDL/OPL server" Foreground="#8A8A93" FontSize="11" Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <TextBox x:Name="TxtIpAddress" 
+                             Grid.Column="1" 
+                             Text="11.22.33.44"
+                             Background="#1E1E24" 
+                             Foreground="#FFFFFF" 
+                             BorderBrush="#3F3F46"
+                             Padding="8,6" 
+                             FontSize="14" 
+                             VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+
+            <!-- Game details -->
+            <Border Background="#2A2A32" CornerRadius="8" Padding="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- ISO Bestand selecteren -->
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="ISO Bestand:" Foreground="#FFFFFF" VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                    <TextBox x:Name="TxtIsoPath" Grid.Row="0" Grid.Column="1" Background="#1E1E24" Foreground="#FFFFFF" BorderBrush="#3F3F46" Padding="6" Margin="0,0,10,12" IsReadOnly="True" VerticalAlignment="Center"/>
+                    <Button x:Name="BtnBrowse" Grid.Row="0" Grid.Column="2" Content="Bladeren..." Padding="12,6" Margin="0,0,0,12" Background="#3F3F46" Foreground="#FFFFFF" BorderThickness="0" Click="BtnBrowse_Click"/>
+
+                    <!-- Game Titel -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Game Titel:" Foreground="#FFFFFF" VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
+                    <TextBox x:Name="TxtGameTitle" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Background="#1E1E24" Foreground="#FFFFFF" BorderBrush="#3F3F46" Padding="6" Margin="0,0,0,12" VerticalAlignment="Center"/>
+
+                    <!-- Game ID -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Game ID:" Foreground="#FFFFFF" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBox x:Name="TxtGameId" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="#1E1E24" Foreground="#FFFFFF" BorderBrush="#3F3F46" Padding="6" Width="150" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+        </StackPanel>
+
+        <!-- Status & Voortgang (Onderkant) -->
+        <StackPanel Grid.Row="2" Margin="0,20,0,0">
+            <Grid Margin="0,0,0,8">
+                <TextBlock x:Name="StatusText" Text="Klaar voor installatie" Foreground="#8A8A93" FontSize="13" HorizontalAlignment="Left"/>
+                <TextBlock x:Name="PercentageText" Text="0%" Foreground="#007ACC" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right"/>
+            </Grid>
+
+            <!-- Progress Bar -->
+            <ProgressBar x:Name="MyProgressBar" 
+                         Height="12" 
+                         Minimum="0" 
+                         Maximum="100" 
+                         Value="0" 
+                         Background="#2A2A32" 
+                         Foreground="#007ACC" 
+                         BorderThickness="0"/>
+
+            <!-- Actieknop -->
+            <Button x:Name="BtnInstall" 
+                    Content="Start Installatie" 
+                    Margin="0,15,0,0" 
+                    Padding="0,12" 
+                    Background="#007ACC" 
+                    Foreground="#FFFFFF" 
+                    FontSize="15" 
+                    FontWeight="Bold" 
+                    BorderThickness="0"
+                    Click="BtnInstall_Click"/>
+        </StackPanel>
     </Grid>
 </Window>
