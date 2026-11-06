@@ -1,0 +1,33 @@
+﻿<Window x:Class="PS2FTPCONNECTOR.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PS2FTPCONNECTOR"
+        mc:Ignorable="d"
+        Title="PS2FTPCONNECTOR" Height="350" Width="400">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Verbindingsbalk -->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
+            <TextBox x:Name="IpTextBox" Text="192.168.1.100" Width="120" Margin="0,0,5,0"/>
+            <TextBox x:Name="PortTextBox" Text="21" Width="40" Margin="0,0,5,0"/>
+            <Button x:Name="ConnectButton" Content="Verbind" Click="ConnectButton_Click" Width="75"/>
+        </StackPanel>
+
+        <!-- Status -->
+        <Label x:Name="StatusLabel" Content="Niet verbonden" Grid.Row="1" FontWeight="Bold"/>
+
+        <!-- Bestandenlijst -->
+        <ListBox x:Name="FileListBox" Grid.Row="2" Margin="0,5,0,5"/>
+
+        <!-- Acties -->
+        <Button x:Name="UploadButton" Content="Upload naar PS2" Click="UploadButton_Click" Grid.Row="3" Height="30"/>
+    </Grid>
+</Window>
