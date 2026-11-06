@@ -6,11 +6,20 @@
         xmlns:local="clr-namespace:PS2FTPCONNECTOR"
         mc:Ignorable="d"
         Title="PS2FTPCONNECTOR" 
-        Height="600" 
-        Width="650"
-        Background="#1E1E24"
+        Height="500" 
+        Width="680"
+        Background="#0B0F19"
+        
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize">
+
+    <Window.Resources>
+        <!-- Sci-Fi Glow Effect voor Borders en Knoppen -->
+        <DropShadowEffect x:Key="NeonGlow" Color="#00E5FF" BlurRadius="12" ShadowDepth="0" Opacity="0.6"/>
+        <DropShadowEffect x:Key="TextGlow" Color="#00E5FF" BlurRadius="6" ShadowDepth="0" Opacity="0.5"/>
+    </Window.Resources>
+   
+
 
     <Grid Margin="25">
         <Grid.RowDefinitions>
@@ -19,48 +28,72 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,20">
-            <TextBlock Text="PS2 Network Installer" 
-                       Foreground="#FFFFFF" 
-                       FontSize="26" 
-                       FontWeight="Bold"/>
-            <TextBlock Text="Installeer ISO-bestanden rechtstreeks op je PS2 harde schijf via het netwerk" 
-                       Foreground="#8A8A93" 
-                       FontSize="13" 
-                       Margin="0,4,0,0"/>
-        </StackPanel>
+        <!-- Matrix / Sci-Fi Header -->
+        <Border Grid.Row="0" BorderBrush="#00E5FF" BorderThickness="0,0,0,1" Padding="0,0,0,15" Margin="0,0,0,20">
+            <Grid>
+                <StackPanel HorizontalAlignment="Left">
+                    <TextBlock Text="PS2 // GAMES UPLOADER" 
+                               FontSize="24" 
+                               FontWeight="Bold" 
+                               FontFamily="Consolas"
+                               Effect="{StaticResource TextGlow}">
+                        <TextBlock.Foreground>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FF0C7FFF"/>
+                                <GradientStop Color="#FF560C7B" Offset="0.738"/>
+                                <GradientStop Color="#FF00E2FF" Offset="0.301"/>
+                            </LinearGradientBrush>
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                    <TextBlock Text="ESTABLISHING LINK TO CONSOLE HDD OVER TCP/IP..." 
+                               Foreground="#5A759E" 
+                               FontSize="11" 
+                               FontFamily="Consolas" 
+                               Margin="0,4,0,0"/>
+                </StackPanel>
+                <TextBlock Text="SYS_STATUS: READY" 
+                           Foreground="#00FF66" 
+                           FontFamily="Consolas" 
+                           FontSize="12" 
+                           FontWeight="Bold" 
+                           HorizontalAlignment="Right" 
+                           VerticalAlignment="Top" 
+                           Margin="0,5,0,0"/>
+            </Grid>
+        </Border>
 
-        <!-- Hoofdcontent (Invoerformulieren) -->
+        <!-- Hoofdcontent (Futuristische panelen) -->
         <StackPanel Grid.Row="1" VerticalAlignment="Top">
 
-            <!-- Netwerkinstellingen -->
-            <Border Background="#2A2A32" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+            <!-- Netwerk Terminal Blok -->
+            <Border BorderBrush="#1F293D" BorderThickness="1" CornerRadius="4" Padding="15" Margin="0,0,0,15">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="1.5*"/>
                         <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                        <TextBlock Text="PS2 IP-Adres" Foreground="#FFFFFF" FontWeight="SemiBold" FontSize="14"/>
-                        <TextBlock Text="Het IP van de HDL/OPL server" Foreground="#8A8A93" FontSize="11" Margin="0,2,0,0"/>
+                        <TextBlock Text="[ TARGET_IP ]" Foreground="#00E5FF" FontFamily="Consolas" FontWeight="Bold" FontSize="14"/>
+                        <TextBlock Text="PS2 server net-node" Foreground="#5A759E" FontSize="11" FontFamily="Consolas" Margin="0,2,0,0"/>
                     </StackPanel>
 
                     <TextBox x:Name="TxtIpAddress" 
                              Grid.Column="1" 
-                             Text="11.22.33.44"
-                             Background="#1E1E24" 
+                             Text="192.168.1.100"
+                             Background="#070A12" 
                              Foreground="#FFFFFF" 
-                             BorderBrush="#3F3F46"
+                             BorderBrush="#00E5FF"
+                             CaretBrush="#00E5FF"
                              Padding="8,6" 
                              FontSize="14" 
+                             FontFamily="ROG Fonts STRIX SCAR"
                              VerticalAlignment="Center"/>
                 </Grid>
             </Border>
 
-            <!-- Game details -->
-            <Border Background="#2A2A32" CornerRadius="8" Padding="15">
+            <!-- Data Core / Game details -->
+            <Border BorderBrush="#1F293D" BorderThickness="1" CornerRadius="4" Padding="15">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -73,49 +106,53 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- ISO Bestand selecteren -->
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="ISO Bestand:" Foreground="#FFFFFF" VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
-                    <TextBox x:Name="TxtIsoPath" Grid.Row="0" Grid.Column="1" Background="#1E1E24" Foreground="#FFFFFF" BorderBrush="#3F3F46" Padding="6" Margin="0,0,10,12" IsReadOnly="True" VerticalAlignment="Center"/>
-                    <Button x:Name="BtnBrowse" Grid.Row="0" Grid.Column="2" Content="Bladeren..." Padding="12,6" Margin="0,0,0,12" Background="#3F3F46" Foreground="#FFFFFF" BorderThickness="0" Click="BtnBrowse_Click"/>
+                    <!-- ISO Dataset -->
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="SOURCE_ISO:" Foreground="#FF00E5FF" FontFamily="Consolas" VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="Bold"/>
+                    <TextBox x:Name="TxtIsoPath" Grid.Row="0" Grid.Column="1" Background="#070A12" Foreground="#FF3CEC0D" BorderBrush="#1F293D" Padding="6" Margin="0,0,10,12" IsReadOnly="True" FontFamily="ROG Fonts STRIX SCAR" FontSize="12" VerticalAlignment="Center"/>
+                    <Button x:Name="BtnBrowse" Grid.Row="0" Grid.Column="2" Content="LOAD ISO" FontFamily="Consolas" FontWeight="Bold" Padding="12,6" Margin="0,0,0,12" Background="{x:Null}" Foreground="#00E5FF" BorderBrush="#FF00FF10" BorderThickness="1" Click="BtnBrowse_Click" FontSize="10"/>
 
                     <!-- Game Titel -->
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Game Titel:" Foreground="#FFFFFF" VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="SemiBold"/>
-                    <TextBox x:Name="TxtGameTitle" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Background="#1E1E24" Foreground="#FFFFFF" BorderBrush="#3F3F46" Padding="6" Margin="0,0,0,12" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="DATA_LABEL:" Foreground="#FF00E5FF" FontFamily="Consolas" VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="Bold"/>
+                    <TextBox x:Name="TxtGameTitle" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Background="#070A12" Foreground="#FF3CEC0D" BorderBrush="#1F293D" Padding="6" Margin="0,0,0,12" FontFamily="ROG Fonts STRIX SCAR" VerticalAlignment="Center"/>
 
                     <!-- Game ID -->
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Game ID:" Foreground="#FFFFFF" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                    <TextBox x:Name="TxtGameId" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="#1E1E24" Foreground="#FFFFFF" BorderBrush="#3F3F46" Padding="6" Width="150" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="CORE_ID:" Foreground="#FF00E5FF" FontFamily="Consolas" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <TextBox x:Name="TxtGameId" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="#070A12" Foreground="#FF3CEC0D" BorderBrush="#1F293D" Padding="6" Width="150" HorizontalAlignment="Left" FontFamily="ROG Fonts STRIX SCAR" FontWeight="Bold" VerticalAlignment="Center"/>
                 </Grid>
             </Border>
         </StackPanel>
 
-        <!-- Status & Voortgang (Onderkant) -->
-        <StackPanel Grid.Row="2" Margin="0,20,0,0">
+        <!-- Status & Progress Terminal (Onderkant) -->
+        <StackPanel Grid.Row="2" Margin="0,15,0,0">
             <Grid Margin="0,0,0,8">
-                <TextBlock x:Name="StatusText" Text="Klaar voor installatie" Foreground="#8A8A93" FontSize="13" HorizontalAlignment="Left"/>
-                <TextBlock x:Name="PercentageText" Text="0%" Foreground="#007ACC" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right"/>
+                <TextBlock x:Name="StatusText" Text=">> AWAITING OPERATOR INPUT..." Foreground="#5A759E" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Left"/>
+                <TextBlock x:Name="PercentageText" Text="00.0%" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" Effect="{StaticResource TextGlow}"/>
             </Grid>
 
-            <!-- Progress Bar -->
-            <ProgressBar x:Name="MyProgressBar" 
-                         Height="12" 
-                         Minimum="0" 
-                         Maximum="100" 
-                         Value="0" 
-                         Background="#2A2A32" 
-                         Foreground="#007ACC" 
-                         BorderThickness="0"/>
+            <!-- Futuristische Progress Bar -->
+            <Border BorderBrush="#00E5FF" BorderThickness="1" Padding="2" Background="#070A12" CornerRadius="2">
+                <ProgressBar x:Name="MyProgressBar" 
+                             Height="10" 
+                             Minimum="0" 
+                             Maximum="100" 
+                             Value="0" 
+                             Background="Transparent" 
+                             Foreground="#00E5FF" 
+                             BorderThickness="0"/>
+            </Border>
 
-            <!-- Actieknop -->
+            <!-- Brute Cyber Knop -->
             <Button x:Name="BtnInstall" 
-                    Content="Start Installatie" 
+                    Content="EXECUTE // INJECT_DATA_STREAM" 
                     Margin="0,15,0,0" 
                     Padding="0,12" 
-                    Background="#007ACC" 
-                    Foreground="#FFFFFF" 
-                    FontSize="15" 
+                    Background="#00E5FF" 
+                    Foreground="#070A12" 
+                    FontFamily="Consolas"
+                    FontSize="14" 
                     FontWeight="Bold" 
                     BorderThickness="0"
+                    Effect="{StaticResource NeonGlow}"
                     Click="BtnInstall_Click"/>
         </StackPanel>
     </Grid>
