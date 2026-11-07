@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PS2FTPCONNECTOR"
         mc:Ignorable="d"
         Title="PS2FTPCONNECTOR // BATCH MATRIX" 
-        Height="600" 
+        Height="800" 
         Width="1050"
         Background="#0B0F19"
         WindowStartupLocation="CenterScreen"
@@ -122,24 +122,35 @@
             </Border>
         </Grid>
 
-        <!-- Status & Progress (Onderkant) -->
-        <Grid Grid.Row="2" Margin="0,15,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+        <!-- Status & Progress Terminal (Onderkant) -->
+        <StackPanel Grid.Row="2" Margin="0,15,0,0">
+            <Grid Margin="0,0,0,4">
+                <TextBlock x:Name="StatusText" Text=">> AWAITING OPERATOR DATA RECRUITMENT..." Foreground="#5A759E" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Left"/>
+                <TextBlock x:Name="PercentageText" Text="00.0%" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" Effect="{StaticResource TextGlow}"/>
+            </Grid>
 
-            <StackPanel Grid.Column="0" Margin="0,0,20,0" VerticalAlignment="Center">
-                <Grid Margin="0,0,0,8">
-                    <TextBlock x:Name="StatusText" Text=">> AWAITING OPERATOR DATA RECRUITMENT..." Foreground="#5A759E" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Left"/>
-                    <TextBlock x:Name="PercentageText" Text="00.0%" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" Effect="{StaticResource TextGlow}"/>
-                </Grid>
-                <Border BorderBrush="#00E5FF" BorderThickness="1" Padding="2" Background="#070A12" CornerRadius="2">
-                    <ProgressBar x:Name="MyProgressBar" Height="12" Minimum="0" Maximum="100" Value="0" Background="Transparent" Foreground="#00E5FF" BorderThickness="0"/>
-                </Border>
-            </StackPanel>
+            <!-- NIEUW: Live Netwerk Statistieken -->
+            <Grid Margin="0,0,0,6">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <TextBlock Text="XFER_SPEED: " Foreground="#5A759E" FontFamily="Consolas" FontSize="11"/>
+                    <TextBlock x:Name="TxtSpeed" Text="0.00 MB/s" Foreground="#FFFF00" FontFamily="Consolas" FontSize="11" FontWeight="Bold"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="TIME_REMAINING: " Foreground="#5A759E" FontFamily="Consolas" FontSize="11"/>
+                    <TextBlock x:Name="TxtEta" Text="00:00:00" Foreground="#00FF66" FontFamily="Consolas" FontSize="11" FontWeight="Bold"/>
+                </StackPanel>
+            </Grid>
 
-            <Button x:Name="BtnInstall" Grid.Column="1" Content="EXECUTE BATCH STREAM" Padding="30,0" Width="280" Height="45" Background="#00E5FF" Foreground="#070A12" FontFamily="Consolas" FontSize="14" FontWeight="Bold" BorderThickness="0" Effect="{StaticResource NeonGlow}" Click="BtnInstall_Click" VerticalAlignment="Bottom"/>
-        </Grid>
+            <!-- Futuristische Progress Bar -->
+            <Border BorderBrush="#00E5FF" BorderThickness="1" Padding="2" Background="#070A12" CornerRadius="2">
+                <ProgressBar x:Name="MyProgressBar" Height="12" Minimum="0" Maximum="100" Value="0" Background="Transparent" Foreground="#00E5FF" BorderThickness="0"/>
+            </Border>
+
+            <Button x:Name="BtnInstall" Content="EXECUTE BATCH STREAM" Margin="0,15,0,0" Padding="30,0" Height="45" Background="#00E5FF" Foreground="#070A12" FontFamily="Consolas" FontSize="14" FontWeight="Bold" BorderThickness="0" Effect="{StaticResource NeonGlow}" Click="BtnInstall_Click"/>
+        </StackPanel>
+
     </Grid>
+
+
+
 </Window>
