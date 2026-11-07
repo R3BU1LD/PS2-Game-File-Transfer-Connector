@@ -5,21 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PS2FTPCONNECTOR"
         mc:Ignorable="d"
-        Title="PS2FTPCONNECTOR" 
-        Height="500" 
-        Width="680"
+        Title="PS2FTPCONNECTOR // BATCH MATRIX" 
+        Height="600" 
+        Width="1050"
         Background="#0B0F19"
-        
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize">
 
     <Window.Resources>
-        <!-- Sci-Fi Glow Effect voor Borders en Knoppen -->
         <DropShadowEffect x:Key="NeonGlow" Color="#00E5FF" BlurRadius="12" ShadowDepth="0" Opacity="0.6"/>
         <DropShadowEffect x:Key="TextGlow" Color="#00E5FF" BlurRadius="6" ShadowDepth="0" Opacity="0.5"/>
     </Window.Resources>
-   
-
 
     <Grid Margin="25">
         <Grid.RowDefinitions>
@@ -28,11 +24,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Matrix / Sci-Fi Header -->
+        <!-- Header -->
         <Border Grid.Row="0" BorderBrush="#00E5FF" BorderThickness="0,0,0,1" Padding="0,0,0,15" Margin="0,0,0,20">
             <Grid>
                 <StackPanel HorizontalAlignment="Left">
-                    <TextBlock Text="PS2 // GAMES UPLOADER" 
+                    <TextBlock Text="PS2 // MULTI-ISO BATCH INJECTOR" 
                                FontSize="24" 
                                FontWeight="Bold" 
                                FontFamily="Consolas"
@@ -45,115 +41,105 @@
                             </LinearGradientBrush>
                         </TextBlock.Foreground>
                     </TextBlock>
-                    <TextBlock Text="ESTABLISHING LINK TO CONSOLE HDD OVER TCP/IP..." 
-                               Foreground="#5A759E" 
-                               FontSize="11" 
-                               FontFamily="Consolas" 
-                               Margin="0,4,0,0"/>
+                    <TextBlock Text="READY FOR MULTI-THREADED DATA STACKING OVER TCP/IP..." Foreground="#5A759E" FontSize="11" FontFamily="Consolas" Margin="0,4,0,0"/>
                 </StackPanel>
-                <TextBlock Text="SYS_STATUS: READY" 
-                           Foreground="#00FF66" 
-                           FontFamily="Consolas" 
-                           FontSize="12" 
-                           FontWeight="Bold" 
-                           HorizontalAlignment="Right" 
-                           VerticalAlignment="Top" 
-                           Margin="0,5,0,0"/>
+                <TextBlock x:Name="TxtQueueStatus" Text="QUEUE: 0 GAMES LOADED" Foreground="#00FF66" FontFamily="Consolas" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,0,0"/>
             </Grid>
         </Border>
 
-        <!-- Hoofdcontent (Futuristische panelen) -->
-        <StackPanel Grid.Row="1" VerticalAlignment="Top">
+        <!-- Hoofdcontent (2 Kolommen: Links Beheer, Rechts Wachtrij) -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="420"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Netwerk Terminal Blok -->
-            <Border BorderBrush="#1F293D" BorderThickness="1" CornerRadius="4" Padding="15" Margin="0,0,0,15">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1.5*"/>
-                        <ColumnDefinition Width="2*"/>
-                    </Grid.ColumnDefinitions>
+            <!-- LINKERKOLOM: Controller & Netwerk -->
+            <StackPanel Grid.Column="0" VerticalAlignment="Top">
+                <Border BorderBrush="#1F293D" BorderThickness="1" CornerRadius="4" Padding="15" Margin="0,0,0,15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="[ TARGET_IP ]" Foreground="#00E5FF" FontFamily="Consolas" FontWeight="Bold" FontSize="13" VerticalAlignment="Center"/>
+                        <TextBox x:Name="TxtIpAddress" Grid.Column="1" Text="192.168.1.100" Background="#070A12" Foreground="#FFFFFF" BorderBrush="#00E5FF" CaretBrush="#00E5FF" Padding="8,6" FontSize="14" FontFamily="Consolas" VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
 
-                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                        <TextBlock Text="[ TARGET_IP ]" Foreground="#00E5FF" FontFamily="Consolas" FontWeight="Bold" FontSize="14"/>
-                        <TextBlock Text="PS2 server net-node" Foreground="#5A759E" FontSize="11" FontFamily="Consolas" Margin="0,2,0,0"/>
+                <!-- Handmatige editor (voor de geselecteerde game in de lijst) -->
+                <Border BorderBrush="#1F293D" BorderThickness="1" CornerRadius="4" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="// SELECTED NODE EDITOR" Foreground="#5A759E" FontFamily="Consolas" FontWeight="Bold" FontSize="12" Margin="0,0,0,10"/>
+
+                        <TextBlock Text="DATA_LABEL:" Foreground="#FF00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,5,0,2"/>
+                        <TextBox x:Name="TxtGameTitle" Background="#070A12" Foreground="#FF3CEC0D" BorderBrush="#1F293D" Padding="6" FontFamily="Consolas" LostFocus="TxtGameTitle_LostFocus"/>
+
+                        <TextBlock Text="CORE_ID:" Foreground="#FF00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,10,0,2"/>
+                        <TextBox x:Name="TxtGameId" Background="#070A12" Foreground="#FF3CEC0D" BorderBrush="#1F293D" Padding="6" Width="180" HorizontalAlignment="Left" FontFamily="Consolas" FontWeight="Bold" LostFocus="TxtGameId_LostFocus"/>
                     </StackPanel>
+                </Border>
 
-                    <TextBox x:Name="TxtIpAddress" 
-                             Grid.Column="1" 
-                             Text="192.168.1.100"
-                             Background="#070A12" 
-                             Foreground="#FFFFFF" 
-                             BorderBrush="#00E5FF"
-                             CaretBrush="#00E5FF"
-                             Padding="8,6" 
-                             FontSize="14" 
-                             FontFamily="ROG Fonts STRIX SCAR"
-                             VerticalAlignment="Center"/>
+                <Button x:Name="BtnBrowse" Content="[ + ] LOAD MULTIPLE ISO'S" FontFamily="Consolas" FontWeight="Bold" Margin="0,15,0,0" Padding="0,15" Background="#1F293D" Foreground="#00E5FF" BorderBrush="#FF00FF10" BorderThickness="1" Click="BtnBrowse_Click" FontSize="13"/>
+                <Button x:Name="BtnClearQueue" Content="[ X ] CLEAR QUEUE" FontFamily="Consolas" FontWeight="Bold" Margin="0,10,0,0" Padding="0,8" Background="#1A1118" Foreground="#FF3C3C" BorderBrush="#FF3C3C" BorderThickness="1" Click="BtnClearQueue_Click" FontSize="11"/>
+            </StackPanel>
+
+            <!-- RECHTERKOLOM: De Data Matrix Wachtrij (ListView) -->
+            <Border Grid.Column="2" BorderBrush="#1F293D" BorderThickness="1" CornerRadius="4" Background="#070A12">
+                <ListView x:Name="LvQueue" Background="Transparent" BorderThickness="0" Foreground="#FFFFFF" FontFamily="Consolas" SelectionChanged="LvQueue_SelectionChanged">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="STATUS" Width="100">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Status}" FontWeight="Bold">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#5A759E"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="QUEUED">
+                                                            <Setter Property="Foreground" Value="#00E5FF"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="UPLOADING...">
+                                                            <Setter Property="Foreground" Value="#FFFF00"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="DONE">
+                                                            <Setter Property="Foreground" Value="#00FF66"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="CORE_ID" DisplayMemberBinding="{Binding GameId}" Width="110"/>
+                            <GridViewColumn Header="DATA_LABEL (KLIK OM TE EDITEN)" DisplayMemberBinding="{Binding Title}" Width="320"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Border>
+        </Grid>
+
+        <!-- Status & Progress (Onderkant) -->
+        <Grid Grid.Row="2" Margin="0,15,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Margin="0,0,20,0" VerticalAlignment="Center">
+                <Grid Margin="0,0,0,8">
+                    <TextBlock x:Name="StatusText" Text=">> AWAITING OPERATOR DATA RECRUITMENT..." Foreground="#5A759E" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Left"/>
+                    <TextBlock x:Name="PercentageText" Text="00.0%" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" Effect="{StaticResource TextGlow}"/>
                 </Grid>
-            </Border>
+                <Border BorderBrush="#00E5FF" BorderThickness="1" Padding="2" Background="#070A12" CornerRadius="2">
+                    <ProgressBar x:Name="MyProgressBar" Height="12" Minimum="0" Maximum="100" Value="0" Background="Transparent" Foreground="#00E5FF" BorderThickness="0"/>
+                </Border>
+            </StackPanel>
 
-            <!-- Data Core / Game details -->
-            <Border BorderBrush="#1F293D" BorderThickness="1" CornerRadius="4" Padding="15">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="120"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- ISO Dataset -->
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="SOURCE_ISO:" Foreground="#FF00E5FF" FontFamily="Consolas" VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="Bold"/>
-                    <TextBox x:Name="TxtIsoPath" Grid.Row="0" Grid.Column="1" Background="#070A12" Foreground="#FF3CEC0D" BorderBrush="#1F293D" Padding="6" Margin="0,0,10,12" IsReadOnly="True" FontFamily="ROG Fonts STRIX SCAR" FontSize="12" VerticalAlignment="Center"/>
-                    <Button x:Name="BtnBrowse" Grid.Row="0" Grid.Column="2" Content="LOAD ISO" FontFamily="Consolas" FontWeight="Bold" Padding="12,6" Margin="0,0,0,12" Background="{x:Null}" Foreground="#00E5FF" BorderBrush="#FF00FF10" BorderThickness="1" Click="BtnBrowse_Click" FontSize="10"/>
-
-                    <!-- Game Titel -->
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="DATA_LABEL:" Foreground="#FF00E5FF" FontFamily="Consolas" VerticalAlignment="Center" Margin="0,0,0,12" FontWeight="Bold"/>
-                    <TextBox x:Name="TxtGameTitle" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Background="#070A12" Foreground="#FF3CEC0D" BorderBrush="#1F293D" Padding="6" Margin="0,0,0,12" FontFamily="ROG Fonts STRIX SCAR" VerticalAlignment="Center"/>
-
-                    <!-- Game ID -->
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="CORE_ID:" Foreground="#FF00E5FF" FontFamily="Consolas" VerticalAlignment="Center" FontWeight="Bold"/>
-                    <TextBox x:Name="TxtGameId" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="#070A12" Foreground="#FF3CEC0D" BorderBrush="#1F293D" Padding="6" Width="150" HorizontalAlignment="Left" FontFamily="ROG Fonts STRIX SCAR" FontWeight="Bold" VerticalAlignment="Center"/>
-                </Grid>
-            </Border>
-        </StackPanel>
-
-        <!-- Status & Progress Terminal (Onderkant) -->
-        <StackPanel Grid.Row="2" Margin="0,15,0,0">
-            <Grid Margin="0,0,0,8">
-                <TextBlock x:Name="StatusText" Text=">> AWAITING OPERATOR INPUT..." Foreground="#5A759E" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Left"/>
-                <TextBlock x:Name="PercentageText" Text="00.0%" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" Effect="{StaticResource TextGlow}"/>
-            </Grid>
-
-            <!-- Futuristische Progress Bar -->
-            <Border BorderBrush="#00E5FF" BorderThickness="1" Padding="2" Background="#070A12" CornerRadius="2">
-                <ProgressBar x:Name="MyProgressBar" 
-                             Height="10" 
-                             Minimum="0" 
-                             Maximum="100" 
-                             Value="0" 
-                             Background="Transparent" 
-                             Foreground="#00E5FF" 
-                             BorderThickness="0"/>
-            </Border>
-
-            <!-- Brute Cyber Knop -->
-            <Button x:Name="BtnInstall" 
-                    Content="EXECUTE // INJECT_DATA_STREAM" 
-                    Margin="0,15,0,0" 
-                    Padding="0,12" 
-                    Background="#00E5FF" 
-                    Foreground="#070A12" 
-                    FontFamily="Consolas"
-                    FontSize="14" 
-                    FontWeight="Bold" 
-                    BorderThickness="0"
-                    Effect="{StaticResource NeonGlow}"
-                    Click="BtnInstall_Click"/>
-        </StackPanel>
+            <Button x:Name="BtnInstall" Grid.Column="1" Content="EXECUTE BATCH STREAM" Padding="30,0" Width="280" Height="45" Background="#00E5FF" Foreground="#070A12" FontFamily="Consolas" FontSize="14" FontWeight="Bold" BorderThickness="0" Effect="{StaticResource NeonGlow}" Click="BtnInstall_Click" VerticalAlignment="Bottom"/>
+        </Grid>
     </Grid>
 </Window>
