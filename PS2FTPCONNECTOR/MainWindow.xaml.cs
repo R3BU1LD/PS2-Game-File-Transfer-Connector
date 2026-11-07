@@ -143,6 +143,10 @@ namespace PS2FTPCONNECTOR
         {
             try
             {
+                // Haal de totale grootte van het ISO-bestand op in bytes
+                FileInfo isoInfo = new FileInfo(isoPath);
+                double totalMegabytes = isoInfo.Length / (1024.0 * 1024.0);
+
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     FileName = "hdl_dump.exe",
@@ -153,6 +157,9 @@ namespace PS2FTPCONNECTOR
                     CreateNoWindow = true
                 };
 
+                // Start een timer om de snelheid te meten
+                Stopwatch transferTimer = new Stopwatch();
+
                 using (Process process = new Process { StartInfo = startInfo })
                 {
                     process.OutputDataReceived += (sender, e) =>
@@ -162,11 +169,41 @@ namespace PS2FTPCONNECTOR
                             var match = Regex.Match(e.Data, @"(\d+)%");
                             if (match.Success)
                             {
+                                // Start de timer zodra de eerste data daadwerkelijk binnenkomt
+                                if (!transferTimer.IsRunning) transferTimer.Start();
+
                                 int percentage = int.Parse(match.Groups[1].Value);
+
+                                // Berekeningen voor Snelheid en Tijd
+                                double elapsedSeconds = transferTimer.Elapsed.TotalSeconds;
+                                double speedMbPerSecond = 0;
+                                string etaString = "CALCULATING...";
+
+                                if (percentage > 0 && elapsedSeconds > 0.5)
+                                {
+                                    // Hoeveel MB is er nu verzonden?
+                                    double mbTransferred = (totalMegabytes * percentage) / 100.0;
+
+                                    // Actuele gemiddelde snelheid
+                                    speedMbPerSecond = mbTransferred / elapsedSeconds;
+
+                                    // Resterende MB's en resterende tijd berekenen
+                                    double mbRemaining = totalMegabytes - mbTransferred;
+                                    double secondsRemaining = mbRemaining / speedMbPerSecond;
+
+                                    TimeSpan timeRemaining = TimeSpan.FromSeconds(secondsRemaining);
+                                    etaString = string.Format("{0:D2}:{1:D2}:{2:D2}", timeRemaining.Hours, timeRemaining.Minutes, timeRemaining.Seconds);
+                                }
+
+                                // Update alle UI indicators veilig op de hoofdthread
                                 Dispatcher.Invoke(() =>
                                 {
                                     MyProgressBar.Value = percentage;
                                     PercentageText.Text = $"{percentage}%";
+
+                                    // Toon de berekende snelheid en ETA
+                                    TxtSpeed.Text = $"{speedMbPerSecond:F2} MB/s";
+                                    TxtEta.Text = etaString;
                                 });
                             }
                         }
@@ -176,6 +213,15 @@ namespace PS2FTPCONNECTOR
                     process.BeginOutputReadLine();
                     process.WaitForExit();
 
+                    transferTimer.Stop();
+
+                    // Reset de statistieken na afronding van de game
+                    Dispatcher.Invoke(() =>
+                    {
+                        TxtSpeed.Text = "0.00 MB/s";
+                        TxtEta.Text = "00:00:00";
+                    });
+
                     return process.ExitCode == 0;
                 }
             }
@@ -184,6 +230,7 @@ namespace PS2FTPCONNECTOR
                 return false;
             }
         }
+
 
         // Update de live editor velden als je een item selecteert in de lijst
         private void LvQueue_SelectionChanged(object sender, SelectionChangedEventArgs e)

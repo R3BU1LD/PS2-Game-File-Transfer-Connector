@@ -64,7 +64,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="[ TARGET_IP ]" Foreground="#00E5FF" FontFamily="Consolas" FontWeight="Bold" FontSize="13" VerticalAlignment="Center"/>
-                        <TextBox x:Name="TxtIpAddress" Grid.Column="1" Text="192.168.1.100" Background="#070A12" Foreground="#FFFFFF" BorderBrush="#00E5FF" CaretBrush="#00E5FF" Padding="8,6" FontSize="14" FontFamily="Consolas" VerticalAlignment="Center"/>
+                        <TextBox x:Name="TxtIpAddress" Grid.Column="1" Text="192.168.0.111" Background="#070A12" Foreground="#FFFFFF" BorderBrush="#00E5FF" CaretBrush="#00E5FF" Padding="8,6" FontSize="14" FontFamily="Consolas" VerticalAlignment="Center"/>
                     </Grid>
                 </Border>
 
