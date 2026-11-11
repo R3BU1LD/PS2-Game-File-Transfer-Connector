@@ -30,7 +30,7 @@ namespace PS2FTPCONNECTOR
         private const uint CMD_WRITE_OSD_RESOURCES = 0x23;
         private const int PROTOCOL_VERSION = 0x0C;
         private const uint CMD_DEL_GAME_ENTRY = 0x1A;
-
+        private const uint CMD_INIT_GAME_READ = 0x12;
         private const uint CMD_SHUTDOWN = 0xFF;
 
         public bool IsConnected => _cmdClient != null && _cmdClient.Connected;
@@ -105,8 +105,8 @@ namespace PS2FTPCONNECTOR
                             string partName = ExtractCleanString(entry, 0, 33, Encoding.ASCII);
                             string title = ExtractCleanString(entry, 33, 161, Encoding.UTF8);
                             string discId = ExtractCleanString(entry, 194, 11, Encoding.ASCII);
-
-                            list.Add(new Ps2GameJob { PartName = partName, GameId = discId, Title = title, Status = "INSTALLED" });
+                            uint sectors = BitConverter.ToUInt32(entry, 209);
+                            list.Add(new Ps2GameJob { PartName = partName, GameId = discId, Title = title, Sectors = sectors, Status = "INSTALLED" });
 
                         }
                     }
@@ -286,7 +286,94 @@ namespace PS2FTPCONNECTOR
                 dataListener?.Stop();
             }
         }
+        public bool DownloadIso(string ip, Ps2GameJob job, string savePath)
+        {
+            if (!IsConnected && !ConnectAndHandshake(ip)) return false;
 
+            TcpListener dataListener = null;
+            try
+            {
+                long totalBytes = (long)job.Sectors * 2048;
+                double totalMegabytes = totalBytes / (1024.0 * 1024.0);
+
+                dataListener = new TcpListener(IPAddress.Any, 45062);
+                dataListener.Start();
+                OnLog?.Invoke(">> PORT 45062 LISTENING FOR PS2 BACKUP STREAM...");
+
+                // Bouw IOInitReq struct (4 bytes sectors + 4 bytes offset + 33 bytes partition = 41 bytes)
+                byte[] req = new byte[41];
+                BitConverter.GetBytes(job.Sectors).CopyTo(req, 0);
+                BitConverter.GetBytes((uint)0).CopyTo(req, 4);
+                byte[] partBytes = Encoding.ASCII.GetBytes(job.PartName);
+                Array.Copy(partBytes, 0, req, 8, Math.Min(partBytes.Length, 32));
+
+                SendPacket(CMD_INIT_GAME_READ, req);
+                var (initRes, _) = GetResponse(0);
+                if (initRes < 0)
+                {
+                    OnLog?.Invoke($"[READ_REFUSED] PS2 Code: {initRes}");
+                    return false;
+                }
+
+                OnLog?.Invoke(">> READ READY! Wachten op PS2 data-verbinding...");
+                var acceptTask = dataListener.AcceptTcpClientAsync();
+                if (!acceptTask.Wait(20000))
+                {
+                    OnLog?.Invoke("[TIMEOUT] PS2 verbond niet terug op 45062.");
+                    return false;
+                }
+
+                using (TcpClient ps2Data = acceptTask.Result)
+                using (NetworkStream dataStream = ps2Data.GetStream())
+                using (FileStream fs = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    OnLog?.Invoke($">> BACKUP ACTIVE: Opslaan naar {Path.GetFileName(savePath)}...");
+                    byte[] buffer = new byte[1024 * 256];
+                    long totalReceived = 0;
+                    Stopwatch timer = Stopwatch.StartNew();
+
+                    while (totalReceived < totalBytes)
+                    {
+                        int toRead = (int)Math.Min(buffer.Length, totalBytes - totalReceived);
+                        int read = dataStream.Read(buffer, 0, toRead);
+                        if (read <= 0) break;
+
+                        fs.Write(buffer, 0, read);
+                        totalReceived += read;
+
+                        double pct = (double)totalReceived / totalBytes * 100.0;
+                        double sec = timer.Elapsed.TotalSeconds;
+                        double speed = 0;
+                        string eta = "CALCULATING...";
+
+                        if (pct > 0 && sec > 0.5)
+                        {
+                            double mbXfer = totalReceived / (1024.0 * 1024.0);
+                            speed = mbXfer / sec;
+                            TimeSpan rem = TimeSpan.FromSeconds((totalMegabytes - mbXfer) / speed);
+                            eta = $"{rem.Hours:D2}:{rem.Minutes:D2}:{rem.Seconds:D2}";
+                        }
+                        OnProgress?.Invoke(pct, speed, eta);
+                    }
+                    fs.Flush();
+                }
+
+                OnLog?.Invoke(">> CLOSING READ SESSION ON PS2 (0x14)...");
+                SendPacket(CMD_CLOSE_GAME, null);
+                GetResponse(0);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                OnLog?.Invoke($"[BACKUP_EXCEPTION] {ex.Message}");
+                return false;
+            }
+            finally
+            {
+                dataListener?.Stop();
+            }
+        }
         private void InstallDefaultOsdResources(string cleanDiscId, string title)
         {
             try

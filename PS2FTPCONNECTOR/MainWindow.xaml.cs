@@ -19,7 +19,8 @@ namespace PS2FTPCONNECTOR
         public string Status { get => _status; set { _status = value; OnPropertyChanged(); } }
         public string Title { get => _title; set { _title = value; OnPropertyChanged(); } }
         public string GameId { get => _gameId; set { _gameId = value; OnPropertyChanged(); } }
-        public string PartName { get; set; } 
+        public string PartName { get; set; }
+        public uint Sectors { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
@@ -77,6 +78,8 @@ namespace PS2FTPCONNECTOR
                 TxtNoConnection.Visibility = Visibility.Visible;
                 TxtIpAddress.IsEnabled = true;
                 BtnReloadGames.IsEnabled = false;
+                BtnBackupGame.IsEnabled = false;
+                BtnDeleteGame.IsEnabled = false;
                 TxtFreeSpace.Text = "PS2 FREE SPACE: -- GB";
                 
                 // Zet de knop weer terug naar CONNECT (Groen)
@@ -103,6 +106,7 @@ namespace PS2FTPCONNECTOR
             BtnConnect.IsEnabled = true;
             if (isServerAlive)
             {
+                
                 TxtNoConnection.Visibility = Visibility.Collapsed;
                 TxtIpAddress.IsEnabled = false; // Vergrendel IP-veld tijdens actieve sessie
                 BtnReloadGames.IsEnabled = true;
@@ -117,6 +121,7 @@ namespace PS2FTPCONNECTOR
                 var gamesOnHdd = await Task.Run(() => _streamer.LoadInstalledGames());
                 foreach (var g in gamesOnHdd) InstalledGames.Add(g);
                 BtnDeleteGame.IsEnabled = true;
+                BtnBackupGame.IsEnabled = true;
                 TxtFreeSpace.Text = "PS2 FREE SPACE: " + await Task.Run(() => _streamer.GetFreeSpaceFormatted());
             }
             else
@@ -290,10 +295,53 @@ namespace PS2FTPCONNECTOR
                 MessageBox.Show("Kon de game niet verwijderen van de PS2.", "Fout", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+            BtnBackupGame.IsEnabled = true;
             BtnDeleteGame.IsEnabled = true;
             BtnReloadGames.IsEnabled = true;
         }
+        private async void BtnBackupGame_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_streamer.IsConnected) return;
 
+            if (LvPs2Disk.SelectedItem is not Ps2GameJob selectedGame)
+            {
+                MessageBox.Show("Selecteer eerst een game in de lijst om te backuppen.", "Geen selectie");
+                return;
+            }
+
+            SaveFileDialog saveDialog = new SaveFileDialog
+            {
+                Filter = "PS2 ISO Image (*.iso)|*.iso",
+                FileName = $"{selectedGame.Title} ({selectedGame.GameId}).iso"
+            };
+
+            if (saveDialog.ShowDialog() != true) return;
+
+            BtnBackupGame.IsEnabled = false;
+            BtnDeleteGame.IsEnabled = false;
+            BtnReloadGames.IsEnabled = false;
+            UpdateProgressUi(0, 0, "CALCULATING...");
+            StatusText.Text = $">> RIPPING ISO FROM PS2: {selectedGame.Title}...";
+
+            string ip = TxtIpAddress.Text.Trim();
+            bool success = await Task.Run(() => _streamer.DownloadIso(ip, selectedGame, saveDialog.FileName));
+
+            if (success)
+            {
+                LogWrite($">> BACKUP COMPLETED: Opgeslagen als {saveDialog.FileName}");
+                StatusText.Text = ">> BACKUP STREAM COMPLETED.";
+                UpdateProgressUi(100, 0, "00:00:00");
+            }
+            else
+            {
+                LogWrite(">> [ERROR] Backup afgebroken of mislukt.");
+                StatusText.Text = ">> BACKUP FAILED.";
+            }
+
+            BtnBackupGame.IsEnabled = true;
+            BtnDeleteGame.IsEnabled = true;
+            BtnReloadGames.IsEnabled = true;
+        }
         private void BtnPowerOff_Click(object sender, RoutedEventArgs e)
         {
             if (!_streamer.IsConnected)
