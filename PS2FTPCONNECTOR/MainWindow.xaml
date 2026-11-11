@@ -105,7 +105,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="[ TARGET_IP ]" Foreground="#00E5FF" FontFamily="Consolas" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
-                        <TextBox x:Name="TxtIpAddress" Grid.Column="1" Text="192.168.0.111" Background="#070A12" Foreground="#FFFFFF" BorderBrush="#00E5FF" CaretBrush="#00E5FF" Padding="6" FontSize="13" FontFamily="Consolas" VerticalAlignment="Center"/>
+                        <TextBox x:Name="TxtIpAddress" Grid.Column="1" Text="192.168.0.103" Background="#070A12" Foreground="#FFFFFF" BorderBrush="#00E5FF" CaretBrush="#00E5FF" Padding="6" FontSize="13" FontFamily="Consolas" VerticalAlignment="Center"/>
                         <Button x:Name="BtnConnect" Grid.Column="2" Content="CONNECT" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Margin="8,0,0,0" Padding="0,6" Background="#111827" Foreground="#00FF66" BorderBrush="#00FF66" BorderThickness="1" Effect="{StaticResource GreenGlow}" Click="BtnConnect_Click"/>
                     </Grid>
                 </Border>
@@ -135,7 +135,8 @@
             <!-- Rechterkolom -->
             <TabControl Grid.Column="2" Background="#070A12" BorderBrush="#1F293D" BorderThickness="1">
                 <TabItem Header="  BATCH UPLOAD QUEUE  ">
-                    <ListView x:Name="LvQueue" Background="Transparent" BorderThickness="0" Foreground="#FFFFFF" FontFamily="Consolas" SelectionChanged="LvQueue_SelectionChanged" Margin="5">
+                    <ListView x:Name="LvQueue" BorderThickness="0" Foreground="#FFFFFF" FontFamily="Consolas" SelectionChanged="LvQueue_SelectionChanged" AllowDrop="True" Drop="LvQueue_Drop" Margin="5" Background="Black">
+
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="STATUS" Width="105">
@@ -179,7 +180,7 @@
                         <ListView x:Name="LvPs2Disk" Grid.Row="0" Background="Transparent" BorderThickness="0" Foreground="#00FF66" FontFamily="Consolas" Margin="5">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="PARTITION / ID" DisplayMemberBinding="{Binding GameId}" Width="150"/>
+                                    <GridViewColumn Header="GAME ID" DisplayMemberBinding="{Binding GameId}" Width="150"/>
                                     <GridViewColumn Header="GAME TITLE ON HARD DRIVE" DisplayMemberBinding="{Binding Title}" Width="400"/>
                                 </GridView>
                             </ListView.View>

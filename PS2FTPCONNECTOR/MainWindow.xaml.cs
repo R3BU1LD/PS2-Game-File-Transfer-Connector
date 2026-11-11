@@ -153,6 +153,52 @@ namespace PS2FTPCONNECTOR
             }
         }
 
+        private void LvQueue_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+            e.Handled = true;
+        }
+        // Plaats de nieuwe Drag & Drop functie hier, helemaal onderaan de klasse:
+        private void LvQueue_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] droppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
+                int addedCount = 0;
+
+                foreach (string file in droppedFiles)
+                {
+                    if (Path.GetExtension(file).Equals(".iso", StringComparison.OrdinalIgnoreCase))
+                    {
+                        string title = Path.GetFileNameWithoutExtension(file);
+                        string id = _streamer.ExtractGameId(file) ?? "UNKNOWN_ID";
+                        GameQueue.Add(new Ps2GameJob { IsoPath = file, Title = title, GameId = id, Status = "QUEUED" });
+                        LogWrite($">> DRAG & DROP REGISTERED: [{id}] {title}");
+                        addedCount++;
+                    }
+                }
+
+                if (addedCount > 0)
+                {
+                    UpdateQueueStatusHeader();
+                }
+                else
+                {
+                    LogWrite(">> [WARN] Geen geldige .iso bestanden herkend bij Drag & Drop.");
+                }
+            }
+        }
+    
+
+
+
         private async void BtnInstall_Click(object sender, RoutedEventArgs e)
         {
             string ip = TxtIpAddress.Text.Trim();
