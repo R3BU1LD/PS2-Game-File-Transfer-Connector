@@ -75,7 +75,8 @@ namespace PS2FTPCONNECTOR
             StatusText.Text = ">> CONNECTING TO HDL GAME INSTALLER SERVER...";
             InstalledGames.Clear();
 
-            bool isServerAlive = await Task.Run(() => _streamer.CheckServerStatus(ip));
+            // Gebruik de nieuwe openstaande verbinding + versie handshake
+            bool isServerAlive = await Task.Run(() => _streamer.ConnectAndHandshake(ip));
 
             BtnConnect.IsEnabled = true;
             if (isServerAlive)
@@ -83,7 +84,10 @@ namespace PS2FTPCONNECTOR
                 TxtNoConnection.Visibility = Visibility.Collapsed;
                 StatusText.Text = ">> CONNECTION ESTABLISHED TO HDL NODE!";
                 LogWrite($">> SUCCESS: Connected to HDLGameInstaller server on {ip}:45061.");
-                InstalledGames.Add(new Ps2GameJob { GameId = "PORT_45061", Title = "HDLGameInstaller server is live en accepteert binaire streams.", Status = "LIVE" });
+
+                // Haal direct de lijst met geïnstalleerde games van de PS2 HDD op
+                var gamesOnHdd = await Task.Run(() => _streamer.LoadInstalledGames());
+                foreach (var g in gamesOnHdd) InstalledGames.Add(g);
             }
             else
             {
@@ -92,6 +96,7 @@ namespace PS2FTPCONNECTOR
                 LogWrite(">> ERROR: Connection refused. Check of HDLGameInstaller open staat op de PS2.");
             }
         }
+
 
         private void BtnBrowse_Click(object sender, RoutedEventArgs e)
         {
