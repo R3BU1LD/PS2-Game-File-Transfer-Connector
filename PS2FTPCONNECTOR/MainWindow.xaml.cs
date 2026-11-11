@@ -38,6 +38,7 @@ namespace PS2FTPCONNECTOR
             LvQueue.ItemsSource = GameQueue;
             LvPs2Disk.ItemsSource = InstalledGames;
             this.MouseLeftButtonDown += (s, e) => { if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed) this.DragMove(); };
+            if (File.Exists("ps2_ip.cfg")) TxtIpAddress.Text = File.ReadAllText("ps2_ip.cfg").Trim();
 
             // Koppel de events van de streamer direct aan onze UI
             _streamer.OnLog += LogWrite;
@@ -247,6 +248,34 @@ namespace PS2FTPCONNECTOR
             BtnReloadGames.IsEnabled = true;
         }
 
+        private void BtnPowerOff_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_streamer.IsConnected)
+            {
+                MessageBox.Show("Maak eerst verbinding met de PS2 om hem uit te schakelen.", "Niet verbonden");
+                return;
+            }
+
+            if (MessageBox.Show("Weet je zeker dat je de PlayStation 2 nu wilt uitschakelen?", "PS2 Uitschakelen", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                if (_streamer.PowerOffPs2())
+                {
+                    InstalledGames.Clear();
+                    TxtNoConnection.Visibility = Visibility.Visible;
+                    TxtIpAddress.IsEnabled = true;
+                    BtnReloadGames.IsEnabled = false;
+                    BtnDeleteGame.IsEnabled = false;
+                    TxtFreeSpace.Text = "PS2 FREE SPACE: -- GB";
+
+                    BtnConnect.Content = "CONNECT";
+                    BtnConnect.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 255, 102));
+                    BtnConnect.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 255, 102));
+
+                    LogWrite(">> POWER-OFF SIGNAL SENT! PS2 is shutting down.");
+                    StatusText.Text = ">> CONSOLE POWERED OFF.";
+                }
+            }
+        }
 
         private void LvQueue_SelectionChanged(object sender, SelectionChangedEventArgs e) { if (LvQueue.SelectedItem is Ps2GameJob job) { TxtGameTitle.Text = job.Title; TxtGameId.Text = job.GameId; } }
         private void TxtGameTitle_LostFocus(object sender, RoutedEventArgs e) { if (LvQueue.SelectedItem is Ps2GameJob job) job.Title = TxtGameTitle.Text; }

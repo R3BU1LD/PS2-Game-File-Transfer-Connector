@@ -30,12 +30,17 @@ namespace PS2FTPCONNECTOR
         private const uint CMD_WRITE_OSD_RESOURCES = 0x23;
         private const int PROTOCOL_VERSION = 0x0C;
         private const uint CMD_DEL_GAME_ENTRY = 0x1A;
+
+        private const uint CMD_SHUTDOWN = 0xFF;
+
         public bool IsConnected => _cmdClient != null && _cmdClient.Connected;
 
         public bool ConnectAndHandshake(string ip)
         {
             try
             {
+                
+                
                 Disconnect();
                 _cmdClient = new TcpClient();
                 var res = _cmdClient.BeginConnect(ip, 45061, null, null);
@@ -354,6 +359,21 @@ namespace PS2FTPCONNECTOR
                 offset += read;
             }
             return buffer;
+        }
+        public bool PowerOffPs2()
+        {
+            if (!IsConnected) return false;
+            try
+            {
+                SendPacket(CMD_SHUTDOWN, null);
+                Disconnect();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                OnLog?.Invoke($"[PWR_ERR] {ex.Message}");
+                return false;
+            }
         }
 
         public void Disconnect()
