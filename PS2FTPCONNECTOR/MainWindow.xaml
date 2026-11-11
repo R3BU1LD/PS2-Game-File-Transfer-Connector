@@ -120,8 +120,16 @@
                     </StackPanel>
                 </Border>
 
-                <Button x:Name="BtnBrowse" Content="[ + ] LOAD MULTIPLE ISO'S" FontFamily="Consolas" FontWeight="Bold" Margin="0,15,0,0" Padding="0,14" Background="#FF081F3E" Foreground="#00E5FF" BorderBrush="#FF08C1FF" BorderThickness="1" Click="BtnBrowse_Click" FontSize="13"/>
-                <Button x:Name="BtnClearQueue" Content="[ X ] CLEAR QUEUE" FontFamily="Consolas" FontWeight="Bold" Margin="0,10,0,0" Padding="0,8" Background="#1A1118" Foreground="#FF3C3C" BorderBrush="#FF3C3C" BorderThickness="1" Click="BtnClearQueue_Click" FontSize="11"/>
+                <Button x:Name="BtnBrowse" Content="[ + ] LOAD MULTIPLE ISO'S" FontFamily="Consolas" FontWeight="Bold" Margin="0,15,0,0" Padding="0,14" Background="#FF081F3E" Foreground="#00E5FF" BorderBrush="#FF08C1FF" BorderThickness="1" Click="BtnBrowse_Click" FontSize="13">
+                    <Button.Effect>
+                        <DropShadowEffect/>
+                    </Button.Effect>
+                </Button>
+                <Button x:Name="BtnClearQueue" Content="[ X ] CLEAR QUEUE" FontFamily="Consolas" FontWeight="Bold" Margin="0,10,0,0" Padding="0,8" Background="#1A1118" Foreground="#FF3C3C" BorderBrush="#FF3C3C" BorderThickness="1" Click="BtnClearQueue_Click" FontSize="11">
+                    <Button.Effect>
+                        <DropShadowEffect/>
+                    </Button.Effect>
+                </Button>
             </StackPanel>
 
             <!-- Rechterkolom -->
@@ -222,7 +230,11 @@
 
             </TabControl>
 
-            <Button Content="Exit Program" HorizontalAlignment="Center" Margin="0,434,0,0" VerticalAlignment="Top" Width="420" Height="27" Background="{x:Null}" Foreground="#FFFFD306" BorderBrush="#FFF3CA09" Click="Button_Click"/>
+            <Button Content="Exit Program" HorizontalAlignment="Center" Margin="0,389,0,0" VerticalAlignment="Top" Width="420" Height="27" Background="{x:Null}" Foreground="#FFFFD306" BorderBrush="#FFF3CA09" Click="Button_Click">
+                <Button.Effect>
+                    <DropShadowEffect/>
+                </Button.Effect>
+            </Button>
         </Grid>
 
         <!-- RIJ 2: Log Terminal -->
@@ -269,7 +281,7 @@
                  Margin="0,342,0,0" 
                  Grid.Row="1" 
                  VerticalAlignment="Top" 
-                 Width="419" 
+                 Width="421" 
                  Height="32"
                  FontFamily="Consolas" 
                  FontWeight="Bold" 
@@ -278,6 +290,10 @@
                  Foreground="#FF9900" 
                  BorderBrush="#FF9900" 
                  BorderThickness="1"
-                 Click="BtnPowerOff_Click"/>
+                 Click="BtnPowerOff_Click">
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+        </Button>
     </Grid>
 </Window>
