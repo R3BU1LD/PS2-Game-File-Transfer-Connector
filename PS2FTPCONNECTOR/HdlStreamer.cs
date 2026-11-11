@@ -312,10 +312,21 @@ namespace PS2FTPCONNECTOR
 
         public void Disconnect()
         {
-            try { _cmdStream?.Close(); _cmdClient?.Close(); } catch { }
+            try
+            {
+                if (_cmdClient != null && _cmdClient.Connected)
+                {
+                    // Stuur een netjes TCP-afsluitsignaal (SD_BOTH) zodat de PS2 direct de poort vrijgeeft
+                    _cmdClient.Client.Shutdown(SocketShutdown.Both);
+                }
+                _cmdStream?.Close();
+                _cmdClient?.Close();
+            }
+            catch { }
             _cmdStream = null;
             _cmdClient = null;
         }
+
 
         public string ExtractGameId(string isoPath)
         {

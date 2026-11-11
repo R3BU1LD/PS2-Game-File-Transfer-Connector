@@ -67,6 +67,25 @@ namespace PS2FTPCONNECTOR
 
         private async void BtnConnect_Click(object sender, RoutedEventArgs e)
         {
+            // ALS WE AL VERBONDEN ZIJN: Verbreek de verbinding (DISCONNECT)
+            if (_streamer.IsConnected)
+            {
+                _streamer.Disconnect();
+                InstalledGames.Clear();
+                TxtNoConnection.Visibility = Visibility.Visible;
+                TxtIpAddress.IsEnabled = true;
+
+                // Zet de knop weer terug naar CONNECT (Groen)
+                BtnConnect.Content = "CONNECT";
+                BtnConnect.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 255, 102));
+                BtnConnect.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 255, 102));
+
+                StatusText.Text = ">> CONNECTION CLOSED. PS2 PORT RELEASED.";
+                LogWrite(">> DISCONNECTED FROM PS2. Console returned to idle state.");
+                return;
+            }
+
+            // ALS WE NOG NIET VERBONDEN ZIJN: Maak verbinding (CONNECT)
             string ip = TxtIpAddress.Text.Trim();
             if (string.IsNullOrEmpty(ip)) { MessageBox.Show("Vul een geldig IP-adres in."); return; }
 
@@ -75,17 +94,21 @@ namespace PS2FTPCONNECTOR
             StatusText.Text = ">> CONNECTING TO HDL GAME INSTALLER SERVER...";
             InstalledGames.Clear();
 
-            // Gebruik de nieuwe openstaande verbinding + versie handshake
             bool isServerAlive = await Task.Run(() => _streamer.ConnectAndHandshake(ip));
 
             BtnConnect.IsEnabled = true;
             if (isServerAlive)
             {
                 TxtNoConnection.Visibility = Visibility.Collapsed;
+                TxtIpAddress.IsEnabled = false; // Vergrendel IP-veld tijdens actieve sessie
                 StatusText.Text = ">> CONNECTION ESTABLISHED TO HDL NODE!";
                 LogWrite($">> SUCCESS: Connected to HDLGameInstaller server on {ip}:45061.");
 
-                // Haal direct de lijst met geïnstalleerde games van de PS2 HDD op
+                // Verander de knop naar DISCONNECT (Rood)
+                BtnConnect.Content = "DISCONNECT";
+                BtnConnect.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 60, 60));
+                BtnConnect.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 60, 60));
+
                 var gamesOnHdd = await Task.Run(() => _streamer.LoadInstalledGames());
                 foreach (var g in gamesOnHdd) InstalledGames.Add(g);
             }
@@ -96,6 +119,14 @@ namespace PS2FTPCONNECTOR
                 LogWrite(">> ERROR: Connection refused. Check of HDLGameInstaller open staat op de PS2.");
             }
         }
+
+        // Zorg dat de PS2 ook netjes wordt vrijgegeven als je de hele PC-app afsluit
+        protected override void OnClosed(EventArgs e)
+        {
+            _streamer.Disconnect();
+            base.OnClosed(e);
+        }
+
 
 
         private void BtnBrowse_Click(object sender, RoutedEventArgs e)
