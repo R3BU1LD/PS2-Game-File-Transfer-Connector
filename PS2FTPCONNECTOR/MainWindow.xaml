@@ -133,7 +133,12 @@
 
                 <TabItem Header="  INSTALLED GAMES ON PS2  ">
                     <Grid>
-                        <ListView x:Name="LvPs2Disk" Background="Transparent" BorderThickness="0" Foreground="#00FF66" FontFamily="Consolas" Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <ListView x:Name="LvPs2Disk" Grid.Row="0" Background="Transparent" BorderThickness="0" Foreground="#00FF66" FontFamily="Consolas" Margin="5">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="PARTITION / ID" DisplayMemberBinding="{Binding GameId}" Width="150"/>
@@ -141,9 +146,27 @@
                                 </GridView>
                             </ListView.View>
                         </ListView>
-                        <TextBlock x:Name="TxtNoConnection" Text="NO LIVE CONNECTION // CLICK 'CONNECT' TO SCAN CONSOLE" Foreground="#FF3C3C" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                        <TextBlock x:Name="TxtNoConnection" Grid.Row="0" Text="NO LIVE CONNECTION // CLICK 'CONNECT' TO SCAN CONSOLE" Foreground="#FF3C3C" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                        <!-- Knop onderaan om de PS2 lijst opnieuw in te laden -->
+                        <Button x:Name="BtnReloadGames" 
+                                Grid.Row="1" 
+                                Content="[ ↻ ] RELOAD GAMES LIST FROM PS2" 
+                                FontFamily="Consolas" 
+                                FontWeight="Bold" 
+                                FontSize="12" 
+                                Margin="10,5,10,10" 
+                                Padding="0,10" 
+                                Background="#111827" 
+                                Foreground="#00FF66" 
+                                BorderBrush="#00FF66" 
+                                BorderThickness="1" 
+                                IsEnabled="False"
+                                Click="BtnReloadGames_Click"/>
                     </Grid>
                 </TabItem>
+
             </TabControl>
         </Grid>
         <!-- RIJ 2: Log Terminal -->

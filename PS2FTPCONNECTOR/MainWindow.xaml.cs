@@ -74,6 +74,7 @@ namespace PS2FTPCONNECTOR
                 InstalledGames.Clear();
                 TxtNoConnection.Visibility = Visibility.Visible;
                 TxtIpAddress.IsEnabled = true;
+                BtnReloadGames.IsEnabled = false;
 
                 // Zet de knop weer terug naar CONNECT (Groen)
                 BtnConnect.Content = "CONNECT";
@@ -101,6 +102,7 @@ namespace PS2FTPCONNECTOR
             {
                 TxtNoConnection.Visibility = Visibility.Collapsed;
                 TxtIpAddress.IsEnabled = false; // Vergrendel IP-veld tijdens actieve sessie
+                BtnReloadGames.IsEnabled = true;
                 StatusText.Text = ">> CONNECTION ESTABLISHED TO HDL NODE!";
                 LogWrite($">> SUCCESS: Connected to HDLGameInstaller server on {ip}:45061.");
 
@@ -185,6 +187,26 @@ namespace PS2FTPCONNECTOR
             BtnInstall.IsEnabled = true; BtnBrowse.IsEnabled = true; BtnClearQueue.IsEnabled = true;
             UpdateQueueStatusHeader();
         }
+        private async void BtnReloadGames_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_streamer.IsConnected)
+            {
+                MessageBox.Show("Maak eerst verbinding met de PS2 voordat je de lijst ververst.", "Geen verbinding");
+                return;
+            }
+
+            BtnReloadGames.IsEnabled = false;
+            LogWrite(">> REFRESHING INSTALLED GAMES LIST FROM PS2 HDD...");
+            StatusText.Text = ">> SCANNING CONSOLE HARD DRIVE...";
+            InstalledGames.Clear();
+
+            var gamesOnHdd = await Task.Run(() => _streamer.LoadInstalledGames());
+            foreach (var g in gamesOnHdd) InstalledGames.Add(g);
+
+            StatusText.Text = $">> HDD SCAN COMPLETE: {InstalledGames.Count} GAMES FOUND.";
+            BtnReloadGames.IsEnabled = true;
+        }
+
 
         private void LvQueue_SelectionChanged(object sender, SelectionChangedEventArgs e) { if (LvQueue.SelectedItem is Ps2GameJob job) { TxtGameTitle.Text = job.Title; TxtGameId.Text = job.GameId; } }
         private void TxtGameTitle_LostFocus(object sender, RoutedEventArgs e) { if (LvQueue.SelectedItem is Ps2GameJob job) job.Title = TxtGameTitle.Text; }
