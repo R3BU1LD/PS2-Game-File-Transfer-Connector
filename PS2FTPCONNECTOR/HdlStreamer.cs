@@ -92,13 +92,14 @@ namespace PS2FTPCONNECTOR
                     var (readRes, _) = GetResponse(0);
                     if (readRes >= 0)
                     {
-                        // Elke HDLGameEntryTransit struct is exact 213 bytes (33 + 161 + 11 + 4 + 4)
                         for (int i = 0; i < count; i++)
                         {
                             byte[] entry = ReadExactBytes(213);
-                            string partName = Encoding.ASCII.GetString(entry, 0, 33).TrimEnd('\0');
-                            string title = Encoding.UTF8.GetString(entry, 33, 161).TrimEnd('\0');
-                            string discId = Encoding.ASCII.GetString(entry, 194, 11).TrimEnd('\0');
+
+                            // Lees de strings uit en kap ze keihard af bij de ALLEREERSTE null-byte (\0)
+                            string partName = ExtractCleanString(entry, 0, 33, Encoding.ASCII);
+                            string title = ExtractCleanString(entry, 33, 161, Encoding.UTF8);
+                            string discId = ExtractCleanString(entry, 194, 11, Encoding.ASCII);
 
                             list.Add(new Ps2GameJob { GameId = discId, Title = title, Status = "INSTALLED" });
                         }
@@ -111,6 +112,18 @@ namespace PS2FTPCONNECTOR
             }
             return list;
         }
+
+        // Hulpmethode om C-strings (tot de eerste \0) schoon uit een byte-array te halen
+        private string ExtractCleanString(byte[] buffer, int offset, int maxLength, Encoding encoding)
+        {
+            int length = 0;
+            while (length < maxLength && buffer[offset + length] != 0)
+            {
+                length++;
+            }
+            return encoding.GetString(buffer, offset, length).Trim();
+        }
+
         public bool UploadIso(string ip, Ps2GameJob job)
         {
             if (!IsConnected && !ConnectAndHandshake(ip)) return false;
