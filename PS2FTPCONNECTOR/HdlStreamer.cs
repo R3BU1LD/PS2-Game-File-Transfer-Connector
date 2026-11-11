@@ -188,7 +188,7 @@ namespace PS2FTPCONNECTOR
                 OnLog?.Invoke(">> PORT 45062 LISTENING FOR PS2 CALLBACK...");
 
                 // 2. Bouw de exacte 197-byte HDLGameInfo struct
-                byte[] gameInfo = new byte[197];
+                byte[] gameInfo = new byte[198];
                 byte[] titleBytes = Encoding.UTF8.GetBytes(job.Title);
                 Array.Copy(titleBytes, 0, gameInfo, 0, Math.Min(titleBytes.Length, 160));
 
