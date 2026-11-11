@@ -19,7 +19,7 @@ namespace PS2FTPCONNECTOR
         public string Status { get => _status; set { _status = value; OnPropertyChanged(); } }
         public string Title { get => _title; set { _title = value; OnPropertyChanged(); } }
         public string GameId { get => _gameId; set { _gameId = value; OnPropertyChanged(); } }
-
+        public string PartName { get; set; } 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
@@ -213,5 +213,10 @@ namespace PS2FTPCONNECTOR
         private void TxtGameId_LostFocus(object sender, RoutedEventArgs e) { if (LvQueue.SelectedItem is Ps2GameJob job) job.GameId = TxtGameId.Text; }
         private void BtnClearQueue_Click(object sender, RoutedEventArgs e) { GameQueue.Clear(); TxtGameTitle.Text = ""; TxtGameId.Text = ""; UpdateQueueStatusHeader(); LogWrite(">> MATRIX STACK PURGED."); }
         private void UpdateQueueStatusHeader() => TxtQueueStatus.Text = $"QUEUE: {GameQueue.Count} GAMES LOADED";
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

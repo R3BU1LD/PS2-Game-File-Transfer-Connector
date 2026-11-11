@@ -29,7 +29,7 @@ namespace PS2FTPCONNECTOR
         private const uint CMD_INIT_OSD_RESOURCES = 0x20;
         private const uint CMD_WRITE_OSD_RESOURCES = 0x23;
         private const int PROTOCOL_VERSION = 0x0C;
-
+        private const uint CMD_DEL_GAME_ENTRY = 0x1A;
         public bool IsConnected => _cmdClient != null && _cmdClient.Connected;
 
         public bool ConnectAndHandshake(string ip)
@@ -101,7 +101,8 @@ namespace PS2FTPCONNECTOR
                             string title = ExtractCleanString(entry, 33, 161, Encoding.UTF8);
                             string discId = ExtractCleanString(entry, 194, 11, Encoding.ASCII);
 
-                            list.Add(new Ps2GameJob { GameId = discId, Title = title, Status = "INSTALLED" });
+                            list.Add(new Ps2GameJob { PartName = partName, GameId = discId, Title = title, Status = "INSTALLED" });
+
                         }
                     }
                 }
@@ -112,6 +113,51 @@ namespace PS2FTPCONNECTOR
             }
             return list;
         }
+
+        
+        public string GetFreeSpaceFormatted()
+        {
+            if (!IsConnected) return "UNKNOWN";
+            try
+            {
+                SendPacket(CMD_GET_FREE_SPACE, null);
+                var (res, payload) = GetResponse(4);
+                if (res >= 0 && payload != null && payload.Length >= 4)
+                {
+                    uint freeSectors512 = BitConverter.ToUInt32(payload, 0);
+                    double freeKb = freeSectors512 / 2.0;
+
+                    if (freeKb >= 1024 * 1024)
+                        return $"{freeKb / (1024.0 * 1024.0):F2} GB";
+                    if (freeKb >= 1024)
+                        return $"{freeKb / 1024.0:F1} MB";
+                    return $"{freeKb:F0} KB";
+                }
+            }
+            catch (Exception ex)
+            {
+                OnLog?.Invoke($"[SPACE_ERR] {ex.Message}");
+            }
+            return "N/A";
+        }
+
+        public bool DeleteGame(string partName)
+        {
+            if (!IsConnected || string.IsNullOrEmpty(partName)) return false;
+            try
+            {
+                byte[] payload = Encoding.ASCII.GetBytes(partName + "\0");
+                SendPacket(CMD_DEL_GAME_ENTRY, payload);
+                var (res, _) = GetResponse(0);
+                return res >= 0;
+            }
+            catch (Exception ex)
+            {
+                OnLog?.Invoke($"[DEL_ERR] {ex.Message}");
+                return false;
+            }
+        }
+
 
         // Hulpmethode om C-strings (tot de eerste \0) schoon uit een byte-array te halen
         private string ExtractCleanString(byte[] buffer, int offset, int maxLength, Encoding encoding)

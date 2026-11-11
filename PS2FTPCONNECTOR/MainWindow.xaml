@@ -10,7 +10,7 @@
         Width="1120"
         Background="#0B0F19"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="CanMinimize">
+        ResizeMode="CanResizeWithGrip" WindowStyle="None">
 
     <Window.Resources>
         <DropShadowEffect x:Key="NeonGlow" Color="#00E5FF" BlurRadius="12" ShadowDepth="0" Opacity="0.6"/>
@@ -168,6 +168,7 @@
                 </TabItem>
 
             </TabControl>
+            <Button Content="Exit Program" HorizontalAlignment="Center" Margin="0,362,0,0" VerticalAlignment="Top" Width="420" Height="27" Background="{x:Null}" Foreground="#FFFFD306" BorderBrush="#FFF3CA09" Click="Button_Click"/>
         </Grid>
         <!-- RIJ 2: Log Terminal -->
         <Border Grid.Row="2" BorderBrush="#1F293D" BorderThickness="1" CornerRadius="4" Background="#050811" Padding="10" Margin="0,0,0,15">
