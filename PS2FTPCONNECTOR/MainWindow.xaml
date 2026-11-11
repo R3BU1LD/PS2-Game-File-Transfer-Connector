@@ -29,6 +29,33 @@
             <Setter Property="Foreground" Value="#5A759E"/>
             <Setter Property="BorderBrush" Value="#1F293D"/>
         </Style>
+        <Style x:Key="CyberButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                        Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}" 
+                        CornerRadius="3" 
+                        Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.35"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
     </Window.Resources>
 
     <Grid Margin="25">
@@ -54,7 +81,10 @@
                     </TextBlock>
                     <TextBlock Text="READY FOR MULTI-THREADED DATA STACKING OVER TCP/IP..." Foreground="#5A759E" FontSize="11" FontFamily="Consolas" Margin="0,4,0,0"/>
                 </StackPanel>
-                <TextBlock x:Name="TxtQueueStatus" Text="QUEUE: 0 GAMES LOADED" Foreground="#00FF66" FontFamily="Consolas" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,0,0"/>
+                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,0,0">
+                    <TextBlock x:Name="TxtQueueStatus" Text="QUEUE: 0 GAMES LOADED" Foreground="#00FF66" FontFamily="Consolas" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right"/>
+                    <TextBlock x:Name="TxtFreeSpace" Text="PS2 FREE SPACE: -- GB" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,4,0,0"/>
+                </StackPanel>
             </Grid>
         </Border>
         <!-- RIJ 1: Hoofdcontent (Links Controls, Rechts Tabbladen) -->
@@ -149,21 +179,44 @@
 
                         <TextBlock x:Name="TxtNoConnection" Grid.Row="0" Text="NO LIVE CONNECTION // CLICK 'CONNECT' TO SCAN CONSOLE" Foreground="#FF3C3C" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                        <!-- Knop onderaan om de PS2 lijst opnieuw in te laden -->
-                        <Button x:Name="BtnReloadGames" 
-                                Grid.Row="1" 
-                                Content="[ ↻ ] RELOAD GAMES LIST FROM PS2" 
-                                FontFamily="Consolas" 
-                                FontWeight="Bold" 
-                                FontSize="12" 
-                                Margin="10,5,10,10" 
-                                Padding="0,10" 
-                                Background="#111827" 
-                                Foreground="#00FF66" 
-                                BorderBrush="#00FF66" 
-                                BorderThickness="1" 
-                                IsEnabled="False"
-                                Click="BtnReloadGames_Click"/>
+                        <!-- Dit binnenste Grid met 3 kolommen houdt de knoppen netjes onderin! -->
+                        <Grid Grid.Row="1" Margin="10,5,10,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button x:Name="BtnReloadGames" 
+                                    Grid.Column="0"
+                                    Style="{StaticResource CyberButtonStyle}"
+                                    Content="[ ↻ ] RELOAD GAMES LIST" 
+                                    FontFamily="Consolas" 
+                                    FontWeight="Bold" 
+                                    FontSize="12" 
+                                    Padding="0,10" 
+                                    Background="#111827" 
+                                    Foreground="#00FF66" 
+                                    BorderBrush="#00FF66" 
+                                    BorderThickness="1" 
+                                    IsEnabled="False"
+                                    Click="BtnReloadGames_Click"/>
+
+                            <Button x:Name="BtnDeleteGame" 
+                                    Grid.Column="2"
+                                    Style="{StaticResource CyberButtonStyle}"
+                                    Content="[ X ] DELETE SELECTED GAME" 
+                                    FontFamily="Consolas" 
+                                    FontWeight="Bold" 
+                                    FontSize="12" 
+                                    Padding="0,10" 
+                                    Background="#1A1118" 
+                                    Foreground="#FF3C3C" 
+                                    BorderBrush="#FF3C3C" 
+                                    BorderThickness="1" 
+                                    IsEnabled="False"
+                                    Click="BtnDeleteGame_Click"/>
+                        </Grid>
                     </Grid>
                 </TabItem>
 

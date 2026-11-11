@@ -37,6 +37,7 @@ namespace PS2FTPCONNECTOR
             InitializeComponent();
             LvQueue.ItemsSource = GameQueue;
             LvPs2Disk.ItemsSource = InstalledGames;
+            this.MouseLeftButtonDown += (s, e) => { if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed) this.DragMove(); };
 
             // Koppel de events van de streamer direct aan onze UI
             _streamer.OnLog += LogWrite;
@@ -75,7 +76,8 @@ namespace PS2FTPCONNECTOR
                 TxtNoConnection.Visibility = Visibility.Visible;
                 TxtIpAddress.IsEnabled = true;
                 BtnReloadGames.IsEnabled = false;
-
+                TxtFreeSpace.Text = "PS2 FREE SPACE: -- GB";
+                
                 // Zet de knop weer terug naar CONNECT (Groen)
                 BtnConnect.Content = "CONNECT";
                 BtnConnect.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 255, 102));
@@ -113,6 +115,8 @@ namespace PS2FTPCONNECTOR
 
                 var gamesOnHdd = await Task.Run(() => _streamer.LoadInstalledGames());
                 foreach (var g in gamesOnHdd) InstalledGames.Add(g);
+                BtnDeleteGame.IsEnabled = true;
+                TxtFreeSpace.Text = "PS2 FREE SPACE: " + await Task.Run(() => _streamer.GetFreeSpaceFormatted());
             }
             else
             {
@@ -194,8 +198,9 @@ namespace PS2FTPCONNECTOR
                 MessageBox.Show("Maak eerst verbinding met de PS2 voordat je de lijst ververst.", "Geen verbinding");
                 return;
             }
-
+            TxtFreeSpace.Text = "PS2 FREE SPACE: " + await Task.Run(() => _streamer.GetFreeSpaceFormatted());
             BtnReloadGames.IsEnabled = false;
+            BtnDeleteGame.IsEnabled = false;
             LogWrite(">> REFRESHING INSTALLED GAMES LIST FROM PS2 HDD...");
             StatusText.Text = ">> SCANNING CONSOLE HARD DRIVE...";
             InstalledGames.Clear();
@@ -204,6 +209,41 @@ namespace PS2FTPCONNECTOR
             foreach (var g in gamesOnHdd) InstalledGames.Add(g);
 
             StatusText.Text = $">> HDD SCAN COMPLETE: {InstalledGames.Count} GAMES FOUND.";
+            BtnReloadGames.IsEnabled = true;
+            
+        }
+        private async void BtnDeleteGame_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_streamer.IsConnected) return;
+
+            if (LvPs2Disk.SelectedItem is not Ps2GameJob selectedGame)
+            {
+                MessageBox.Show("Selecteer eerst een game in de lijst om te verwijderen.", "Geen selectie");
+                return;
+            }
+
+            var confirm = MessageBox.Show($"Weet je zeker dat je '{selectedGame.Title}' ({selectedGame.GameId}) definitief van je PS2 harde schijf wilt verwijderen?", "Game Verwijderen", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (confirm != MessageBoxResult.Yes) return;
+
+            BtnDeleteGame.IsEnabled = false;
+            BtnReloadGames.IsEnabled = false;
+            LogWrite($">> DELETING PARTITION [{selectedGame.PartName}]: {selectedGame.Title}...");
+
+            bool deleted = await Task.Run(() => _streamer.DeleteGame(selectedGame.PartName));
+
+            if (deleted)
+            {
+                InstalledGames.Remove(selectedGame);
+                LogWrite($">> SUCCESS: '{selectedGame.Title}' verwijderd van PS2 HDD.");
+                TxtFreeSpace.Text = "PS2 FREE SPACE: " + await Task.Run(() => _streamer.GetFreeSpaceFormatted());
+            }
+            else
+            {
+                LogWrite($">> ERROR: Verwijderen van '{selectedGame.Title}' mislukt.");
+                MessageBox.Show("Kon de game niet verwijderen van de PS2.", "Fout", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            BtnDeleteGame.IsEnabled = true;
             BtnReloadGames.IsEnabled = true;
         }
 
