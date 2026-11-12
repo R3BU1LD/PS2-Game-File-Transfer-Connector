@@ -11,8 +11,8 @@
         AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResizeWithGrip" 
-        
-        WindowStyle="None" Background="#FF0D1323">
+        WindowStyle="None" 
+        Background="{x:Null}">
 
     <Window.Resources>
         <!-- Neon Glow Effecten -->
@@ -45,7 +45,7 @@
             <Setter Property="BorderBrush" Value="#3300E5FF"/>
         </Style>
 
-        <!-- Smokey Glass Neon Button Stijl (Licht op bij hover!) -->
+        <!-- Smokey Glass Neon Button Stijl -->
         <Style x:Key="CyberButtonStyle" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -75,230 +75,289 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Neon Glow ProgressBar Stijl -->
+        <Style x:Key="NeonProgressBarStyle" TargetType="ProgressBar">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid x:Name="TemplateRoot">
+                            <Border x:Name="PART_Track" 
+                                    Background="#44070A12" 
+                                    BorderBrush="#4400E5FF" 
+                                    BorderThickness="1" 
+                                    CornerRadius="4"/>
+
+                            <Border x:Name="PART_Indicator" 
+                                    HorizontalAlignment="Left" 
+                                    CornerRadius="3" 
+                                    Margin="1">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#FF0066FF" Offset="0.0"/>
+                                        <GradientStop Color="#FF00E5FF" Offset="0.7"/>
+                                        <GradientStop Color="#FF00FFCC" Offset="1.0"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#00E5FF" BlurRadius="14" ShadowDepth="0" Opacity="0.9"/>
+                                </Border.Effect>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
-    <Grid Margin="25">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="190"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <!-- Buitenste Smokey Glass Venster Paneel -->
+    <Border Background="{StaticResource SmokeyGlassBg}" 
+            BorderBrush="#5500E5FF" 
+            BorderThickness="1.5" 
+            CornerRadius="12" 
+            Margin="10">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" BlurRadius="20" ShadowDepth="0" Opacity="0.85"/>
+        </Border.Effect>
 
-        <!-- RIJ 0: Header -->
-        <Border Grid.Row="0" BorderBrush="#00E5FF" BorderThickness="0,0,0,1" Padding="0,0,0,15" Margin="0,0,0,15">
-            <Grid>
-                <StackPanel HorizontalAlignment="Left">
-                    <TextBlock Text="PS2 // MULTI-ISO BATCH INJECTOR" FontSize="24" FontWeight="Bold" FontFamily="Consolas" Effect="{StaticResource TextGlow}">
-                        <TextBlock.Foreground>
-                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="#FF0C7FFF"/>
-                                <GradientStop Color="#FF560C7B" Offset="0.738"/>
-                                <GradientStop Color="#FF00E2FF" Offset="0.301"/>
-                            </LinearGradientBrush>
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                    <TextBlock Text="READY FOR MULTI-THREADED DATA STACKING OVER TCP/IP..." Foreground="#5A759E" FontSize="11" FontFamily="Consolas" Margin="0,4,0,0"/>
-                </StackPanel>
-                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,0,0">
-                    <TextBlock x:Name="TxtQueueStatus" Text="QUEUE: 0 GAMES LOADED" Foreground="#00FF66" FontFamily="Consolas" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right"/>
-                    <TextBlock x:Name="TxtFreeSpace" Text="PS2 FREE SPACE: -- GB" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,4,0,0"/>
-                </StackPanel>
-            </Grid>
-        </Border>
+        <Grid Margin="25">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="190"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <!-- RIJ 1: Hoofdcontent (Links Controls, Rechts Tabbladen) -->
-        <Grid Grid.Row="1" Margin="0,0,0,15">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="420"/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <!-- LINKERKOLOM: Alle knoppen strak onder elkaar -->
-            <StackPanel Grid.Column="0" VerticalAlignment="Top">
-                <Border BorderBrush="#1F293D" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,12">
-                    <Border.Effect>
-                        <DropShadowEffect/>
-                    </Border.Effect>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="180"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="[ TARGET_IP ]" Foreground="#00E5FF" FontFamily="Consolas" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
-                        <TextBox x:Name="TxtIpAddress" Grid.Column="1" Text="192.168.0.103" Background="#070A12" Foreground="#FFFFFF" BorderBrush="#00E5FF" CaretBrush="#00E5FF" Padding="6" FontSize="13" FontFamily="Consolas" VerticalAlignment="Center"/>
-                        <Button x:Name="BtnConnect" Grid.Column="2" Content="CONNECT" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Margin="8,0,0,0" Padding="0,6" Background="#111827" Foreground="#00FF66" BorderBrush="#00FF66" BorderThickness="1" Effect="{StaticResource GreenGlow}" Click="BtnConnect_Click"/>
-                    </Grid>
-                </Border>
-
-                <Border BorderBrush="#1F293D" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,12">
-                    <Border.Effect>
-                        <DropShadowEffect/>
-                    </Border.Effect>
-                    <StackPanel>
-                        <TextBlock Text="// SELECTED NODE EDITOR (QUEUE)" Foreground="#5A759E" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Margin="0,0,0,8"/>
-                        <TextBlock Text="DATA_LABEL:" Foreground="#FF00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,2,0,2"/>
-                        <TextBox x:Name="TxtGameTitle" Background="#070A12" Foreground="#FF3CEC0D" BorderBrush="#1F293D" Padding="5" FontFamily="Consolas" LostFocus="TxtGameTitle_LostFocus"/>
-                        <TextBlock Text="CORE_ID:" Foreground="#FF00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,8,0,2"/>
-                        <TextBox x:Name="TxtGameId" Background="#070A12" Foreground="#FF3CEC0D" BorderBrush="#1F293D" Padding="5" Width="180" HorizontalAlignment="Left" FontFamily="Consolas" FontWeight="Bold" LostFocus="TxtGameId_LostFocus"/>
+            <!-- RIJ 0: Header -->
+            <Border Grid.Row="0" BorderBrush="#00E5FF" BorderThickness="0,0,0,1" Padding="0,0,0,15" Margin="0,0,0,15">
+                <Grid>
+                    <StackPanel HorizontalAlignment="Left">
+                        <TextBlock Text="PS2 // MULTI-ISO BATCH INJECTOR" FontSize="24" FontWeight="Bold" FontFamily="Consolas" Effect="{StaticResource TextGlow}">
+                            <TextBlock.Foreground>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#FF0C7FFF"/>
+                                    <GradientStop Color="#FF560C7B" Offset="0.738"/>
+                                    <GradientStop Color="#FF00E2FF" Offset="0.301"/>
+                                </LinearGradientBrush>
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                        <TextBlock Text="READY FOR MULTI-THREADED DATA STACKING OVER TCP/IP..." Foreground="#5A759E" FontSize="11" FontFamily="Consolas" Margin="0,4,0,0"/>
                     </StackPanel>
-                </Border>
+                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,0,0">
+                        <TextBlock x:Name="TxtQueueStatus" Text="QUEUE: 0 GAMES LOADED" Foreground="#00FF66" FontFamily="Consolas" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        <TextBlock x:Name="TxtFreeSpace" Text="PS2 FREE SPACE: -- GB" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <!-- RIJ 1: Hoofdcontent (Links Controls, Rechts Tabbladen) -->
+            <Grid Grid.Row="1" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="420"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                <Button x:Name="BtnBrowse" Style="{StaticResource CyberButtonStyle}" Content="[ + ] LOAD MULTIPLE ISO'S" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,8" Padding="0,12" Background="#FF081F3E" Foreground="#00E5FF" BorderBrush="#FF08C1FF" BorderThickness="1" Click="BtnBrowse_Click" FontSize="13"/>
-                <Button x:Name="BtnClearQueue" Style="{StaticResource CyberButtonStyle}" Content="[ X ] CLEAR QUEUE" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,8" Padding="0,8" Background="#1A1118" Foreground="#FF3C3C" BorderBrush="#FF3C3C" BorderThickness="1" Click="BtnClearQueue_Click" FontSize="11"/>
-                <Button x:Name="BtnPowerOff" Style="{StaticResource CyberButtonStyle}" Content="[ ⏻ ] POWER OFF PS2 CONSOLE" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,8" Padding="0,9" Background="#1F1209" Foreground="#FF9900" BorderBrush="#FF9900" BorderThickness="1" Click="BtnPowerOff_Click" FontSize="11"/>
-                <Button Style="{StaticResource CyberButtonStyle}" Content="[ ESC ] EXIT PROGRAM" FontFamily="Consolas" FontWeight="Bold" Padding="0,8" Background="#141414" Foreground="#FFFFD306" BorderBrush="#FFF3CA09" BorderThickness="1" Click="Button_Click" FontSize="11"/>
-            </StackPanel>
-            <!-- RECHTERKOLOM: Tabbladen -->
-            <TabControl Grid.Column="2" Background="#070A12" BorderBrush="#1F293D" BorderThickness="1">
-                <TabControl.Effect>
-                    <DropShadowEffect/>
-                </TabControl.Effect>
-                <TabItem Header="  BATCH UPLOAD QUEUE  ">
-                    <ListView x:Name="LvQueue" BorderThickness="0" Foreground="#FFFFFF" FontFamily="Consolas" SelectionChanged="LvQueue_SelectionChanged" AllowDrop="True" DragOver="LvQueue_DragOver" Drop="LvQueue_Drop" Margin="5" Background="#01000000">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="STATUS" Width="105">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Status}" FontWeight="Bold">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="Foreground" Value="#5A759E"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Status}" Value="QUEUED">
-                                                                <Setter Property="Foreground" Value="#00E5FF"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="UPLOADING...">
-                                                                <Setter Property="Foreground" Value="#FFFF00"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="DONE">
-                                                                <Setter Property="Foreground" Value="#00FF66"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Header="CORE_ID" DisplayMemberBinding="{Binding GameId}" Width="115"/>
-                                <GridViewColumn Header="DATA_LABEL (KLIK OM TE EDITEN)" DisplayMemberBinding="{Binding Title}" Width="350"/>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
-                </TabItem>
+                <!-- LINKERKOLOM: Alle knoppen strak onder elkaar -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Top">
+                    <Border Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,12">
+                        <Border.Effect>
+                            <DropShadowEffect/>
+                        </Border.Effect>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="180"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="[ TARGET_IP ]" Foreground="#00E5FF" FontFamily="Consolas" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                            <TextBox x:Name="TxtIpAddress" Grid.Column="1" Text="192.168.0.103" Background="#88070A12" Foreground="#FFFFFF" BorderBrush="#00E5FF" CaretBrush="#00E5FF" Padding="6" FontSize="13" FontFamily="Consolas" VerticalAlignment="Center"/>
+                            <Button x:Name="BtnConnect" Grid.Column="2" Style="{StaticResource CyberButtonStyle}" Content="CONNECT" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Margin="8,0,0,0" Padding="0,6" Background="#88111827" Foreground="#00FF66" BorderBrush="#00FF66" BorderThickness="1" Effect="{StaticResource GreenGlow}" Click="BtnConnect_Click"/>
+                        </Grid>
+                    </Border>
 
-                <TabItem Header="  INSTALLED GAMES ON PS2  ">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                    <Border Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,12">
+                        <Border.Effect>
+                            <DropShadowEffect/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="// SELECTED NODE EDITOR (QUEUE)" Foreground="#5A759E" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Margin="0,0,0,8"/>
+                            <TextBlock Text="DATA_LABEL:" Foreground="#FF00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,2,0,2"/>
+                            <TextBox x:Name="TxtGameTitle" Background="#88070A12" Foreground="#FF3CEC0D" BorderBrush="#3300E5FF" Padding="5" FontFamily="Consolas" LostFocus="TxtGameTitle_LostFocus"/>
+                            <TextBlock Text="CORE_ID:" Foreground="#FF00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,8,0,2"/>
+                            <TextBox x:Name="TxtGameId" Background="#88070A12" Foreground="#FF3CEC0D" BorderBrush="#3300E5FF" Padding="5" Width="180" HorizontalAlignment="Left" FontFamily="Consolas" FontWeight="Bold" LostFocus="TxtGameId_LostFocus"/>
+                        </StackPanel>
+                    </Border>
 
-                        <!-- Rij 0: Lijst met spellen -->
-                        <ListView x:Name="LvPs2Disk" Grid.Row="0" Background="Transparent" BorderThickness="0" Foreground="#00FF66" FontFamily="Consolas" Margin="5" SelectionChanged="LvPs2Disk_SelectionChanged">
+                    <Button x:Name="BtnBrowse" Style="{StaticResource CyberButtonStyle}" Content="[ + ] LOAD MULTIPLE ISO'S" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,8" Padding="0,12" Background="#99081F3E" Foreground="#00E5FF" BorderBrush="#FF08C1FF" BorderThickness="1" Click="BtnBrowse_Click" FontSize="13"/>
+                    <Button x:Name="BtnClearQueue" Style="{StaticResource CyberButtonStyle}" Content="[ X ] CLEAR QUEUE" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,8" Padding="0,8" Background="#991A1118" Foreground="#FF3C3C" BorderBrush="#FF3C3C" BorderThickness="1" Click="BtnClearQueue_Click" FontSize="11"/>
+                    <Button x:Name="BtnPowerOff" Style="{StaticResource CyberButtonStyle}" Content="[ ⏻ ] POWER OFF PS2 CONSOLE" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,8" Padding="0,9" Background="#991F1209" Foreground="#FF9900" BorderBrush="#FF9900" BorderThickness="1" Click="BtnPowerOff_Click" FontSize="11"/>
+                    <Button Style="{StaticResource CyberButtonStyle}" Content="[ ESC ] EXIT PROGRAM" FontFamily="Consolas" FontWeight="Bold" Padding="0,8" Background="#99141414" Foreground="#FFFFD306" BorderBrush="#FFF3CA09" BorderThickness="1" Click="Button_Click" FontSize="11"/>
+                </StackPanel>
+
+                <!-- RECHTERKOLOM: Tabbladen -->
+                <TabControl Grid.Column="2" Background="#66070A12" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1">
+                    <TabControl.Effect>
+                        <DropShadowEffect/>
+                    </TabControl.Effect>
+                    <TabItem Header="  BATCH UPLOAD QUEUE  ">
+                        <ListView x:Name="LvQueue" BorderThickness="0" FontFamily="Georgia" SelectionChanged="LvQueue_SelectionChanged" AllowDrop="True" DragOver="LvQueue_DragOver" Drop="LvQueue_Drop" Margin="5" Background="#01000000" d:ItemsSource="{d:SampleData ItemCount=5}" FontSize="14">
+                            <ListView.Foreground>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#FF00F9FF"/>
+                                    <GradientStop Color="#FF0816F5" Offset="1"/>
+                                </LinearGradientBrush>
+                            </ListView.Foreground>
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="GAME DISC ID" DisplayMemberBinding="{Binding GameId}" Width="150"/>
-                                    <GridViewColumn Header="GAME TITLE ON HARD DRIVE" DisplayMemberBinding="{Binding Title}" Width="400"/>
+                                    <GridViewColumn Header="STATUS" Width="105">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Status}" FontWeight="Bold">
+                                                    <TextBlock.Foreground>
+                                                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                            <GradientStop Color="#FF6F6E6E" Offset="0.058"/>
+                                                            <GradientStop Color="#FF13FF00" Offset="0.873"/>
+                                                        </LinearGradientBrush>
+                                                    </TextBlock.Foreground>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="#5A759E"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Status}" Value="QUEUED">
+                                                                    <Setter Property="Foreground" Value="#00E5FF"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Status}" Value="UPLOADING...">
+                                                                    <Setter Property="Foreground" Value="#FFFF00"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Status}" Value="DONE">
+                                                                    <Setter Property="Foreground" Value="#00FF66"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="CORE_ID" DisplayMemberBinding="{Binding GameId}" Width="115"/>
+                                    <GridViewColumn Header="DATA_LABEL (KLIK OM TE EDITEN)" DisplayMemberBinding="{Binding Title}" Width="350"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
+                    </TabItem>
+                    <TabItem Header="  INSTALLED GAMES ON PS2  ">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-                        <TextBlock x:Name="TxtNoConnection" Grid.Row="0" Text="NO LIVE CONNECTION // CLICK 'CONNECT' TO SCAN CONSOLE" Foreground="#FF3C3C" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <!-- Rij 0: Lijst met spellen -->
+                            <ListView x:Name="LvPs2Disk" Grid.Row="0" Background="Transparent" BorderThickness="0" FontFamily="Consolas" Margin="5" SelectionChanged="LvPs2Disk_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}" FontSize="16">
+                                <ListView.Foreground>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FF00F9FF"/>
+                                        <GradientStop Color="#FF0816F5" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </ListView.Foreground>
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="GAME DISC ID" DisplayMemberBinding="{Binding GameId}" Width="150"/>
+                                        <GridViewColumn Header="GAME TITLE ON HARD DRIVE" DisplayMemberBinding="{Binding Title}" Width="400"/>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
 
-                        <!-- Rij 1: Mode 1-8 & Titel Editor -->
-                        <Border Grid.Row="1" BorderBrush="#1F293D" BorderThickness="1" CornerRadius="4" Background="#0B0F19" Padding="8" Margin="10,2,10,5">
-                            <StackPanel>
-                                <Grid Margin="0,0,0,6">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="8"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="EDIT TITLE:" Foreground="#00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                    <TextBox x:Name="TxtEditPs2Title" Grid.Column="1" Background="#070A12" Foreground="#FFFFFF" BorderBrush="#1F293D" Padding="4" FontFamily="Consolas" FontSize="12"/>
-                                    <Button x:Name="BtnSaveGameSettings" Grid.Column="3" Style="{StaticResource CyberButtonStyle}" Content="[ ✓ ] SAVE SETTINGS" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="12,5" Background="#0A291A" Foreground="#00FF66" BorderBrush="#00FF66" BorderThickness="1" IsEnabled="False" Click="BtnSaveGameSettings_Click"/>
-                                </Grid>
+                            <TextBlock x:Name="TxtNoConnection" Grid.Row="0" Text="NO LIVE CONNECTION // CLICK 'CONNECT' TO SCAN CONSOLE" Foreground="#FF3C3C" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                                <UniformGrid Columns="4" Rows="2">
-                                    <CheckBox x:Name="ChkMode1" Content="Mode 1 (Accurate Reads)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                    <CheckBox x:Name="ChkMode2" Content="Mode 2 (Sync Mode)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                    <CheckBox x:Name="ChkMode3" Content="Mode 3 (Unhook Syscalls)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                    <CheckBox x:Name="ChkMode4" Content="Mode 4 (Skip Videos)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                    <CheckBox x:Name="ChkMode5" Content="Mode 5 (Emulate DVD-DL)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                    <CheckBox x:Name="ChkMode6" Content="Mode 6 (Disable IGR)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                    <CheckBox x:Name="ChkMode7" Content="Mode 7 (High Module)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                    <CheckBox x:Name="ChkMode8" Content="Mode 8 (Hide Dev9)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                </UniformGrid>
-                            </StackPanel>
-                        </Border>
+                            <!-- Rij 1: Mode 1-8 & Titel Editor -->
+                            <Border Grid.Row="1" Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="8" Margin="10,2,10,5">
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="8"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="EDIT TITLE:" Foreground="#00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBox x:Name="TxtEditPs2Title" Grid.Column="1" Background="#88070A12" Foreground="#FFFFFF" BorderBrush="#3300E5FF" Padding="4" FontFamily="Consolas" FontSize="12"/>
+                                        <Button x:Name="BtnSaveGameSettings" Grid.Column="3" Style="{StaticResource CyberButtonStyle}" Content="[ ✓ ] SAVE SETTINGS" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="12,5" Background="#880A291A" Foreground="#00FF66" BorderBrush="#00FF66" BorderThickness="1" IsEnabled="False" Click="BtnSaveGameSettings_Click"/>
+                                    </Grid>
 
-                        <!-- Rij 2: Onderste 3 Actieknoppen -->
-                        <Grid Grid.Row="2" Margin="10,2,10,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="8"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="8"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                                    <UniformGrid Columns="4" Rows="2">
+                                        <CheckBox x:Name="ChkMode1" Content="Mode 1 (Accurate Reads)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode2" Content="Mode 2 (Sync Mode)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode3" Content="Mode 3 (Unhook Syscalls)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode4" Content="Mode 4 (Skip Videos)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode5" Content="Mode 5 (Emulate DVD-DL)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode6" Content="Mode 6 (Disable IGR)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode7" Content="Mode 7 (High Module)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode8" Content="Mode 8 (Hide Dev9)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
+                                    </UniformGrid>
+                                </StackPanel>
+                            </Border>
 
-                            <Button x:Name="BtnReloadGames" Grid.Column="0" Style="{StaticResource CyberButtonStyle}" Content="[ ↻ ] RELOAD" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="0,9" Background="#111827" Foreground="#00FF66" BorderBrush="#00FF66" BorderThickness="1" IsEnabled="False" Click="BtnReloadGames_Click"/>
-                            <Button x:Name="BtnBackupGame" Grid.Column="2" Style="{StaticResource CyberButtonStyle}" Content="[ ↓ ] BACKUP TO ISO" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="0,9" Background="#0A192F" Foreground="#00E5FF" BorderBrush="#00E5FF" BorderThickness="1" IsEnabled="False" Click="BtnBackupGame_Click"/>
-                            <Button x:Name="BtnDeleteGame" Grid.Column="4" Style="{StaticResource CyberButtonStyle}" Content="[ X ] DELETE" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="0,9" Background="#1A1118" Foreground="#FF3C3C" BorderBrush="#FF3C3C" BorderThickness="1" IsEnabled="False" Click="BtnDeleteGame_Click"/>
+                            <!-- Rij 2: Onderste 3 Actieknoppen -->
+                            <Grid Grid.Row="2" Margin="10,2,10,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button x:Name="BtnReloadGames" Grid.Column="0" Style="{StaticResource CyberButtonStyle}" Content="[ ↻ ] RELOAD" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="0,9" Background="#88111827" Foreground="#00FF66" BorderBrush="#00FF66" BorderThickness="1" IsEnabled="False" Click="BtnReloadGames_Click"/>
+                                <Button x:Name="BtnBackupGame" Grid.Column="2" Style="{StaticResource CyberButtonStyle}" Content="[ ↓ ] BACKUP TO ISO" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="0,9" Background="#880A192F" Foreground="#00E5FF" BorderBrush="#00E5FF" BorderThickness="1" IsEnabled="False" Click="BtnBackupGame_Click"/>
+                                <Button x:Name="BtnDeleteGame" Grid.Column="4" Style="{StaticResource CyberButtonStyle}" Content="[ X ] DELETE" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="0,9" Background="#881A1118" Foreground="#FF3C3C" BorderBrush="#FF3C3C" BorderThickness="1" IsEnabled="False" Click="BtnDeleteGame_Click"/>
+                            </Grid>
                         </Grid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+
+            <!-- RIJ 2: Log Terminal -->
+            <Border Grid.Row="2" Background="#66050811" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="10" Margin="0,0,0,15">
+                <Border.Effect>
+                    <DropShadowEffect/>
+                </Border.Effect>
+                <DockPanel>
+                    <TextBlock Text="[ LOG MATRIX TERMINAL ]" DockPanel.Dock="Top" Foreground="#5A759E" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,0,0,6"/>
+                    <TextBox x:Name="TxtLog" Background="Transparent" Foreground="#A0A0AA" BorderThickness="0" FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True"/>
+                </DockPanel>
+            </Border>
+
+            <!-- RIJ 3: Status, Snelheid, ProgressBar & Startknop -->
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,20,0" VerticalAlignment="Center">
+                    <Grid Margin="0,0,0,4">
+                        <TextBlock x:Name="StatusText" Text=">> AWAITING OPERATOR DATA RECRUITMENT..." Foreground="#5A759E" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Left"/>
+                        <TextBlock x:Name="PercentageText" Text="00.0%" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" Effect="{StaticResource TextGlow}"/>
                     </Grid>
-                </TabItem>
-            </TabControl>
+
+                    <Grid Margin="0,0,0,6">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <TextBlock Text="XFER_SPEED: " Foreground="#5A759E" FontFamily="Consolas" FontSize="11"/>
+                            <TextBlock x:Name="TxtSpeed" Text="0.00 MB/s" Foreground="#FFFF00" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="5,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <TextBlock Text="TIME_REMAINING: " Foreground="#5A759E" FontFamily="Consolas" FontSize="11"/>
+                            <TextBlock x:Name="TxtEta" Text="00:00:00" Foreground="#00FF66" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <ProgressBar x:Name="MyProgressBar" Style="{StaticResource NeonProgressBarStyle}" Height="16" Minimum="0" Maximum="100" Value="0"/>
+                </StackPanel>
+
+                <Button x:Name="BtnInstall" Grid.Column="1" Style="{StaticResource CyberButtonStyle}" Content="EXECUTE BATCH STREAM" Padding="30,0" Width="280" Height="50" Background="#00E5FF" Foreground="#070A12" FontFamily="Consolas" FontSize="14" FontWeight="Bold" BorderThickness="0" Effect="{StaticResource NeonGlow}" Click="BtnInstall_Click" VerticalAlignment="Bottom"/>
+            </Grid>
         </Grid>
-
-        <!-- RIJ 2: Log Terminal -->
-        <Border Grid.Row="2" BorderBrush="#1F293D" BorderThickness="1" CornerRadius="4" Background="#050811" Padding="10" Margin="0,0,0,15">
-            <Border.Effect>
-                <DropShadowEffect/>
-            </Border.Effect>
-            <DockPanel>
-                <TextBlock Text="[ LOG MATRIX TERMINAL ]" DockPanel.Dock="Top" Foreground="#5A759E" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,0,0,6"/>
-                <TextBox x:Name="TxtLog" Background="Transparent" Foreground="#A0A0AA" BorderThickness="0" FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True"/>
-            </DockPanel>
-        </Border>
-
-        <!-- RIJ 3: Status, Snelheid, ProgressBar & Startknop -->
-        <Grid Grid.Row="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0" Margin="0,0,20,0" VerticalAlignment="Center">
-                <Grid Margin="0,0,0,4">
-                    <TextBlock x:Name="StatusText" Text=">> AWAITING OPERATOR DATA RECRUITMENT..." Foreground="#5A759E" FontFamily="Consolas" FontSize="12" HorizontalAlignment="Left"/>
-                    <TextBlock x:Name="PercentageText" Text="00.0%" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" Effect="{StaticResource TextGlow}"/>
-                </Grid>
-
-                <Grid Margin="0,0,0,6">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <TextBlock Text="XFER_SPEED: " Foreground="#5A759E" FontFamily="Consolas" FontSize="11"/>
-                        <TextBlock x:Name="TxtSpeed" Text="0.00 MB/s" Foreground="#FFFF00" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="5,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock Text="TIME_REMAINING: " Foreground="#5A759E" FontFamily="Consolas" FontSize="11"/>
-                        <TextBlock x:Name="TxtEta" Text="00:00:00" Foreground="#00FF66" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="5,0,0,0"/>
-                    </StackPanel>
-                </Grid>
-
-                <Border BorderBrush="#00E5FF" BorderThickness="1" Padding="2" Background="#070A12" CornerRadius="2">
-                    <ProgressBar x:Name="MyProgressBar" Height="14" Minimum="0" Maximum="100" Value="0" Background="Transparent" Foreground="#00E5FF" BorderThickness="0"/>
-                </Border>
-            </StackPanel>
-
-            <Button x:Name="BtnInstall" Grid.Column="1" Content="EXECUTE BATCH STREAM" Padding="30,0" Width="280" Height="50" Background="#00E5FF" Foreground="#070A12" FontFamily="Consolas" FontSize="14" FontWeight="Bold" BorderThickness="0" Effect="{StaticResource NeonGlow}" Click="BtnInstall_Click" VerticalAlignment="Bottom"/>
-        </Grid>
-    </Grid>
+    </Border>
 </Window>
