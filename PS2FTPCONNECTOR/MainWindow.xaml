@@ -192,8 +192,8 @@
                                 <ColumnDefinition Width="180"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="[ TARGET_IP ]" Foreground="#00E5FF" FontFamily="Consolas" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBox x:Name="TxtIpAddress" Grid.Column="1" Text="192.168.0.103" Background="#88070A12" Foreground="#FFFFFF" BorderBrush="#00E5FF" CaretBrush="#00E5FF" Padding="6" FontSize="13" FontFamily="Consolas" VerticalAlignment="Center"/>
+                            <TextBlock Text="[ &#x26a1;TARGET_IP ]" Foreground="#00E5FF" FontFamily="Consolas" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                            <TextBox x:Name="TxtIpAddress" Grid.Column="1" Text="192.168.0.103" Background="#88070A12" Foreground="#FFFFFF" BorderBrush="#00E5FF" CaretBrush="#00E5FF" Padding="6" FontSize="13" FontFamily="ROG Fonts" VerticalAlignment="Center"/>
                             <Button x:Name="BtnConnect" Grid.Column="2" Style="{StaticResource CyberButtonStyle}" Content="CONNECT" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Margin="8,0,0,0" Padding="0,6" Background="#88111827" Foreground="#00FF66" BorderBrush="#00FF66" BorderThickness="1" Effect="{StaticResource GreenGlow}" Click="BtnConnect_Click"/>
                         </Grid>
                     </Border>
@@ -205,9 +205,23 @@
                         <StackPanel>
                             <TextBlock Text="// SELECTED NODE EDITOR (QUEUE)" Foreground="#5A759E" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Margin="0,0,0,8"/>
                             <TextBlock Text="DATA_LABEL:" Foreground="#FF00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,2,0,2"/>
-                            <TextBox x:Name="TxtGameTitle" Background="#88070A12" Foreground="#FF3CEC0D" BorderBrush="#3300E5FF" Padding="5" FontFamily="Consolas" LostFocus="TxtGameTitle_LostFocus"/>
+                            <TextBox x:Name="TxtGameTitle" Background="#88070A12" BorderBrush="#3300E5FF" Padding="5" FontFamily="Georgia" LostFocus="TxtGameTitle_LostFocus" FontSize="14">
+                                <TextBox.Foreground>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FF00F9FF"/>
+                                        <GradientStop Color="#FF0413FF" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </TextBox.Foreground>
+                            </TextBox>
                             <TextBlock Text="CORE_ID:" Foreground="#FF00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,8,0,2"/>
-                            <TextBox x:Name="TxtGameId" Background="#88070A12" Foreground="#FF3CEC0D" BorderBrush="#3300E5FF" Padding="5" Width="180" HorizontalAlignment="Left" FontFamily="Consolas" FontWeight="Bold" LostFocus="TxtGameId_LostFocus"/>
+                            <TextBox x:Name="TxtGameId" Background="#88070A12" BorderBrush="#3300E5FF" Padding="5" Width="180" HorizontalAlignment="Left" FontFamily="Consolas" FontWeight="Bold" LostFocus="TxtGameId_LostFocus">
+                                <TextBox.Foreground>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FF00D6FF"/>
+                                        <GradientStop Color="#FF0004FF" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </TextBox.Foreground>
+                            </TextBox>
                         </StackPanel>
                     </Border>
 
@@ -222,7 +236,13 @@
                     <TabControl.Effect>
                         <DropShadowEffect/>
                     </TabControl.Effect>
-                    <TabItem Header="  BATCH UPLOAD QUEUE  ">
+                    <TabItem Header=" &#x25b6; BATCH UPLOAD QUEUE  " Background="{x:Null}"  FontSize="14">
+                        <TabItem.Foreground>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FF0408FF" Offset="1"/>
+                                <GradientStop Color="#FF00FFED" Offset="0"/>
+                            </LinearGradientBrush>
+                        </TabItem.Foreground>
                         <ListView x:Name="LvQueue" BorderThickness="0" FontFamily="Georgia" SelectionChanged="LvQueue_SelectionChanged" AllowDrop="True" DragOver="LvQueue_DragOver" Drop="LvQueue_Drop" Margin="5" Background="#01000000" d:ItemsSource="{d:SampleData ItemCount=5}" FontSize="14">
                             <ListView.Foreground>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -232,7 +252,7 @@
                             </ListView.Foreground>
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="STATUS" Width="105">
+                                    <GridViewColumn Header="&#x231b;STATUS" Width="105">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding Status}" FontWeight="Bold">
@@ -262,13 +282,19 @@
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
-                                    <GridViewColumn Header="CORE_ID" DisplayMemberBinding="{Binding GameId}" Width="115"/>
-                                    <GridViewColumn Header="DATA_LABEL (KLIK OM TE EDITEN)" DisplayMemberBinding="{Binding Title}" Width="350"/>
+                                    <GridViewColumn Header="&#x1f525;CORE_ID" DisplayMemberBinding="{Binding GameId}" Width="115"/>
+                                    <GridViewColumn Header="&#x2699;DATA_LABEL (KLIK OM TE EDITEN)" DisplayMemberBinding="{Binding Title}" Width="350"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
                     </TabItem>
-                    <TabItem Header="  INSTALLED GAMES ON PS2  ">
+                    <TabItem Header=" &#x25bc; INSTALLED GAMES ON PS2  ">
+                        <TabItem.Foreground>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FF0010FF" Offset="1"/>
+                                <GradientStop Color="#FF00F9FF" Offset="0"/>
+                            </LinearGradientBrush>
+                        </TabItem.Foreground>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
@@ -292,7 +318,7 @@
                                 </ListView.View>
                             </ListView>
 
-                            <TextBlock x:Name="TxtNoConnection" Grid.Row="0" Text="NO LIVE CONNECTION // CLICK 'CONNECT' TO SCAN CONSOLE" Foreground="#FF3C3C" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtNoConnection" Grid.Row="0" Text="&#x26a0; NO LIVE CONNECTION // CLICK 'CONNECT' TO SCAN CONSOLE &#x26a0;" Foreground="#FF3C3C" FontFamily="Consolas" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
                             <!-- Rij 1: Mode 1-8 & Titel Editor -->
                             <Border Grid.Row="1" 
@@ -341,9 +367,9 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Button x:Name="BtnReloadGames" Grid.Column="0" Style="{StaticResource CyberButtonStyle}" Content="[ ↻ ] RELOAD" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="0,9" Background="#88111827" Foreground="#00FF66" BorderBrush="#00FF66" BorderThickness="1" IsEnabled="False" Click="BtnReloadGames_Click"/>
-                                <Button x:Name="BtnBackupGame" Grid.Column="2" Style="{StaticResource CyberButtonStyle}" Content="[ ↓ ] BACKUP TO ISO" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="0,9" Background="#880A192F" Foreground="#00E5FF" BorderBrush="#00E5FF" BorderThickness="1" IsEnabled="False" Click="BtnBackupGame_Click"/>
-                                <Button x:Name="BtnDeleteGame" Grid.Column="4" Style="{StaticResource CyberButtonStyle}" Content="[ X ] DELETE" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="0,9" Background="#881A1118" Foreground="#FF3C3C" BorderBrush="#FF3C3C" BorderThickness="1" IsEnabled="False" Click="BtnDeleteGame_Click"/>
+                                <Button x:Name="BtnReloadGames" Grid.Column="0" Style="{StaticResource CyberButtonStyle}" Content="[ &#x21bb; ] RELOAD" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="0,9" Background="#88111827" Foreground="#00FF66" BorderBrush="#00FF66" BorderThickness="1" IsEnabled="False" Click="BtnReloadGames_Click"/>
+                                <Button x:Name="BtnBackupGame" Grid.Column="2" Style="{StaticResource CyberButtonStyle}" Content="[ &#x1f310; ] BACKUP TO ISO" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="0,9" Background="#880A192F" Foreground="#00E5FF" BorderBrush="#00E5FF" BorderThickness="1" IsEnabled="False" Click="BtnBackupGame_Click"/>
+                                <Button x:Name="BtnDeleteGame" Grid.Column="4" Style="{StaticResource CyberButtonStyle}" Content="[ &#x1f5d1; ] DELETE" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="0,9" Background="#881A1118" Foreground="#FF3C3C" BorderBrush="#FF3C3C" BorderThickness="1" IsEnabled="False" Click="BtnDeleteGame_Click"/>
                             </Grid>
                         </Grid>
                     </TabItem>
@@ -357,7 +383,14 @@
                 </Border.Effect>
                 <DockPanel>
                     <TextBlock Text="[ LOG MATRIX TERMINAL ]" DockPanel.Dock="Top" Foreground="#5A759E" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,0,0,6"/>
-                    <TextBox x:Name="TxtLog" Background="Transparent" Foreground="#A0A0AA" BorderThickness="0" FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    <TextBox x:Name="TxtLog" Background="Transparent" BorderThickness="0" FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True">
+                        <TextBox.Foreground>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FF00FFE2"/>
+                                <GradientStop Color="#FF122BFF" Offset="1"/>
+                            </LinearGradientBrush>
+                        </TextBox.Foreground>
+                    </TextBox>
                 </DockPanel>
             </Border>
 
@@ -388,7 +421,7 @@
                     <ProgressBar x:Name="MyProgressBar" Style="{StaticResource NeonProgressBarStyle}" Height="16" Minimum="0" Maximum="100" Value="0"/>
                 </StackPanel>
 
-                <Button x:Name="BtnInstall" Grid.Column="1" Style="{StaticResource CyberButtonStyle}" Content="EXECUTE BATCH STREAM" Padding="30,0" Width="280" Height="50" Background="#00E5FF" Foreground="#070A12" FontFamily="Consolas" FontSize="14" FontWeight="Bold" BorderThickness="0" Effect="{StaticResource NeonGlow}" Click="BtnInstall_Click" VerticalAlignment="Bottom"/>
+                <Button x:Name="BtnInstall" Grid.Column="1" Style="{StaticResource CyberButtonStyle}" Content="[ &#x25b6; EXECUTE BATCH STREAM ]" Padding="30,0" Width="280" Height="50" Background="#00E5FF" Foreground="#070A12" FontFamily="Consolas" FontSize="14" FontWeight="Bold" BorderThickness="0" Effect="{StaticResource NeonGlow}" Click="BtnInstall_Click" VerticalAlignment="Bottom"/>
             </Grid>
         </Grid>
     </Border>
