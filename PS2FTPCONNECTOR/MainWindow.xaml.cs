@@ -21,6 +21,10 @@ namespace PS2FTPCONNECTOR
         public string GameId { get => _gameId; set { _gameId = value; OnPropertyChanged(); } }
         public string PartName { get; set; }
         public uint Sectors { get; set; }
+        public byte CompatFlags { get; set; }
+        public byte TrType { get; set; }
+        public byte TrMode { get; set; }
+        public byte DiscType { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
@@ -369,6 +373,86 @@ namespace PS2FTPCONNECTOR
                     StatusText.Text = ">> CONSOLE POWERED OFF.";
                 }
             }
+        }
+
+        private async void BtnSaveGameSettings_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_streamer.IsConnected || LvPs2Disk.SelectedItem is not Ps2GameJob selectedGame)
+            {
+                MessageBox.Show("Selecteer een geïnstalleerde game terwijl de PS2 verbonden is.", "Geen selectie");
+                return;
+            }
+
+            var updatedGame = new Ps2GameJob
+            {
+                PartName = selectedGame.PartName,
+                Title = TxtEditPs2Title.Text,
+                GameId = selectedGame.GameId,
+                IsoPath = selectedGame.IsoPath,
+                Sectors = selectedGame.Sectors,
+                CompatFlags = GetCompatibilityFlags(),
+                TrType = selectedGame.TrType,
+                TrMode = selectedGame.TrMode,
+                DiscType = selectedGame.DiscType,
+                Status = selectedGame.Status
+            };
+
+            BtnSaveGameSettings.IsEnabled = false;
+            bool saved = await Task.Run(() => _streamer.UpdateGameSettings(updatedGame));
+            if (saved)
+            {
+                selectedGame.Title = updatedGame.Title;
+                selectedGame.CompatFlags = updatedGame.CompatFlags;
+                LogWrite($">> SETTINGS SAVED FOR [{selectedGame.GameId}].");
+            }
+            else
+            {
+                LogWrite($">> [ERROR] Could not save settings for [{selectedGame.GameId}].");
+                MessageBox.Show("De instellingen konden niet op de PS2 worden opgeslagen.", "Opslaan mislukt", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            BtnSaveGameSettings.IsEnabled = _streamer.IsConnected && LvPs2Disk.SelectedItem == selectedGame;
+        }
+
+        private void LvPs2Disk_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (LvPs2Disk.SelectedItem is Ps2GameJob selectedGame)
+            {
+                TxtEditPs2Title.Text = selectedGame.Title;
+                SetCompatibilityModes(selectedGame.CompatFlags);
+                BtnSaveGameSettings.IsEnabled = _streamer.IsConnected;
+                return;
+            }
+
+            TxtEditPs2Title.Clear();
+            SetCompatibilityModes(0);
+            BtnSaveGameSettings.IsEnabled = false;
+        }
+
+        private void SetCompatibilityModes(byte flags)
+        {
+            ChkMode1.IsChecked = (flags & 0x01) != 0;
+            ChkMode2.IsChecked = (flags & 0x02) != 0;
+            ChkMode3.IsChecked = (flags & 0x04) != 0;
+            ChkMode4.IsChecked = (flags & 0x08) != 0;
+            ChkMode5.IsChecked = (flags & 0x10) != 0;
+            ChkMode6.IsChecked = (flags & 0x20) != 0;
+            ChkMode7.IsChecked = (flags & 0x40) != 0;
+            ChkMode8.IsChecked = (flags & 0x80) != 0;
+        }
+
+        private byte GetCompatibilityFlags()
+        {
+            byte flags = 0;
+            if (ChkMode1.IsChecked == true) flags |= 0x01;
+            if (ChkMode2.IsChecked == true) flags |= 0x02;
+            if (ChkMode3.IsChecked == true) flags |= 0x04;
+            if (ChkMode4.IsChecked == true) flags |= 0x08;
+            if (ChkMode5.IsChecked == true) flags |= 0x10;
+            if (ChkMode6.IsChecked == true) flags |= 0x20;
+            if (ChkMode7.IsChecked == true) flags |= 0x40;
+            if (ChkMode8.IsChecked == true) flags |= 0x80;
+            return flags;
         }
 
         private void LvQueue_SelectionChanged(object sender, SelectionChangedEventArgs e) { if (LvQueue.SelectedItem is Ps2GameJob job) { TxtGameTitle.Text = job.Title; TxtGameId.Text = job.GameId; } }

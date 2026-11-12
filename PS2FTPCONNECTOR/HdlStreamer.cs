@@ -18,20 +18,29 @@ namespace PS2FTPCONNECTOR
         private NetworkStream _cmdStream;
 
         // Officiële Commando's uit HDLGManClient.h
+        private const uint CMD_SHUTDOWN = 0xFF;
         private const uint CMD_GET_VERSION = 0x01;
         private const uint CMD_SEND_VERSION = 0x02;
         private const uint CMD_PREP_GAME_INST = 0x10;
+        private const uint CMD_INIT_GAME_READ = 0x12;
         private const uint CMD_CLOSE_GAME = 0x14;
         private const uint CMD_LOAD_GAME_LIST = 0x15;
         private const uint CMD_READ_GAME_LIST = 0x16;
-        private const uint CMD_GET_GAME_PART_NAME = 0x1B;
-        private const uint CMD_GET_FREE_SPACE = 0x1C;
+        private const uint CMD_UPD_GAME_ENTRY = 0x19;
         private const uint CMD_INIT_OSD_RESOURCES = 0x20;
         private const uint CMD_WRITE_OSD_RESOURCES = 0x23;
-        private const int PROTOCOL_VERSION = 0x0C;
         private const uint CMD_DEL_GAME_ENTRY = 0x1A;
-        private const uint CMD_INIT_GAME_READ = 0x12;
-        private const uint CMD_SHUTDOWN = 0xFF;
+        private const uint CMD_GET_GAME_PART_NAME = 0x1B;
+        
+        private const int PROTOCOL_VERSION = 0x0C;
+        
+        private const uint CMD_GET_FREE_SPACE = 0x1C;
+        
+        
+        
+        
+        
+       
 
         public bool IsConnected => _cmdClient != null && _cmdClient.Connected;
 
@@ -101,12 +110,27 @@ namespace PS2FTPCONNECTOR
                         {
                             byte[] entry = ReadExactBytes(213);
 
-                            // Lees de strings uit en kap ze keihard af bij de ALLEREERSTE null-byte (\0)
                             string partName = ExtractCleanString(entry, 0, 33, Encoding.ASCII);
                             string title = ExtractCleanString(entry, 33, 161, Encoding.UTF8);
                             string discId = ExtractCleanString(entry, 194, 11, Encoding.ASCII);
+                            byte compatFlags = entry[205];
+                            byte trType = entry[206];
+                            byte trMode = entry[207];
+                            byte discType = entry[208];
                             uint sectors = BitConverter.ToUInt32(entry, 209);
-                            list.Add(new Ps2GameJob { PartName = partName, GameId = discId, Title = title, Sectors = sectors, Status = "INSTALLED" });
+
+                            list.Add(new Ps2GameJob
+                            {
+                                PartName = partName,
+                                GameId = discId,
+                                Title = title,
+                                CompatFlags = compatFlags,
+                                TrType = trType,
+                                TrMode = trMode,
+                                DiscType = discType,
+                                Sectors = sectors,
+                                Status = "INSTALLED"
+                            });
 
                         }
                     }
@@ -163,6 +187,43 @@ namespace PS2FTPCONNECTOR
             }
         }
 
+        public bool UpdateGameSettings(Ps2GameJob job)
+        {
+            if (!IsConnected || string.IsNullOrEmpty(job.PartName)) return false;
+            try
+            {
+                byte[] transit = Array.Empty<byte>();
+                Array.Resize(ref transit, 213);
+
+                // 1. PartName (33 bytes)
+                byte[] partBytes = Encoding.ASCII.GetBytes(job.PartName);
+                Array.Copy(partBytes, 0, transit, 0, Math.Min(partBytes.Length, 32));
+
+                // 2. GameTitle (161 bytes UTF-8)
+                byte[] titleBytes = Encoding.UTF8.GetBytes(job.Title);
+                Array.Copy(titleBytes, 0, transit, 33, Math.Min(titleBytes.Length, 160));
+
+                // 3. DiscID (11 bytes)
+                byte[] idBytes = Encoding.ASCII.GetBytes(job.GameId);
+                Array.Copy(idBytes, 0, transit, 194, Math.Min(idBytes.Length, 10));
+
+                // 4. Modes, Transfer Rate & DiscType (Bytes 205 t/m 208)
+                byte[] meta = new byte[] { job.CompatFlags, job.TrType, job.TrMode, job.DiscType };
+                Array.Copy(meta, 0, transit, 205, 4);
+
+                // 5. Sectors (Bytes 209 t/m 212)
+                BitConverter.GetBytes(job.Sectors).CopyTo(transit, 209);
+
+                SendPacket(CMD_UPD_GAME_ENTRY, transit);
+                var (res, _) = GetResponse(0);
+                return res >= 0;
+            }
+            catch (Exception ex)
+            {
+                OnLog?.Invoke($"[UPD_ERR] {ex.Message}");
+                return false;
+            }
+        }
 
         // Hulpmethode om C-strings (tot de eerste \0) schoon uit een byte-array te halen
         private string ExtractCleanString(byte[] buffer, int offset, int maxLength, Encoding encoding)
