@@ -141,12 +141,35 @@
                                 </LinearGradientBrush>
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <TextBlock Text="READY FOR MULTI-THREADED DATA STACKING OVER TCP/IP..." Foreground="#5A759E" FontSize="11" FontFamily="Consolas" Margin="0,4,0,0"/>
+                        <TextBlock Text="READY FOR MULTI-THREADED DATA STACKING OVER TCP/IP..." Foreground="#FF08C8F9" FontSize="11" FontFamily="Georgia" Margin="0,4,0,0"/>
                     </StackPanel>
-                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,0,0">
-                        <TextBlock x:Name="TxtQueueStatus" Text="QUEUE: 0 GAMES LOADED" Foreground="#00FF66" FontFamily="Consolas" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right"/>
-                        <TextBlock x:Name="TxtFreeSpace" Text="PS2 FREE SPACE: -- GB" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,4,0,0"/>
-                    </StackPanel>
+                    <Border HorizontalAlignment="Right" 
+                        VerticalAlignment="Center" 
+                        Background="{StaticResource GlassCardBg}" 
+                        BorderBrush="{StaticResource GlassBorder}" 
+                        BorderThickness="1" 
+                        CornerRadius="6" 
+                        Padding="14,8">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#00E5FF" BlurRadius="12" ShadowDepth="0" Opacity="0.35"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <!-- Bovenste regel: Queue Status -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,4">
+                                <TextBlock Text="● " Foreground="#00FF66" FontFamily="Consolas" FontSize="12" Effect="{StaticResource GreenGlow}"/>
+                                <TextBlock x:Name="TxtQueueStatus" Text="QUEUE: 0 GAMES LOADED" Foreground="#00FF66" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Effect="{StaticResource GreenGlow}"/>
+                            </StackPanel>
+
+                            <!-- Subtiele scheidingslijn -->
+                            <Separator Background="#3300E5FF" Margin="0,1,0,3"/>
+
+                            <!-- Onderste regel: PS2 Vrije Schijfruimte -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <TextBlock Text="HDD_STORAGE // " Foreground="#7A95BE" FontFamily="Consolas" FontSize="12" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtFreeSpace" Text="PS2 FREE SPACE: -- GB" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" Effect="{StaticResource TextGlow}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </Grid>
             </Border>
             <!-- RIJ 1: Hoofdcontent (Links Controls, Rechts Tabbladen) -->
@@ -272,7 +295,16 @@
                             <TextBlock x:Name="TxtNoConnection" Grid.Row="0" Text="NO LIVE CONNECTION // CLICK 'CONNECT' TO SCAN CONSOLE" Foreground="#FF3C3C" FontFamily="Consolas" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
                             <!-- Rij 1: Mode 1-8 & Titel Editor -->
-                            <Border Grid.Row="1" Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="8" Margin="10,2,10,5">
+                            <Border Grid.Row="1" 
+                                        Background="{StaticResource GlassCardBg}" 
+                                        BorderBrush="{StaticResource GlassBorder}" 
+                                        BorderThickness="1" 
+                                        CornerRadius="4" 
+                                        Padding="8" 
+                                        Margin="10,2,10,5"
+                                        TextOptions.TextFormattingMode="Display"
+                                        TextOptions.TextRenderingMode="ClearType"
+                                        UseLayoutRounding="True" Panel.ZIndex="1">
                                 <StackPanel>
                                     <Grid Margin="0,0,0,6">
                                         <Grid.ColumnDefinitions>
@@ -286,15 +318,15 @@
                                         <Button x:Name="BtnSaveGameSettings" Grid.Column="3" Style="{StaticResource CyberButtonStyle}" Content="[ ✓ ] SAVE SETTINGS" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Padding="12,5" Background="#880A291A" Foreground="#00FF66" BorderBrush="#00FF66" BorderThickness="1" IsEnabled="False" Click="BtnSaveGameSettings_Click"/>
                                     </Grid>
 
-                                    <UniformGrid Columns="4" Rows="2">
-                                        <CheckBox x:Name="ChkMode1" Content="Mode 1 (Accurate Reads)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                        <CheckBox x:Name="ChkMode2" Content="Mode 2 (Sync Mode)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                        <CheckBox x:Name="ChkMode3" Content="Mode 3 (Unhook Syscalls)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                        <CheckBox x:Name="ChkMode4" Content="Mode 4 (Skip Videos)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                        <CheckBox x:Name="ChkMode5" Content="Mode 5 (Emulate DVD-DL)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                        <CheckBox x:Name="ChkMode6" Content="Mode 6 (Disable IGR)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                        <CheckBox x:Name="ChkMode7" Content="Mode 7 (High Module)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
-                                        <CheckBox x:Name="ChkMode8" Content="Mode 8 (Hide Dev9)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="10" Margin="2"/>
+                                    <UniformGrid Columns="4" Rows="2" Panel.ZIndex="1">
+                                        <CheckBox x:Name="ChkMode1" Content="Mode 1 (Accurate Reads)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="12" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode2" Content="Mode 2 (Sync Mode)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="12" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode3" Content="Mode 3 (Unhook Syscalls)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="12" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode4" Content="Mode 4 (Skip Videos)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="12" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode5" Content="Mode 5 (Emulate DVD-DL)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="12" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode6" Content="Mode 6 (Disable IGR)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="12" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode7" Content="Mode 7 (High Module)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="12" Margin="2"/>
+                                        <CheckBox x:Name="ChkMode8" Content="Mode 8 (Hide Dev9)" Foreground="#A0A0AA" FontFamily="Consolas" FontSize="12" Margin="2"/>
                                     </UniformGrid>
                                 </StackPanel>
                             </Border>
