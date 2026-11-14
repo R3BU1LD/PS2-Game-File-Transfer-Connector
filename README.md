@@ -38,10 +38,10 @@ To ensure you always get the latest 2 TB-compatible build—and to support the o
 * **Official GitHub Releases:** [Download HDLGameInstaller from ps2homebrew](https://github.com)
 
 ### Step 2: Launch the Server on Your PlayStation 2
-1. Copy **`HDLGameInstaller.elf`** to a FAT32 USB flash drive (or directly onto your PS2 internal HDD using **PS2FTPCONNECTOR APPLICATION * BUILD BY R3BU1LD *).
+1. Copy **`HDLGameInstaller.elf`** to a FAT32 USB flash drive (or directly onto your PS2 internal HDD using *wlauncherELF FILE Browser you can start the HDGAMEINSTALLER.elf from there Keep in mind the Installer works the best trhu mass:/apps/ * HDD0: Gives more of the time trouble but the safest way is thru the mass: <-- this can be your usb stick  ).
 2. Connect an Ethernet cable between your PlayStation 2 Network Adapter and your router/switch (on the same local network as your Windows PC).
-3. Boot your PlayStation 2 into **wLaunchELF** and launch **`HDLGameInstaller.elf`**.
-4. Once loaded, note the **IP Address** displayed on your TV screen (for example: `192.168.0.103`).
+3. Boot your PlayStation 2 into **wLaunchELF** and launch **`HDLGameInstaller.elf`**. <- This should be on your USB Stick under apps or diffrent map possible )
+4. Once loaded, note the **IP Address** displayed on your TV screen (for example: `192.168.0.103`). <-- This is my old connection so yours can be diffrent . Look in the network settings from the HDGameInstaller.elf application adjust the network at your wish but the ip that will show is the right one to hook on.
 
 ### Step 3: Connect & Stream from Windows
 1. Extract and launch **`PS2FTPCONNECTOR.exe`** on your Windows PC.
