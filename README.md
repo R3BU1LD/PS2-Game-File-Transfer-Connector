@@ -1,3 +1,4 @@
+<img width="1376" height="768" alt="image_152b9099" src="https://github.com/user-attachments/assets/b6b9b36d-82fa-4114-ae24-d7e2c7997a05" />
 # PS2FTPCONNECTOR // Multi-ISO Batch Injector & PS2 HDD Manager
 
 ![Platform](https://shields.io)
