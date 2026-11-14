@@ -38,7 +38,7 @@ To ensure you always get the latest 2 TB-compatible build—and to support the o
 * **Official GitHub Releases:** [Download HDLGameInstaller from ps2homebrew](https://github.com)
 
 ### Step 2: Launch the Server on Your PlayStation 2
-1. Copy **`HDLGameInstaller.elf`** to a FAT32 USB flash drive (or directly onto your PS2 internal HDD using **PS2 HDD MOUNTER**).
+1. Copy **`HDLGameInstaller.elf`** to a FAT32 USB flash drive (or directly onto your PS2 internal HDD using **PS2FTPCONNECTOR APPLICATION * BUILD BY R3BU1LD *).
 2. Connect an Ethernet cable between your PlayStation 2 Network Adapter and your router/switch (on the same local network as your Windows PC).
 3. Boot your PlayStation 2 into **wLaunchELF** and launch **`HDLGameInstaller.elf`**.
 4. Once loaded, note the **IP Address** displayed on your TV screen (for example: `192.168.0.103`).
