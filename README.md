@@ -1,0 +1,44 @@
+# PS2FTPCONNECTOR // Multi-ISO Batch Injector & PS2 HDD Manager
+
+![Platform](https://shields.io)
+![Framework](https://shields.io)
+![Protocol](https://shields.io)
+
+A modern, Smokey-Glass sci-fi C# WPF desktop manager for transferring, backing up, and managing **PlayStation 2 ISO games** over your local network via **HDLGameInstaller** (TCP port `45061`). Built to eliminate tedious command-line transfers with a fast, queue-based batch workflow.
+
+---
+
+## Key Features
+
+* **Multi-ISO Batch Queue & Drag-and-Drop:** Load multiple `.iso` files via file browser or drag-and-drop directly into the queue, with automatic **Game Disc ID** extraction (`SLES` / `SLUS` / `SCES`).
+* **Real-Time Telemetry:** Displays live transfer speed (`MB/s`), estimated time remaining (`ETA`), percentage progress, and available PS2 hard drive capacity (`GB`).
+* **Installed Games Manager:**
+  * Scan all installed games directly from your PS2 internal HDD over the network.
+  * Edit game titles on the fly and configure **HDLoader / OPL Compatibility Modes (Mode 1 – Mode 8)**.
+  * **Backup to ISO:** Rip installed games from your PS2 hard drive back to `.iso` files on your PC.
+  * **Delete Games:** Safely remove unwanted game partitions from the console.
+* **Remote Console Power-Off:** Shut down your PlayStation 2 safely from your PC once your batch transfer finishes.
+
+---
+
+## Prerequisites & Setup
+
+1. **Operating System:** Windows 10 or Windows 11 (64-bit).
+2. **Runtime:** [.NET 8.0 Desktop Runtime](https://microsoft.com).
+3. **PlayStation 2 Server:** Launch **`HDLGameInstaller.elf`** on your PlayStation 2 console (ensure your PS2 and PC are connected to the same local network and TCP ports `45061` / `45062` are reachable).
+4. **Connect:** Enter your PS2's local IP address in **PS2FTPCONNECTOR** and click **`CONNECT`**.
+
+---
+
+## Credits & Acknowledgments
+
+This application acts as a modern Windows frontend and network streaming client for **HDLGameInstaller** on the PlayStation 2. Special thanks and full credit go to the original creator and the homebrew maintainers who made network game installation possible:
+
+* **Original Creator & Protocol Author:** [**sp193**](https://github.com) — creator of `HDLGameInstaller` and its TCP/IP server architecture ([Original Project Archive](https://sites.google.com/view/ysai187/home/projects/hdlgameinstaller)).
+* **Community Maintainers:** [**ps2homebrew**](https://github.com/ps2homebrew) — for maintaining and updating the open-source [ps2homebrew/HDLGameInstaller](https://github.com/ps2homebrew/HDLGameInstaller) repository and releases.
+
+---
+
+## License
+
+Released under the **GNU General Public License v3.0 (GPL-3.0)** by **R3BU1LD**.
