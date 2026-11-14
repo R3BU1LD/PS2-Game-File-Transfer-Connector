@@ -28,6 +28,26 @@ A modern, Smokey-Glass sci-fi C# WPF desktop manager for transferring, backing u
 2. **Runtime:** [.NET 8.0 Desktop Runtime](https://microsoft.com).
 3. **PlayStation 2 Server:** Launch **`HDLGameInstaller.elf`** on your PlayStation 2 console (ensure your PS2 and PC are connected to the same local network and TCP ports `45061` / `45062` are reachable).
 4. **Connect:** Enter your PS2's local IP address in **PS2FTPCONNECTOR** and click **`CONNECT`**.
+---
+## Setup & Connection Guide (Step-by-Step)
+
+Because **PS2FTPCONNECTOR** communicates directly with **HDLGameInstaller** running on your PlayStation 2 console, you need to load the server `.ELF` on your PS2 first.
+
+### Step 1: Download `HDLGameInstaller.elf` (Official Source)
+To ensure you always get the latest 2 TB-compatible build—and to support the original homebrew developers with official download metrics—please download **`HDLGameInstaller.elf`** directly from the official release page:
+* **Official GitHub Releases:** [Download HDLGameInstaller from ps2homebrew](https://github.com)
+
+### Step 2: Launch the Server on Your PlayStation 2
+1. Copy **`HDLGameInstaller.elf`** to a FAT32 USB flash drive (or directly onto your PS2 internal HDD using **PS2 HDD MOUNTER**).
+2. Connect an Ethernet cable between your PlayStation 2 Network Adapter and your router/switch (on the same local network as your Windows PC).
+3. Boot your PlayStation 2 into **wLaunchELF** and launch **`HDLGameInstaller.elf`**.
+4. Once loaded, note the **IP Address** displayed on your TV screen (for example: `192.168.0.103`).
+
+### Step 3: Connect & Stream from Windows
+1. Extract and launch **`PS2FTPCONNECTOR.exe`** on your Windows PC.
+2. Enter the **IP Address** shown on your PS2 screen into the **`TARGET_IP`** field.
+3. Click **`CONNECT`** (TCP port `45061`). Your installed PS2 games and free HDD space (`GB`) will load automatically.
+4. Drag and drop your `.iso` files into the **Batch Upload Queue** and click **`EXECUTE BATCH STREAM`** to start transferring!
 
 ---
 
