@@ -11,11 +11,11 @@ namespace PS2FTPCONNECTOR
 {
     public class HdlStreamer
     {
-        public event Action<string> OnLog;
-        public event Action<double, double, string> OnProgress;
+        public event Action<string>? OnLog;
+        public event Action<double, double, string>? OnProgress;
 
-        private TcpClient _cmdClient;
-        private NetworkStream _cmdStream;
+        private TcpClient? _cmdClient;
+        private NetworkStream? _cmdStream;
 
         // Officiële Commando's uit HDLGManClient.h
         private const uint CMD_SHUTDOWN = 0xFF;
@@ -240,7 +240,7 @@ namespace PS2FTPCONNECTOR
         {
             if (!IsConnected && !ConnectAndHandshake(ip)) return false;
 
-            TcpListener dataListener = null;
+            TcpListener? dataListener = null;
             try
             {
                 FileInfo isoFile = new FileInfo(job.IsoPath);
@@ -351,7 +351,7 @@ namespace PS2FTPCONNECTOR
         {
             if (!IsConnected && !ConnectAndHandshake(ip)) return false;
 
-            TcpListener dataListener = null;
+            TcpListener? dataListener = null;
             try
             {
                 long totalBytes = (long)job.Sectors * 2048;
@@ -469,14 +469,17 @@ namespace PS2FTPCONNECTOR
             }
         }
 
-        private void SendPacket(uint command, byte[] payload)
+        private void SendPacket(uint command, byte[]? payload)
         {
+            if (_cmdStream is null)
+                throw new InvalidOperationException("PS2 command stream is not initialized.");
+
             uint len = (uint)(payload?.Length ?? 0);
             byte[] packet = new byte[12 + len];
             BitConverter.GetBytes(command).CopyTo(packet, 0);
             BitConverter.GetBytes(len).CopyTo(packet, 4);
             BitConverter.GetBytes(0).CopyTo(packet, 8);
-            if (len > 0) Array.Copy(payload, 0, packet, 12, len);
+            if (len > 0 && payload is not null) Array.Copy(payload, 0, packet, 12, len);
 
             _cmdStream.Write(packet, 0, packet.Length);
             _cmdStream.Flush();
@@ -493,11 +496,14 @@ namespace PS2FTPCONNECTOR
                 byte[] payload = ReadExactBytes((int)payloadLen);
                 return (result, payload);
             }
-            return (result, null);
+            return (result, Array.Empty<byte>());
         }
 
         private byte[] ReadExactBytes(int count)
         {
+            if (_cmdStream is null)
+                throw new InvalidOperationException("PS2 command stream is not initialized.");
+
             byte[] buffer = new byte[count];
             int offset = 0;
             while (offset < count)
@@ -542,14 +548,15 @@ namespace PS2FTPCONNECTOR
         }
 
 
-        public string ExtractGameId(string isoPath)
+        public string? ExtractGameId(string isoPath)
         {
             try
             {
                 using (FileStream fs = new FileStream(isoPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     byte[] buffer = new byte[1024 * 1024 * 4];
-                    string text = Encoding.ASCII.GetString(buffer, 0, fs.Read(buffer, 0, buffer.Length));
+                    int bytesRead = fs.Read(buffer, 0, buffer.Length);
+                    string text = Encoding.ASCII.GetString(buffer, 0, bytesRead);
                     var match = Regex.Match(text, @"(SLES|SLUS|SCUS|SCDH|SLPM|SLPS|SCPM)_[0-9]{3}\.[0-9]{2}");
                     if (match.Success) return match.Value;
                 }

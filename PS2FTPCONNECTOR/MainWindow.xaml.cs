@@ -13,20 +13,32 @@ namespace PS2FTPCONNECTOR
     public class Ps2GameJob : INotifyPropertyChanged
     {
         private string _status = "QUEUED";
-        private string _title;
-        private string _gameId;
-        public string IsoPath { get; set; }
-        public string Status { get => _status; set { _status = value; OnPropertyChanged(); } }
-        public string Title { get => _title; set { _title = value; OnPropertyChanged(); } }
-        public string GameId { get => _gameId; set { _gameId = value; OnPropertyChanged(); } }
-        public string PartName { get; set; }
+        private string _title = string.Empty;
+        private string _gameId = string.Empty;
+        private string _sizeText = "--";
+
+        public string IsoPath { get; set; } = string.Empty;
+        public string Status { get => _status; set { _status = value ?? string.Empty; OnPropertyChanged(); } }
+        public string Title { get => _title; set { _title = value ?? string.Empty; OnPropertyChanged(); } }
+        public string GameId { get => _gameId; set { _gameId = value ?? string.Empty; OnPropertyChanged(); } }
+        public string SizeText { get => _sizeText; set { _sizeText = value ?? string.Empty; OnPropertyChanged(); } }
+
+        public string PartName { get; set; } = string.Empty;
         public uint Sectors { get; set; }
         public byte CompatFlags { get; set; }
         public byte TrType { get; set; }
         public byte TrMode { get; set; }
         public byte DiscType { get; set; }
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        public static string FormatBytes(long bytes)
+        {
+            if (bytes <= 0) return "--";
+            double mb = bytes / (1024.0 * 1024.0);
+            return mb >= 1024.0 ? $"{mb / 1024.0:F2} GB" : $"{mb:F1} MB";
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));
     }
 
     public partial class MainWindow : Window
@@ -104,7 +116,7 @@ namespace PS2FTPCONNECTOR
                 BtnBackupGame.IsEnabled = false;
                 BtnDeleteGame.IsEnabled = false;
                 TxtFreeSpace.Text = "PS2 FREE SPACE: -- GB";
-                
+
                 // Zet de knop weer terug naar CONNECT (Groen)
                 BtnConnect.Content = "CONNECT";
                 BtnConnect.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 255, 102));
@@ -129,7 +141,6 @@ namespace PS2FTPCONNECTOR
             BtnConnect.IsEnabled = true;
             if (isServerAlive)
             {
-                
                 TxtNoConnection.Visibility = Visibility.Collapsed;
                 TxtIpAddress.IsEnabled = false; // Vergrendel IP-veld tijdens actieve sessie
                 BtnReloadGames.IsEnabled = true;
@@ -142,7 +153,13 @@ namespace PS2FTPCONNECTOR
                 BtnConnect.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 60, 60));
 
                 var gamesOnHdd = await Task.Run(() => _streamer.LoadInstalledGames());
-                foreach (var g in gamesOnHdd) InstalledGames.Add(g);
+                foreach (var g in gamesOnHdd)
+                {
+                    if (g.Sectors > 0)
+                        g.SizeText = Ps2GameJob.FormatBytes((long)g.Sectors * 2048L);
+                    InstalledGames.Add(g);
+                }
+
                 BtnDeleteGame.IsEnabled = true;
                 BtnBackupGame.IsEnabled = true;
                 TxtFreeSpace.Text = "PS2 FREE SPACE: " + await Task.Run(() => _streamer.GetFreeSpaceFormatted());
@@ -174,8 +191,11 @@ namespace PS2FTPCONNECTOR
                 {
                     string title = Path.GetFileNameWithoutExtension(selectedIso);
                     string id = _streamer.ExtractGameId(selectedIso) ?? "UNKNOWN_ID";
-                    GameQueue.Add(new Ps2GameJob { IsoPath = selectedIso, Title = title, GameId = id, Status = "QUEUED" });
-                    LogWrite($">> NODE REGISTERED: [{id}] {title}");
+                    long fileBytes = new FileInfo(selectedIso).Length;
+                    string sizeFormatted = Ps2GameJob.FormatBytes(fileBytes);
+
+                    GameQueue.Add(new Ps2GameJob { IsoPath = selectedIso, Title = title, GameId = id, SizeText = sizeFormatted, Status = "QUEUED" });
+                    LogWrite($">> NODE REGISTERED: [{id}] {title} ({sizeFormatted})");
                 }
                 UpdateQueueStatusHeader();
             }
@@ -193,23 +213,34 @@ namespace PS2FTPCONNECTOR
             }
             e.Handled = true;
         }
-        // Plaats de nieuwe Drag & Drop functie hier, helemaal onderaan de klasse:
+
         private void LvQueue_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[] droppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
+                string[] droppedItems = (string[])e.Data.GetData(DataFormats.FileDrop);
                 int addedCount = 0;
 
-                foreach (string file in droppedFiles)
+                foreach (string item in droppedItems)
                 {
-                    if (Path.GetExtension(file).Equals(".iso", StringComparison.OrdinalIgnoreCase))
+                    // Ondersteunt zowel losse .iso bestanden als volledige mappen met .iso bestanden!
+                    string[] filesToProcess = Directory.Exists(item)
+                        ? Directory.GetFiles(item, "*.iso", SearchOption.AllDirectories)
+                        : new[] { item };
+
+                    foreach (string file in filesToProcess)
                     {
-                        string title = Path.GetFileNameWithoutExtension(file);
-                        string id = _streamer.ExtractGameId(file) ?? "UNKNOWN_ID";
-                        GameQueue.Add(new Ps2GameJob { IsoPath = file, Title = title, GameId = id, Status = "QUEUED" });
-                        LogWrite($">> DRAG & DROP REGISTERED: [{id}] {title}");
-                        addedCount++;
+                        if (Path.GetExtension(file).Equals(".iso", StringComparison.OrdinalIgnoreCase))
+                        {
+                            string title = Path.GetFileNameWithoutExtension(file);
+                            string id = _streamer.ExtractGameId(file) ?? "UNKNOWN_ID";
+                            long fileBytes = new FileInfo(file).Length;
+                            string sizeFormatted = Ps2GameJob.FormatBytes(fileBytes);
+
+                            GameQueue.Add(new Ps2GameJob { IsoPath = file, Title = title, GameId = id, SizeText = sizeFormatted, Status = "QUEUED" });
+                            LogWrite($">> DRAG & DROP REGISTERED: [{id}] {title} ({sizeFormatted})");
+                            addedCount++;
+                        }
                     }
                 }
 
@@ -295,6 +326,7 @@ namespace PS2FTPCONNECTOR
                 MessageBox.Show("Maak eerst verbinding met de PS2 voordat je de lijst ververst.", "Geen verbinding");
                 return;
             }
+
             TxtFreeSpace.Text = "PS2 FREE SPACE: " + await Task.Run(() => _streamer.GetFreeSpaceFormatted());
             BtnReloadGames.IsEnabled = false;
             BtnDeleteGame.IsEnabled = false;
@@ -303,11 +335,16 @@ namespace PS2FTPCONNECTOR
             InstalledGames.Clear();
 
             var gamesOnHdd = await Task.Run(() => _streamer.LoadInstalledGames());
-            foreach (var g in gamesOnHdd) InstalledGames.Add(g);
+            foreach (var g in gamesOnHdd)
+            {
+                if (g.Sectors > 0)
+                    g.SizeText = Ps2GameJob.FormatBytes((long)g.Sectors * 2048L);
+                InstalledGames.Add(g);
+            }
 
             StatusText.Text = $">> HDD SCAN COMPLETE: {InstalledGames.Count} GAMES FOUND.";
             BtnReloadGames.IsEnabled = true;
-            
+            BtnDeleteGame.IsEnabled = InstalledGames.Count > 0;
         }
         private async void BtnDeleteGame_Click(object sender, RoutedEventArgs e)
         {

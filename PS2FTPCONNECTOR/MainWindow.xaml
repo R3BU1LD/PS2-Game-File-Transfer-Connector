@@ -6,22 +6,16 @@
         xmlns:local="clr-namespace:PS2FTPCONNECTOR"
         mc:Ignorable="d"
         Title="PS2FTPCONNECTOR // BATCH MATRIX CONTROL" 
-        Height="860" 
-        Width="1120"
-        AllowsTransparency="True"
-        WindowStartupLocation="CenterScreen"
-        ResizeMode="CanResizeWithGrip" 
-        WindowStyle="None" 
-        Background="{x:Null}">
+        Height="860" Width="1120" AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip" 
+        WindowStyle="None" Background="{x:Null}">
 
     <Window.Resources>
-        <!-- Neon Glow Effecten -->
         <DropShadowEffect x:Key="NeonGlow" Color="#00E5FF" BlurRadius="16" ShadowDepth="0" Opacity="0.75"/>
         <DropShadowEffect x:Key="GreenGlow" Color="#00FF66" BlurRadius="14" ShadowDepth="0" Opacity="0.65"/>
         <DropShadowEffect x:Key="RedGlow" Color="#FF3C3C" BlurRadius="14" ShadowDepth="0" Opacity="0.65"/>
         <DropShadowEffect x:Key="TextGlow" Color="#00E5FF" BlurRadius="8" ShadowDepth="0" Opacity="0.7"/>
 
-        <!-- Smokey Glass Achtergrond & Randen -->
         <LinearGradientBrush x:Key="SmokeyGlassBg" StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="#E6080C16" Offset="0.0"/>
             <GradientStop Color="#CC0F172A" Offset="0.5"/>
@@ -31,7 +25,6 @@
         <SolidColorBrush x:Key="GlassCardBg" Color="#550D1424"/>
         <SolidColorBrush x:Key="GlassBorder" Color="#4400E5FF"/>
 
-        <!-- TabItem Stijl -->
         <Style TargetType="TabItem">
             <Setter Property="HeaderTemplate">
                 <Setter.Value>
@@ -45,17 +38,11 @@
             <Setter Property="BorderBrush" Value="#3300E5FF"/>
         </Style>
 
-        <!-- Smokey Glass Neon Button Stijl -->
         <Style x:Key="CyberButtonStyle" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" 
-                                Background="{TemplateBinding Background}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" 
-                                CornerRadius="5" 
-                                Padding="{TemplateBinding Padding}">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5" Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -76,22 +63,13 @@
             </Setter>
         </Style>
 
-        <!-- Neon Glow ProgressBar Stijl -->
         <Style x:Key="NeonProgressBarStyle" TargetType="ProgressBar">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ProgressBar">
                         <Grid x:Name="TemplateRoot">
-                            <Border x:Name="PART_Track" 
-                                    Background="#44070A12" 
-                                    BorderBrush="#4400E5FF" 
-                                    BorderThickness="1" 
-                                    CornerRadius="4"/>
-
-                            <Border x:Name="PART_Indicator" 
-                                    HorizontalAlignment="Left" 
-                                    CornerRadius="3" 
-                                    Margin="1">
+                            <Border x:Name="PART_Track" Background="#44070A12" BorderBrush="#4400E5FF" BorderThickness="1" CornerRadius="4"/>
+                            <Border x:Name="PART_Indicator" HorizontalAlignment="Left" CornerRadius="3" Margin="1">
                                 <Border.Background>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                                         <GradientStop Color="#FF0066FF" Offset="0.0"/>
@@ -110,12 +88,7 @@
         </Style>
     </Window.Resources>
 
-    <!-- Buitenste Smokey Glass Venster Paneel -->
-    <Border Background="{StaticResource SmokeyGlassBg}" 
-            BorderBrush="#5500E5FF" 
-            BorderThickness="1.5" 
-            CornerRadius="12" 
-            Margin="10">
+    <Border Background="{StaticResource SmokeyGlassBg}" BorderBrush="#5500E5FF" BorderThickness="1.5" CornerRadius="12" Margin="10">
         <Border.Effect>
             <DropShadowEffect Color="#000000" BlurRadius="20" ShadowDepth="0" Opacity="0.85"/>
         </Border.Effect>
@@ -128,7 +101,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- RIJ 0: Header -->
+            <!-- ROW 0: Header -->
             <Border Grid.Row="0" BorderBrush="#00E5FF" BorderThickness="0,0,0,1" Padding="0,0,0,15" Margin="0,0,0,15">
                 <Grid>
                     <StackPanel HorizontalAlignment="Left">
@@ -143,27 +116,13 @@
                         </TextBlock>
                         <TextBlock Text="READY FOR MULTI-THREADED DATA STACKING OVER TCP/IP..." Foreground="#FF08C8F9" FontSize="11" FontFamily="Georgia" Margin="0,4,0,0"/>
                     </StackPanel>
-                    <Border HorizontalAlignment="Right" 
-                        VerticalAlignment="Center" 
-                        Background="{StaticResource GlassCardBg}" 
-                        BorderBrush="{StaticResource GlassBorder}" 
-                        BorderThickness="1" 
-                        CornerRadius="6" 
-                        Padding="14,8">
-                        <Border.Effect>
-                            <DropShadowEffect Color="#00E5FF" BlurRadius="12" ShadowDepth="0" Opacity="0.35"/>
-                        </Border.Effect>
+                    <Border HorizontalAlignment="Right" VerticalAlignment="Center" Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="6" Padding="14,8">
                         <StackPanel>
-                            <!-- Bovenste regel: Queue Status -->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,4">
                                 <TextBlock Text="● " Foreground="#00FF66" FontFamily="Consolas" FontSize="12" Effect="{StaticResource GreenGlow}"/>
                                 <TextBlock x:Name="TxtQueueStatus" Text="QUEUE: 0 GAMES LOADED" Foreground="#00FF66" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Effect="{StaticResource GreenGlow}"/>
                             </StackPanel>
-
-                            <!-- Subtiele scheidingslijn -->
                             <Separator Background="#3300E5FF" Margin="0,1,0,3"/>
-
-                            <!-- Onderste regel: PS2 Vrije Schijfruimte -->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock Text="HDD_STORAGE // " Foreground="#7A95BE" FontFamily="Consolas" FontSize="12" FontWeight="Bold"/>
                                 <TextBlock x:Name="TxtFreeSpace" Text="PS2 FREE SPACE: -- GB" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" Effect="{StaticResource TextGlow}"/>
@@ -172,7 +131,7 @@
                     </Border>
                 </Grid>
             </Border>
-            <!-- RIJ 1: Hoofdcontent (Links Controls, Rechts Tabbladen) -->
+            <!-- ROW 1: Main Content -->
             <Grid Grid.Row="1" Margin="0,0,0,15">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="420"/>
@@ -180,12 +139,9 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- LINKERKOLOM: Alle knoppen strak onder elkaar -->
+                <!-- LEFT COLUMN: Controls -->
                 <StackPanel Grid.Column="0" VerticalAlignment="Top">
                     <Border Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,12">
-                        <Border.Effect>
-                            <DropShadowEffect/>
-                        </Border.Effect>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100"/>
@@ -199,9 +155,6 @@
                     </Border>
 
                     <Border Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,12">
-                        <Border.Effect>
-                            <DropShadowEffect/>
-                        </Border.Effect>
                         <StackPanel>
                             <TextBlock Text="// SELECTED NODE EDITOR (QUEUE)" Foreground="#5A759E" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Margin="0,0,0,8"/>
                             <TextBlock Text="DATA_LABEL:" Foreground="#FF00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,2,0,2"/>
@@ -230,66 +183,74 @@
                     <Button x:Name="BtnPowerOff" Style="{StaticResource CyberButtonStyle}" Content="[ ⏻ ] POWER OFF PS2 CONSOLE" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,8" Padding="0,9" Background="#991F1209" Foreground="#FF9900" BorderBrush="#FF9900" BorderThickness="1" Click="BtnPowerOff_Click" FontSize="11"/>
                     <Button Style="{StaticResource CyberButtonStyle}" Content="[ ESC ] EXIT PROGRAM" FontFamily="Consolas" FontWeight="Bold" Padding="0,8" Background="#99141414" Foreground="#FFFFD306" BorderBrush="#FFF3CA09" BorderThickness="1" Click="Button_Click" FontSize="11"/>
                 </StackPanel>
-                
-                
 
-                <!-- RECHTERKOLOM: Tabbladen -->
+                <!-- RIGHT COLUMN: Tabs -->
                 <TabControl Grid.Column="2" Background="#66070A12" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1">
-                    <TabControl.Effect>
-                        <DropShadowEffect/>
-                    </TabControl.Effect>
-                    <TabItem Header=" &#x25b6; BATCH UPLOAD QUEUE  " Background="{x:Null}"  FontSize="14">
+                    <TabItem Header=" &#x25b6; BATCH UPLOAD QUEUE  " Background="{x:Null}" FontSize="14">
                         <TabItem.Foreground>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                 <GradientStop Color="#FF0408FF" Offset="1"/>
                                 <GradientStop Color="#FF00FFED" Offset="0"/>
                             </LinearGradientBrush>
                         </TabItem.Foreground>
-                        <ListView x:Name="LvQueue" BorderThickness="0" FontFamily="Georgia" SelectionChanged="LvQueue_SelectionChanged" AllowDrop="True" DragOver="LvQueue_DragOver" Drop="LvQueue_Drop" Margin="5" Background="#01000000" d:ItemsSource="{d:SampleData ItemCount=5}" FontSize="14">
-                            <ListView.Foreground>
-                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                    <GradientStop Color="#FF00F9FF"/>
-                                    <GradientStop Color="#FF0816F5" Offset="1"/>
-                                </LinearGradientBrush>
-                            </ListView.Foreground>
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="&#x231b;STATUS" Width="105">
-                                        <GridViewColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Status}" FontWeight="Bold">
-                                                    <TextBlock.Foreground>
-                                                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                                            <GradientStop Color="#FF6F6E6E" Offset="0.058"/>
-                                                            <GradientStop Color="#FF13FF00" Offset="0.873"/>
-                                                        </LinearGradientBrush>
-                                                    </TextBlock.Foreground>
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Foreground" Value="#5A759E"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Status}" Value="QUEUED">
-                                                                    <Setter Property="Foreground" Value="#00E5FF"/>
-                                                                </DataTrigger>
-                                                                <DataTrigger Binding="{Binding Status}" Value="UPLOADING...">
-                                                                    <Setter Property="Foreground" Value="#FFFF00"/>
-                                                                </DataTrigger>
-                                                                <DataTrigger Binding="{Binding Status}" Value="DONE">
-                                                                    <Setter Property="Foreground" Value="#00FF66"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
-                                            </DataTemplate>
-                                        </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn Header="&#x1f525;CORE_ID" DisplayMemberBinding="{Binding GameId}" Width="115"/>
-                                    <GridViewColumn Header="&#x2699;DATA_LABEL (KLIK OM TE EDITEN)" DisplayMemberBinding="{Binding Title}" Width="350"/>
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <ListView x:Name="LvQueue" Grid.Row="0" BorderThickness="0" FontFamily="Georgia" SelectionChanged="LvQueue_SelectionChanged" AllowDrop="True" DragOver="LvQueue_DragOver" Drop="LvQueue_Drop" Margin="5" Background="#01000000" FontSize="14">
+                                <ListView.Foreground>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FF00F9FF"/>
+                                        <GradientStop Color="#FF0816F5" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </ListView.Foreground>
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="&#x231b;STATUS" Width="110">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Status}" FontWeight="Bold">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Foreground" Value="#5A759E"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Status}" Value="QUEUED">
+                                                                        <Setter Property="Foreground" Value="#00E5FF"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding Status}" Value="SKIPPED">
+                                                                        <Setter Property="Foreground" Value="#A0A0AA"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding Status}" Value="UPLOADING...">
+                                                                        <Setter Property="Foreground" Value="#FFFF00"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding Status}" Value="DONE">
+                                                                        <Setter Property="Foreground" Value="#00FF66"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding Status}" Value="FAILED">
+                                                                        <Setter Property="Foreground" Value="#FF3C3C"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="&#x1f525;CORE_ID" DisplayMemberBinding="{Binding GameId}" Width="110"/>
+                                        <GridViewColumn Header="&#x1f4be;SIZE" DisplayMemberBinding="{Binding SizeText}" Width="85"/>
+                                        <GridViewColumn Header="&#x2699;DATA_LABEL (CLICK TO EDIT)" DisplayMemberBinding="{Binding Title}" Width="280"/>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+
+                            <Border Grid.Row="1" Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="0,1,0,0" Padding="10,7">
+                                <CheckBox x:Name="ChkOverwriteDuplicates" Content="OVERWRITE EXISTING GAMES ON PS2 (Unchecked = Skip duplicates already installed)" Foreground="#00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
                     </TabItem>
+
                     <TabItem Header=" &#x25bc; INSTALLED GAMES ON PS2  ">
                         <TabItem.Foreground>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -304,8 +265,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <!-- Rij 0: Lijst met spellen -->
-                            <ListView x:Name="LvPs2Disk" Grid.Row="0" Background="Transparent" BorderThickness="0" FontFamily="Consolas" Margin="5" SelectionChanged="LvPs2Disk_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}" FontSize="16">
+                            <ListView x:Name="LvPs2Disk" Grid.Row="0" Background="Transparent" BorderThickness="0" FontFamily="Consolas" Margin="5" SelectionChanged="LvPs2Disk_SelectionChanged" FontSize="16">
                                 <ListView.Foreground>
                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                         <GradientStop Color="#FF00F9FF"/>
@@ -322,17 +282,17 @@
 
                             <TextBlock x:Name="TxtNoConnection" Grid.Row="0" Text="&#x26a0; NO LIVE CONNECTION // CLICK 'CONNECT' TO SCAN CONSOLE &#x26a0;" Foreground="#FF3C3C" FontFamily="Consolas" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                            <!-- Rij 1: Mode 1-8 & Titel Editor -->
-                            <Border Grid.Row="1" 
-                                        Background="{StaticResource GlassCardBg}" 
-                                        BorderBrush="{StaticResource GlassBorder}" 
-                                        BorderThickness="1" 
-                                        CornerRadius="4" 
-                                        Padding="8" 
-                                        Margin="10,2,10,5"
-                                        TextOptions.TextFormattingMode="Display"
-                                        TextOptions.TextRenderingMode="ClearType"
-                                        UseLayoutRounding="True" Panel.ZIndex="1">
+                            <Border Grid.Row="1"
+                                    Background="{StaticResource GlassCardBg}"
+                                    BorderBrush="{StaticResource GlassBorder}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="8"
+                                    Margin="10,2,10,5"
+                                    TextOptions.TextFormattingMode="Display"
+                                    TextOptions.TextRenderingMode="ClearType"
+                                    UseLayoutRounding="True"
+                                    Panel.ZIndex="1">
                                 <StackPanel>
                                     <Grid Margin="0,0,0,6">
                                         <Grid.ColumnDefinitions>
@@ -359,7 +319,6 @@
                                 </StackPanel>
                             </Border>
 
-                            <!-- Rij 2: Onderste 3 Actieknoppen -->
                             <Grid Grid.Row="2" Margin="10,2,10,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -378,11 +337,8 @@
                 </TabControl>
             </Grid>
 
-            <!-- RIJ 2: Log Terminal -->
+            <!-- ROW 2: Log Terminal -->
             <Border Grid.Row="2" Background="#66050811" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="10" Margin="0,0,0,15">
-                <Border.Effect>
-                    <DropShadowEffect/>
-                </Border.Effect>
                 <DockPanel>
                     <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
                         <TextBlock Text="[ LOG MATRIX TERMINAL // AUTO-SAVING TO \LOGS ]" Foreground="#5A759E" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
@@ -399,7 +355,7 @@
                 </DockPanel>
             </Border>
 
-            <!-- RIJ 3: Status, Snelheid, ProgressBar & Startknop -->
+            <!-- ROW 3: Status, Speed, ProgressBar & Action Buttons -->
             <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -434,3 +390,6 @@
         </Grid>
     </Border>
 </Window>
+
+
+            
