@@ -25,9 +25,13 @@
 
 # 🚀 What's New in This Release
 
-## 🔍 Smart Duplicate Comparison & Highlighting
-With this new comparison engine, **PS2FTPCONNECTOR** automatically cross-checks your local batch queue against the games already installed on your PlayStation 2 hard drive. Any duplicates found are immediately highlighted with a **glowing red neon border** so you can spot them at a glance—and with the **Overwrite** toggle unchecked, they are safely skipped automatically during batch transfers.  
-*(Note: A dedicated button to remove individual selected items or duplicates directly from the queue is planned for the next update—for now, you can clear the full stack anytime using `CLEAR QUEUE`.)*
+## 🔍 Smart Duplicate Comparison & Queue Cleanup
+With this new comparison engine, **PS2FTPCONNECTOR** automatically cross-checks your local batch queue against the games already installed on your PlayStation 2 hard drive. Any duplicates found are immediately highlighted with a **glowing red neon border** so you can spot them at a glance—and with the **`OVERWRITE EXISTING GAMES`** toggle unchecked, they are safely skipped automatically during batch transfers.
+
+To keep your queue clean before starting a transfer, two dedicated queue management buttons are built right below the list:
+* **`[ - ] REMOVE SELECTED`:** Instantly removes any single selected game from your local batch queue.
+* **`[ 🗑 ] REMOVE DUPLICATES`:** Purges all red-bordered duplicate games from your queue in a single click, leaving only fresh titles ready to inject.
+
 
 ## 💾 Automatic Session Logs & "Save Log As..."
 To give you complete visibility into every transfer, **PS2FTPCONNECTOR** now automatically saves full session logs to a local `\Logs` folder right next to the executable. Need to inspect an interrupted transfer or troubleshoot a specific ISO? Click **`SAVE LOG AS...`** in the terminal header to export a full transfer report and queue summary anywhere on your PC.
