@@ -16,6 +16,8 @@ namespace PS2FTPCONNECTOR
         private string _title = string.Empty;
         private string _gameId = string.Empty;
         private string _sizeText = "--";
+        private bool _isDuplicate;
+        public bool IsDuplicate { get => _isDuplicate; set { _isDuplicate = value; OnPropertyChanged(); } }
 
         public string IsoPath { get; set; } = string.Empty;
         public string Status { get => _status; set { _status = value ?? string.Empty; OnPropertyChanged(); } }
@@ -171,7 +173,7 @@ namespace PS2FTPCONNECTOR
                         g.SizeText = Ps2GameJob.FormatBytes((long)g.Sectors * 2048L);
                     InstalledGames.Add(g);
                 }
-
+                RefreshDuplicateHighlights();
                 BtnDeleteGame.IsEnabled = true;
                 BtnBackupGame.IsEnabled = true;
                 TxtFreeSpace.Text = "PS2 FREE SPACE: " + await Task.Run(() => _streamer.GetFreeSpaceFormatted());
@@ -267,7 +269,21 @@ namespace PS2FTPCONNECTOR
             }
         }
 
+        private void RefreshDuplicateHighlights()
+        {
+            int dupCount = 0;
+            foreach (var job in GameQueue)
+            {
+                bool isDup = FindInstalledDuplicate(job) != null;
+                job.IsDuplicate = isDup;
+                if (isDup) dupCount++;
+            }
 
+            if (dupCount > 0)
+            {
+                LogWrite($">> [COMPARE] {dupCount} duplicate game(s) detected against PS2 HDD (marked with red border).");
+            }
+        }
 
 
         private Ps2GameJob? FindInstalledDuplicate(Ps2GameJob candidate)
@@ -410,7 +426,7 @@ namespace PS2FTPCONNECTOR
                     g.SizeText = Ps2GameJob.FormatBytes((long)g.Sectors * 2048L);
                 InstalledGames.Add(g);
             }
-
+            RefreshDuplicateHighlights();
             StatusText.Text = $">> HDD SCAN COMPLETE: {InstalledGames.Count} GAMES FOUND.";
             BtnReloadGames.IsEnabled = true;
             BtnDeleteGame.IsEnabled = InstalledGames.Count > 0;
@@ -656,7 +672,11 @@ namespace PS2FTPCONNECTOR
         private void TxtGameTitle_LostFocus(object sender, RoutedEventArgs e) { if (LvQueue.SelectedItem is Ps2GameJob job) job.Title = TxtGameTitle.Text; }
         private void TxtGameId_LostFocus(object sender, RoutedEventArgs e) { if (LvQueue.SelectedItem is Ps2GameJob job) job.GameId = TxtGameId.Text; }
         private void BtnClearQueue_Click(object sender, RoutedEventArgs e) { GameQueue.Clear(); TxtGameTitle.Text = ""; TxtGameId.Text = ""; UpdateQueueStatusHeader(); LogWrite(">> MATRIX STACK PURGED."); }
-        private void UpdateQueueStatusHeader() => TxtQueueStatus.Text = $"QUEUE: {GameQueue.Count} GAMES LOADED";
+        private void UpdateQueueStatusHeader()
+        {
+            TxtQueueStatus.Text = $"QUEUE: {GameQueue.Count} GAMES LOADED";
+            RefreshDuplicateHighlights();
+        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
