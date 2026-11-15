@@ -11,7 +11,7 @@
 
 ---
 
-<img width="1121" height="858" alt="Schermafbeelding 2026-11-15 200702" src="https://github.com/user-attachments/assets/dae00790-7799-4848-9c62-0c87bf50b360" />
+<img width="1583" height="1042" alt="Schermafbeelding 2026-11-15 231432" src="https://github.com/user-attachments/assets/16532bae-c81b-4fbc-867a-0aaf20f2bb87" />
 
 ---
 
