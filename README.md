@@ -19,6 +19,10 @@
 
 ---
 
+<img width="1710" height="1090" alt="Schermafbeelding 2026-11-15 232447" src="https://github.com/user-attachments/assets/016a9af6-0308-4e1c-98d4-050e9a9bbb6b" />
+
+---
+
 # 🚀 What's New in This Release
 
 ## 🔍 Smart Duplicate Comparison & Highlighting
