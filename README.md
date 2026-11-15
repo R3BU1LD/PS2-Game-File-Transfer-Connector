@@ -6,6 +6,10 @@
 ---
 <img width="1119" height="858" alt="Schermafbeelding 2026-11-15 200645" src="https://github.com/user-attachments/assets/0488dd4d-1d53-4a02-9900-1968fcc93f1b" />
 
+
+
+<img width="1121" height="858" alt="Schermafbeelding 2026-11-15 200702" src="https://github.com/user-attachments/assets/dae00790-7799-4848-9c62-0c87bf50b360" />
+
 ---
 > New Features have beeing added to this version ..
 >
@@ -28,10 +32,6 @@
 > I tryed to sqeeze the maximum speed between the computer and the ps2 console as much that it would take .
  
 ---
-
-<img width="1121" height="858" alt="Schermafbeelding 2026-11-15 200702" src="https://github.com/user-attachments/assets/dae00790-7799-4848-9c62-0c87bf50b360" />
-
-
 
 A modern, Smokey-Glass sci-fi C# WPF desktop manager for transferring, backing up, and managing **PlayStation 2 ISO games** over your local network via **HDLGameInstaller** (TCP port `45061`). Built to eliminate tedious command-line transfers with a fast, queue-based batch workflow.
 
