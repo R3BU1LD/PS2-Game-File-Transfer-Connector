@@ -7,11 +7,19 @@
 
 ---
 
-<img width="1119" height="858" alt="Schermafbeelding 2026-11-15 200645" src="https://github.com/user-attachments/assets/0488dd4d-1d53-4a02-9900-1968fcc93f1b" />
+<img width="943" height="529" alt="Schermafbeelding 2026-11-15 231737" src="https://github.com/user-attachments/assets/23e5a07a-7753-4ca4-aa33-2b1862579efa" />
+
+---
+<img width="1713" height="1093" alt="Schermafbeelding 2026-11-15 232216" src="https://github.com/user-attachments/assets/a7f98171-1416-4cff-bb06-57c481fcf691" />
+
 
 ---
 
-<img width="1121" height="858" alt="Schermafbeelding 2026-11-15 200702" src="https://github.com/user-attachments/assets/dae00790-7799-4848-9c62-0c87bf50b360" />
+<img width="1718" height="1090" alt="Schermafbeelding 2026-11-15 231856" src="https://github.com/user-attachments/assets/2d0c578a-6936-470f-a690-f93981197474" />
+
+---
+
+<img width="1711" height="1084" alt="Schermafbeelding 2026-11-15 232700" src="https://github.com/user-attachments/assets/f48b8c27-4339-4934-9c2c-f02fc90b3221" />
 
 ---
 
