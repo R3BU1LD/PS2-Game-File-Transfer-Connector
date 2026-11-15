@@ -1,13 +1,39 @@
 
 <img width="1376" height="768" alt="image_152b9099" src="https://github.com/user-attachments/assets/b6b9b36d-82fa-4114-ae24-d7e2c7997a05" />
+
+---
+
 <img width="1736" height="77" alt="PS2FTPCONNECTOR Multi-ISO Batch Injector and PS2 HDD Manager" src="https://github.com/user-attachments/assets/f8e6acdb-eff2-49e0-b6e4-bdbe70f72670" />
----
-<img width="1115" height="856" alt="Schermafbeelding 2026-11-14 154142" src="https://github.com/user-attachments/assets/89ff6ee4-a642-4598-824d-74ae5858301a" />
 
 ---
 
-<img width="1347" height="882" alt="Schermafbeelding 2026-11-14 154218" src="https://github.com/user-attachments/assets/53a7d23a-0dee-457b-aa70-c9d2220c973b" />
+<img width="1119" height="858" alt="Schermafbeelding 2026-11-15 200645" src="https://github.com/user-attachments/assets/0488dd4d-1d53-4a02-9900-1968fcc93f1b" />
 
+---
+
+<img width="1121" height="858" alt="Schermafbeelding 2026-11-15 200702" src="https://github.com/user-attachments/assets/dae00790-7799-4848-9c62-0c87bf50b360" />
+
+---
+
+# 🚀 What's New in This Release
+
+## 🔍 Smart Duplicate Comparison & Highlighting
+With this new comparison engine, **PS2FTPCONNECTOR** automatically cross-checks your local batch queue against the games already installed on your PlayStation 2 hard drive. Any duplicates found are immediately highlighted with a **glowing red neon border** so you can spot them at a glance—and with the **Overwrite** toggle unchecked, they are safely skipped automatically during batch transfers.  
+*(Note: A dedicated button to remove individual selected items or duplicates directly from the queue is planned for the next update—for now, you can clear the full stack anytime using `CLEAR QUEUE`.)*
+
+## 💾 Automatic Session Logs & "Save Log As..."
+To give you complete visibility into every transfer, **PS2FTPCONNECTOR** now automatically saves full session logs to a local `\Logs` folder right next to the executable. Need to inspect an interrupted transfer or troubleshoot a specific ISO? Click **`SAVE LOG AS...`** in the terminal header to export a full transfer report and queue summary anywhere on your PC.
+
+## ⏹ Safe Stop (Zero-Corruption Batch Pause)
+Running a massive batch queue and need to shut down for the night? Click **`SAFE STOP`** during an active transfer—the app will finish streaming the current ISO cleanly to completion and then halt the queue safely before starting the next title, ensuring zero corrupted partitions on your PS2 drive.
+
+## 🎨 Sci-Fi Smokey-Glass UI Overhaul
+Several parts of the interface received a visual upgrade to match the neon HUD aesthetic—including pulsing hover-glow buttons, rounded sci-fi tabs, file size indicators (`MB` / `GB`) in both lists, and a custom 3D neon-gradient scrollbar.
+
+## ⚡ Tuned TCP/IP Network Throughput
+The network streaming engine has been tuned to maximize transfer stability and throughput between your Windows PC and the PlayStation 2 console over TCP/IP.
+
+---
 
 
 A modern, Smokey-Glass sci-fi C# WPF desktop manager for transferring, backing up, and managing **PlayStation 2 ISO games** over your local network via **HDLGameInstaller** (TCP port `45061`). Built to eliminate tedious command-line transfers with a fast, queue-based batch workflow.
