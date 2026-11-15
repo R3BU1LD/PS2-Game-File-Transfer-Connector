@@ -80,19 +80,23 @@
         </Style>
 
 
-        <!-- Smokey Glass Neon Button Style met 100% volledig oppervlak hover -->
+        <!-- Smokey Glass Neon Button Style met haarscherpe tekst + pulserende glow -->
         <Style x:Key="CyberButtonStyle" TargetType="Button">
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+            <Setter Property="UseLayoutRounding" Value="True"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid Background="#01000000">
-                            <Border x:Name="border"
+                            <!-- Aparte gloeiende achtergrondlaag (zodat tekst nooit geblurred wordt!) -->
+                            <Border x:Name="GlowLayer"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="5"
-                                    Padding="{TemplateBinding Padding}">
+                                    CornerRadius="5">
                                 <Border.Effect>
                                     <DropShadowEffect x:Name="GlowEffect"
                                                       Color="{Binding BorderBrush.Color, RelativeSource={RelativeSource TemplatedParent}}"
@@ -100,6 +104,10 @@
                                                       ShadowDepth="0"
                                                       Opacity="0.35"/>
                                 </Border.Effect>
+                            </Border>
+
+                            <!-- Haarscherpe tekstlaag bovenop zonder effect -->
+                            <Border Padding="{TemplateBinding Padding}">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
@@ -110,14 +118,13 @@
                                     <Storyboard RepeatBehavior="Forever" AutoReverse="True">
                                         <DoubleAnimation Storyboard.TargetName="GlowEffect"
                                                          Storyboard.TargetProperty="BlurRadius"
-                                                         From="8" To="26" Duration="0:0:0.65"/>
+                                                         From="8" To="24" Duration="0:0:0.65"/>
                                         <DoubleAnimation Storyboard.TargetName="GlowEffect"
                                                          Storyboard.TargetProperty="Opacity"
                                                          From="0.45" To="1.0" Duration="0:0:0.65"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
-
                             <EventTrigger RoutedEvent="MouseLeave">
                                 <StopStoryboard BeginStoryboardName="PulseStoryboard"/>
                                 <BeginStoryboard>
@@ -131,13 +138,11 @@
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
-
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Opacity" Value="0.75"/>
+                                <Setter TargetName="GlowLayer" Property="Opacity" Value="0.75"/>
                             </Trigger>
-
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Opacity" Value="0.30"/>
+                                <Setter TargetName="GlowLayer" Property="Opacity" Value="0.30"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -457,9 +462,18 @@
                                 </ListView.View>
                             </ListView>
 
-                            <Border Grid.Row="1" Background="{StaticResource GlassCardBg}"  BorderBrush="{StaticResource GlassBorder}" BorderThickness="0,1,0,0" Padding="10,7">
-                                <CheckBox x:Name="ChkOverwriteDuplicates" Content="OVERWRITE EXISTING GAMES ON PS2 (Unchecked = Skip duplicates already installed)" Foreground="#00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <!-- Onderste balk in de wachtrij: Overwrite vinkje + Verwijderknoppen -->
+                            <Border Grid.Row="1" Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="0,1,0,0" Padding="10,7">
+                                <Grid>
+                                    <CheckBox x:Name="ChkOverwriteDuplicates" Content="OVERWRITE EXISTING GAMES" Foreground="#00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button x:Name="BtnRemoveSelectedQueue" Style="{StaticResource CyberButtonStyle}" Content="[ - ] REMOVE SELECTED" FontFamily="Corbel" FontWeight="Bold" FontSize="10" Padding="10,4" Margin="0,0,8,0" Background="#881F1206" Foreground="#FF9900" BorderBrush="#FF9900" BorderThickness="1" Click="BtnRemoveSelectedQueue_Click"/>
+                                        <Button x:Name="BtnRemoveDuplicates" Style="{StaticResource CyberButtonStyle}" Content="[ 🗑 ] REMOVE DUPLICATES" FontFamily="Corbel" FontWeight="Bold" FontSize="10" Padding="10,4" Background="#881A0B10" Foreground="#FF3C3C" BorderBrush="#FF3C3C" BorderThickness="1" Click="BtnRemoveDuplicates_Click"/>
+                                    </StackPanel>
+                                </Grid>
                             </Border>
+
                         </Grid>
                     </TabItem>
 
@@ -486,8 +500,9 @@
                                 </ListView.Foreground>
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="GAME DISC ID" DisplayMemberBinding="{Binding GameId}" Width="150"/>
-                                        <GridViewColumn Header="GAME TITLE ON HARD DRIVE" DisplayMemberBinding="{Binding Title}" Width="400"/>
+                                        <GridViewColumn Header="GAME DISC ID" DisplayMemberBinding="{Binding GameId}" Width="140"/>
+                                        <GridViewColumn Header="SIZE" DisplayMemberBinding="{Binding SizeText}" Width="95"/>
+                                        <GridViewColumn Header="GAME TITLE ON HARD DRIVE" DisplayMemberBinding="{Binding Title}" Width="350"/>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -557,7 +572,7 @@
                         <Button x:Name="BtnSaveLog" Style="{StaticResource CyberButtonStyle}" Content="[ 💾 ] SAVE LOG AS..." HorizontalAlignment="Right" Padding="10,3" Background="#880A192F" Foreground="#00E5FF" BorderBrush="#00E5FF" BorderThickness="1" FontFamily="Consolas" FontSize="10" FontWeight="Bold" Click="BtnSaveLog_Click"/>
                     </Grid>
                     <ScrollViewer x:Name="LogScrollViewer" VerticalScrollBarVisibility="Auto" Background="Transparent">
-                        <TextBlock x:Name="TxtLog" Background="Transparent" FontFamily="Cascadia Mono SemiLight" TextWrapping="Wrap">
+                        <TextBlock x:Name="TxtLog" Background="Transparent" FontFamily="Cascadia Mono SemiLight" TextWrapping="Wrap" FontSize="14">
                             <TextBlock.Foreground>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                     <GradientStop Color="#FF00FFE2"/>

@@ -672,6 +672,53 @@ namespace PS2FTPCONNECTOR
         private void TxtGameTitle_LostFocus(object sender, RoutedEventArgs e) { if (LvQueue.SelectedItem is Ps2GameJob job) job.Title = TxtGameTitle.Text; }
         private void TxtGameId_LostFocus(object sender, RoutedEventArgs e) { if (LvQueue.SelectedItem is Ps2GameJob job) job.GameId = TxtGameId.Text; }
         private void BtnClearQueue_Click(object sender, RoutedEventArgs e) { GameQueue.Clear(); TxtGameTitle.Text = ""; TxtGameId.Text = ""; UpdateQueueStatusHeader(); LogWrite(">> MATRIX STACK PURGED."); }
+        private void BtnRemoveSelectedQueue_Click(object sender, RoutedEventArgs e)
+        {
+            if (LvQueue.SelectedItem is not Ps2GameJob selectedJob)
+            {
+                MessageBox.Show("Selecteer eerst een game in de wachtrij om te verwijderen.", "Geen selectie");
+                return;
+            }
+
+            if (selectedJob.Status == "UPLOADING...")
+            {
+                MessageBox.Show("Je kunt een game niet verwijderen terwijl deze actief wordt geüpload.", "Upload actief");
+                return;
+            }
+
+            GameQueue.Remove(selectedJob);
+            TxtGameTitle.Text = "";
+            TxtGameId.Text = "";
+            UpdateQueueStatusHeader();
+            LogWrite($">> [QUEUE] Removed selected node: [{selectedJob.GameId}] {selectedJob.Title}");
+        }
+
+        private void BtnRemoveDuplicates_Click(object sender, RoutedEventArgs e)
+        {
+            int removedCount = 0;
+
+            for (int i = GameQueue.Count - 1; i >= 0; i--)
+            {
+                var job = GameQueue[i];
+                if ((job.IsDuplicate || job.Status == "SKIPPED") && job.Status != "UPLOADING...")
+                {
+                    GameQueue.RemoveAt(i);
+                    removedCount++;
+                }
+            }
+
+            if (removedCount > 0)
+            {
+                TxtGameTitle.Text = "";
+                TxtGameId.Text = "";
+                UpdateQueueStatusHeader();
+                LogWrite($">> [CLEANUP] Removed {removedCount} duplicate game(s) from the batch queue.");
+            }
+            else
+            {
+                MessageBox.Show("Er staan op dit moment geen duplicaten in de wachtrij.", "Geen duplicaten");
+            }
+        }
         private void UpdateQueueStatusHeader()
         {
             TxtQueueStatus.Text = $"QUEUE: {GameQueue.Count} GAMES LOADED";
