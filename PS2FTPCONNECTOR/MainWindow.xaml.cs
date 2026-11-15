@@ -743,7 +743,7 @@ namespace PS2FTPCONNECTOR
                 bool confirm = ConfirmDialog.Ask(
                     this,
                     "// SYSTEM EXIT CONFIRMATION",
-                    "Are you sure you want to terminate PS2FTPCONNECTOR?",
+                    "Are you sure ?",
                     isWarning: false);
 
                 if (!confirm) return;
