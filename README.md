@@ -14,24 +14,24 @@
 <img width="1121" height="858" alt="Schermafbeelding 2026-11-15 200702" src="https://github.com/user-attachments/assets/dae00790-7799-4848-9c62-0c87bf50b360" />
 
 ---
-> ## New Features have beeing added to this version ..
+> # New Features have beeing added to this version ..
 >
-> # An improved comparison list :
+> ## An improved comparison list :
 > With this feature you are able to compare files between the ps2 internal list and the local batch queue if there is an duplicate you will be noticed with an red border !
 > ( I will build an function around it so you can remove the selected item from the queue list <- at this moment you only see the duplicates and you could use clear queue in the mean time .
 > 
-> # Save Log As . This function has beeing implemented because you need to see whats going on !
+> ## Save Log As . This function has beeing implemented because you need to see whats going on !
 > With this tool you are able to save the logs from the Terminal window save it somewhere on your desk or any place you like .
 > If things going badly you could open the log and figure out whats happening .
 >
-> # Safe stop:
+> ## Safe stop:
 > With this feature you are able to stop the upload progress but in an safe way the program does first the job then it quits without corrupting the last upload
 > Batch to big then safe stop when you think this can stop i'll do the rest tommorow .
 >
-> # UI changes:
+> ## UI changes:
 > Some part of the application could use some extra attention around the theme so i did improvments on this it looks awesome now
 >
-> # Net Speed:
+> ## Net Speed:
 > I tryed to sqeeze the maximum speed between the computer and the ps2 console as much that it would take .
  
 ---
