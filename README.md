@@ -19,7 +19,7 @@
 
 ---
 
-<img width="1710" height="1090" alt="Schermafbeelding 2026-11-15 232447" src="https://github.com/user-attachments/assets/016a9af6-0308-4e1c-98d4-050e9a9bbb6b" />
+<img width="1711" height="1084" alt="Schermafbeelding 2026-11-15 232700" src="https://github.com/user-attachments/assets/f48b8c27-4339-4934-9c2c-f02fc90b3221" />
 
 ---
 
