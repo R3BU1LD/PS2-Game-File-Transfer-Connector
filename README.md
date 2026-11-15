@@ -14,27 +14,27 @@
 <img width="1121" height="858" alt="Schermafbeelding 2026-11-15 200702" src="https://github.com/user-attachments/assets/dae00790-7799-4848-9c62-0c87bf50b360" />
 
 ---
-> # New Features have beeing added to this version ..
->
-> ## An improved comparison list :
-> With this feature you are able to compare files between the ps2 internal list and the local batch queue if there is an duplicate you will be noticed with an red border !
-> ( I will build an function around it so you can remove the selected item from the queue list <- at this moment you only see the duplicates and you could use clear queue in the mean time .
-> 
-> ## Save Log As . This function has beeing implemented because you need to see whats going on !
-> With this tool you are able to save the logs from the Terminal window save it somewhere on your desk or any place you like .
-> If things going badly you could open the log and figure out whats happening .
->
-> ## Safe stop:
-> With this feature you are able to stop the upload progress but in an safe way the program does first the job then it quits without corrupting the last upload
-> Batch to big then safe stop when you think this can stop i'll do the rest tommorow .
->
-> ## UI changes:
-> Some part of the application could use some extra attention around the theme so i did improvments on this it looks awesome now
->
-> ## Net Speed:
-> I tryed to sqeeze the maximum speed between the computer and the ps2 console as much that it would take .
- 
+
+# 🚀 What's New in This Release
+
+## 🔍 Smart Duplicate Comparison & Highlighting
+With this new comparison engine, **PS2FTPCONNECTOR** automatically cross-checks your local batch queue against the games already installed on your PlayStation 2 hard drive. Any duplicates found are immediately highlighted with a **glowing red neon border** so you can spot them at a glance—and with the **Overwrite** toggle unchecked, they are safely skipped automatically during batch transfers.  
+*(Note: A dedicated button to remove individual selected items or duplicates directly from the queue is planned for the next update—for now, you can clear the full stack anytime using `CLEAR QUEUE`.)*
+
+## 💾 Automatic Session Logs & "Save Log As..."
+To give you complete visibility into every transfer, **PS2FTPCONNECTOR** now automatically saves full session logs to a local `\Logs` folder right next to the executable. Need to inspect an interrupted transfer or troubleshoot a specific ISO? Click **`SAVE LOG AS...`** in the terminal header to export a full transfer report and queue summary anywhere on your PC.
+
+## ⏹ Safe Stop (Zero-Corruption Batch Pause)
+Running a massive batch queue and need to shut down for the night? Click **`SAFE STOP`** during an active transfer—the app will finish streaming the current ISO cleanly to completion and then halt the queue safely before starting the next title, ensuring zero corrupted partitions on your PS2 drive.
+
+## 🎨 Sci-Fi Smokey-Glass UI Overhaul
+Several parts of the interface received a visual upgrade to match the neon HUD aesthetic—including pulsing hover-glow buttons, rounded sci-fi tabs, file size indicators (`MB` / `GB`) in both lists, and a custom 3D neon-gradient scrollbar.
+
+## ⚡ Tuned TCP/IP Network Throughput
+The network streaming engine has been tuned to maximize transfer stability and throughput between your Windows PC and the PlayStation 2 console over TCP/IP.
+
 ---
+
 
 A modern, Smokey-Glass sci-fi C# WPF desktop manager for transferring, backing up, and managing **PlayStation 2 ISO games** over your local network via **HDLGameInstaller** (TCP port `45061`). Built to eliminate tedious command-line transfers with a fast, queue-based batch workflow.
 
