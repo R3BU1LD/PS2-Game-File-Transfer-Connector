@@ -14,7 +14,7 @@
 
 ---
 
-<img width="1718" height="1090" alt="Schermafbeelding 2026-11-15 231856" src="https://github.com/user-attachments/assets/db75910e-0911-4faf-8557-f7330dd107ed" />
+
 
 ---
 
