@@ -55,6 +55,18 @@ namespace PS2FTPCONNECTOR
         private readonly object _logFileLock = new object();
         private volatile bool _stopBatchRequested = false;
 
+        private void SetConsoleOperationControlsEnabled(bool enabled)
+        {
+            // Vergrendel nooit MainTabs zelf (dat maakt WPF TabControl wit!), maar alleen de PS2-disk knoppen:
+            BtnConnect.IsEnabled = enabled;
+            BtnPowerOff.IsEnabled = enabled;
+            BtnReloadGames.IsEnabled = enabled && _streamer.IsConnected;
+            BtnBackupGame.IsEnabled = enabled && _streamer.IsConnected;
+            BtnDeleteGame.IsEnabled = enabled && _streamer.IsConnected;
+            BtnSaveGameSettings.IsEnabled = enabled && _streamer.IsConnected && LvPs2Disk.SelectedItem != null;
+            ChkOverwriteDuplicates.IsEnabled = enabled;
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -91,8 +103,8 @@ namespace PS2FTPCONNECTOR
             // 2. Toon direct in de UI terminal
             Dispatcher.Invoke(() =>
             {
-                TxtLog.AppendText($"[{DateTime.Now:HH:mm:ss}] {text}\n");
-                TxtLog.ScrollToEnd();
+                TxtLog.Text += $"[{DateTime.Now:HH:mm:ss}] {text}\n";
+                LogScrollViewer.ScrollToEnd();
             });
         }
         private void BtnStopBatch_Click(object sender, RoutedEventArgs e)
@@ -258,65 +270,122 @@ namespace PS2FTPCONNECTOR
 
 
 
+        private Ps2GameJob? FindInstalledDuplicate(Ps2GameJob candidate)
+        {
+            foreach (var installed in InstalledGames)
+            {
+                bool sameId = !string.IsNullOrWhiteSpace(candidate.GameId) &&
+                              candidate.GameId != "UNKNOWN_ID" &&
+                              string.Equals(installed.GameId?.Trim(), candidate.GameId.Trim(), StringComparison.OrdinalIgnoreCase);
+
+                bool sameTitle = !string.IsNullOrWhiteSpace(candidate.Title) &&
+                                 string.Equals(installed.Title?.Trim(), candidate.Title.Trim(), StringComparison.OrdinalIgnoreCase);
+
+                if (sameId || sameTitle) return installed;
+            }
+            return null;
+        }
+
         private async void BtnInstall_Click(object sender, RoutedEventArgs e)
         {
             string ip = TxtIpAddress.Text.Trim();
             if (string.IsNullOrEmpty(ip) || GameQueue.Count == 0) { MessageBox.Show("Geen doel-IP of wachtrij aanwezig."); return; }
 
+            bool overwriteDuplicates = ChkOverwriteDuplicates.IsChecked == true;
             _stopBatchRequested = false;
+
             BtnInstall.IsEnabled = false;
             BtnBrowse.IsEnabled = false;
             BtnClearQueue.IsEnabled = false;
             BtnStopBatch.IsEnabled = true;
             BtnStopBatch.Content = "[ ⏹ ] SAFE STOP";
+            SetConsoleOperationControlsEnabled(false);
 
-            LogWrite(">> INITIATING BATCH DATA INJECTION STREAM...");
-
-            for (int i = 0; i < GameQueue.Count; i++)
+            try
             {
-                if (_stopBatchRequested)
+                LogWrite($">> INITIATING BATCH STREAM (OVERWRITE MODE: {(overwriteDuplicates ? "ON" : "OFF / SKIP DUPLICATES")})...");
+
+                for (int i = 0; i < GameQueue.Count; i++)
                 {
-                    LogWrite(">> [PAUSED] Batch netjes gepauzeerd op verzoek van operator. Geen corrupte data!");
-                    StatusText.Text = ">> BATCH SAFELY PAUSED. READY TO RESUME.";
-                    break;
+                    if (_stopBatchRequested)
+                    {
+                        LogWrite(">> [PAUSED] Batch netjes gepauzeerd op verzoek van operator. Geen corrupte data!");
+                        StatusText.Text = ">> BATCH SAFELY PAUSED. READY TO RESUME.";
+                        break;
+                    }
+
+                    var job = GameQueue[i];
+                    if (job.Status == "DONE" || job.Status == "SKIPPED") continue;
+
+                    // Controleer of de game al op de PS2 staat
+                    var existingGame = FindInstalledDuplicate(job);
+                    if (existingGame != null)
+                    {
+                        if (!overwriteDuplicates)
+                        {
+                            job.Status = "SKIPPED";
+                            LogWrite($">> [SKIPPED] [{job.GameId}] {job.Title} ({job.SizeText}) is already installed on PS2 ({existingGame.SizeText}).");
+                            continue;
+                        }
+
+                        LogWrite($">> [OVERWRITE] Removing existing PS2 partition: [{existingGame.GameId}] {existingGame.Title} ({existingGame.SizeText})...");
+                        bool removed = await Task.Run(() => _streamer.DeleteGame(existingGame.PartName));
+                        if (removed)
+                        {
+                            InstalledGames.Remove(existingGame);
+                            LogWrite(">> [OVERWRITE] Old partition removed. Streaming fresh ISO...");
+                        }
+                        else
+                        {
+                            job.Status = "FAILED";
+                            LogWrite($">> [ERROR] Could not remove existing partition for {existingGame.Title}.");
+                            continue;
+                        }
+                    }
+
+                    job.Status = "UPLOADING...";
+                    UpdateProgressUi(0, 0, "CALCULATING...");
+                    StatusText.Text = $">> INJECTING [{i + 1}/{GameQueue.Count}]: {job.Title}";
+                    LogWrite($">> START STREAM NODE [{i + 1}/{GameQueue.Count}]: {job.Title} ({job.GameId}) [{job.SizeText}]");
+
+                    bool success = await Task.Run(() => _streamer.UploadIso(ip, job));
+
+                    if (success)
+                    {
+                        job.Status = "DONE";
+                        LogWrite($">> SUCCESS: Node {job.Title} ({job.SizeText}) transferred.");
+                    }
+                    else
+                    {
+                        job.Status = "FAILED";
+                        LogWrite($">> CRITICAL INTERRUPT: Transfer failed for {job.Title}.");
+                        if (MessageBox.Show($"Stream afgebroken bij '{job.Title}'. Wilt u doorgaan met de rest?", "Stream Fout", MessageBoxButton.YesNo) == MessageBoxResult.No) break;
+                    }
                 }
 
-                var job = GameQueue[i];
-                if (job.Status == "DONE") continue;
-
-                job.Status = "UPLOADING...";
-                UpdateProgressUi(0, 0, "CALCULATING...");
-                StatusText.Text = $">> INJECTING [{i + 1}/{GameQueue.Count}]: {job.Title}";
-                LogWrite($">> START STREAM NODE [{i + 1}/{GameQueue.Count}]: {job.Title} ({job.GameId})");
-
-                bool success = await Task.Run(() => _streamer.UploadIso(ip, job));
-
-                if (success)
+                if (!_stopBatchRequested)
                 {
-                    job.Status = "DONE";
-                    LogWrite($">> SUCCESS: Node {job.Title} succesvol overgedragen.");
-                }
-                else
-                {
-                    job.Status = "FAILED";
-                    LogWrite($">> CRITICAL INTERRUPT: Overdracht gefaald voor {job.Title}.");
-                    if (MessageBox.Show($"Stream afgebroken bij '{job.Title}'. Wilt u doorgaan met de rest?", "Stream Fout", MessageBoxButton.YesNo) == MessageBoxResult.No) break;
+                    LogWrite(">> BATCH PROCESS TERMINATED.");
+                    StatusText.Text = ">> BATCH STREAM PROCESS COMPLETED.";
+                    UpdateProgressUi(100, 0, "00:00:00");
                 }
             }
-
-            if (!_stopBatchRequested)
+            catch (Exception ex)
             {
-                LogWrite(">> BATCH PROCESS TERMINATED.");
-                StatusText.Text = ">> BATCH STREAM PROCESS COMPLETED.";
-                UpdateProgressUi(100, 0, "00:00:00");
+                LogWrite($">> [ERROR] Batch stopped unexpectedly: {ex.Message}");
+                StatusText.Text = ">> BATCH STOPPED DUE TO AN UNEXPECTED ERROR.";
+                MessageBox.Show($"De batch kon niet worden afgerond: {ex.Message}", "Batch fout", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            BtnStopBatch.IsEnabled = false;
-            BtnStopBatch.Content = "[ ⏹ ] SAFE STOP";
-            BtnInstall.IsEnabled = true;
-            BtnBrowse.IsEnabled = true;
-            BtnClearQueue.IsEnabled = true;
-            UpdateQueueStatusHeader();
+            finally
+            {
+                BtnStopBatch.IsEnabled = false;
+                BtnStopBatch.Content = "[ ⏹ ] SAFE STOP";
+                BtnInstall.IsEnabled = true;
+                BtnBrowse.IsEnabled = true;
+                BtnClearQueue.IsEnabled = true;
+                SetConsoleOperationControlsEnabled(true);
+                UpdateQueueStatusHeader();
+            }
         }
 
         private async void BtnReloadGames_Click(object sender, RoutedEventArgs e)

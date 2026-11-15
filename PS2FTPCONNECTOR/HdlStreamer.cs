@@ -292,38 +292,52 @@ namespace PS2FTPCONNECTOR
                     return false;
                 }
 
-                // 3. Stuur de ISO data
+                // 3. Stuur de ISO data (Exacte 1MB DMA-blokken zoals sp193 HDLGManClient voor 7.4+ MB/s)
                 using (TcpClient ps2Data = acceptTask.Result)
-                using (NetworkStream dataStream = ps2Data.GetStream())
-                using (FileStream fs = new FileStream(job.IsoPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    OnLog?.Invoke(">> DATA STREAM ACTIVE! Verzenden van ISO clusters...");
-                    byte[] buffer = new byte[1024 * 256]; // 256KB blokken
-                    int bytesRead;
-                    long totalSent = 0;
-                    Stopwatch timer = Stopwatch.StartNew();
+                    Socket sock = ps2Data.Client;
+                    sock.NoDelay = true;
+                    sock.SendBufferSize = 1024 * 1024; // 1 MB TCP socket buffer
 
-                    while ((bytesRead = fs.Read(buffer, 0, buffer.Length)) > 0)
+                    using (FileStream fs = new FileStream(job.IsoPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 1024 * 1024, FileOptions.SequentialScan))
                     {
-                        dataStream.Write(buffer, 0, bytesRead);
-                        totalSent += bytesRead;
+                        OnLog?.Invoke(">> DATA STREAM ACTIVE! Direct 1MB DMA-aligned socket transfer...");
+                        byte[] buffer = new byte[1024 * 1024]; // Exact 1 MB (512 PS2-sectoren)
+                        int bytesRead;
+                        long totalSent = 0;
+                        Stopwatch timer = Stopwatch.StartNew();
+                        long lastUiUpdateMs = 0;
 
-                        double pct = (double)totalSent / totalBytes * 100.0;
-                        double sec = timer.Elapsed.TotalSeconds;
-                        double speed = 0;
-                        string eta = "CALCULATING...";
-
-                        if (pct > 0 && sec > 0.5)
+                        while ((bytesRead = fs.Read(buffer, 0, buffer.Length)) > 0)
                         {
-                            double mbXfer = totalSent / (1024.0 * 1024.0);
-                            speed = mbXfer / sec;
-                            TimeSpan rem = TimeSpan.FromSeconds((totalMegabytes - mbXfer) / speed);
-                            eta = $"{rem.Hours:D2}:{rem.Minutes:D2}:{rem.Seconds:D2}";
+                            int sentInChunk = 0;
+                            while (sentInChunk < bytesRead)
+                            {
+                                sentInChunk += sock.Send(buffer, sentInChunk, bytesRead - sentInChunk, SocketFlags.None);
+                            }
+                            totalSent += bytesRead;
+
+                            long nowMs = timer.ElapsedMilliseconds;
+                            if (nowMs - lastUiUpdateMs >= 250 || totalSent >= totalBytes)
+                            {
+                                lastUiUpdateMs = nowMs;
+                                double pct = (double)totalSent / totalBytes * 100.0;
+                                double sec = nowMs / 1000.0;
+                                double speed = 0;
+                                string eta = "CALCULATING...";
+
+                                if (pct > 0 && sec > 0.5)
+                                {
+                                    double mbXfer = totalSent / (1024.0 * 1024.0);
+                                    speed = mbXfer / sec;
+                                    TimeSpan rem = TimeSpan.FromSeconds((totalMegabytes - mbXfer) / speed);
+                                    eta = $"{rem.Hours:D2}:{rem.Minutes:D2}:{rem.Seconds:D2}";
+                                }
+                                OnProgress?.Invoke(pct, speed, eta);
+                            }
                         }
-                        OnProgress?.Invoke(pct, speed, eta);
+                        sock.Shutdown(SocketShutdown.Send);
                     }
-                    dataStream.Flush();
-                    ps2Data.Client.Shutdown(SocketShutdown.Send);
                 }
 
                 // 4. Sluit de game op de PS2

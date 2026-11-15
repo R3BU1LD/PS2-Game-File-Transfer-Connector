@@ -15,6 +15,10 @@
         <DropShadowEffect x:Key="GreenGlow" Color="#00FF66" BlurRadius="14" ShadowDepth="0" Opacity="0.65"/>
         <DropShadowEffect x:Key="RedGlow" Color="#FF3C3C" BlurRadius="14" ShadowDepth="0" Opacity="0.65"/>
         <DropShadowEffect x:Key="TextGlow" Color="#00E5FF" BlurRadius="8" ShadowDepth="0" Opacity="0.7"/>
+        <LinearGradientBrush x:Key="TerminalTextBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FF00FFE2"/>
+            <GradientStop Color="#FF122BFF" Offset="1"/>
+        </LinearGradientBrush>
 
         <LinearGradientBrush x:Key="SmokeyGlassBg" StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="#E6080C16" Offset="0.0"/>
@@ -25,35 +29,113 @@
         <SolidColorBrush x:Key="GlassCardBg" Color="#550D1424"/>
         <SolidColorBrush x:Key="GlassBorder" Color="#4400E5FF"/>
 
+        <!-- Moderne Sci-Fi TabItem Stijl -->
         <Style TargetType="TabItem">
-            <Setter Property="HeaderTemplate">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
                 <Setter.Value>
-                    <DataTemplate>
-                        <TextBlock Text="{TemplateBinding Content}" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Padding="12,6"/>
-                    </DataTemplate>
+                    <ControlTemplate TargetType="TabItem">
+                        <Grid Background="#01000000" Margin="0,0,4,0">
+                            <Border x:Name="TabBorder"
+                                    Background="#66090E1A"
+                                    BorderBrush="#3300E5FF"
+                                    BorderThickness="1,1,1,0"
+                                    CornerRadius="7,7,0,0"
+                                    Padding="16,8">
+                                <TextBlock x:Name="TabText"
+                                           Text="{TemplateBinding Header}"
+                                           Foreground="#7A95BE"
+                                           FontFamily="Consolas"
+                                           FontSize="13"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <!-- Hover effect op niet-actieve tab -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="TabBorder" Property="Background" Value="#880E172A"/>
+                                <Setter TargetName="TabBorder" Property="BorderBrush" Value="#8800E5FF"/>
+                                <Setter TargetName="TabText" Property="Foreground" Value="#B8E8FF"/>
+                            </Trigger>
+
+                            <!-- Actieve tab licht op in neon cyaan -->
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="TabBorder" Property="Background" Value="#CC0D1B30"/>
+                                <Setter TargetName="TabBorder" Property="BorderBrush" Value="#00E5FF"/>
+                                <Setter TargetName="TabBorder" Property="BorderThickness" Value="1.4,1.4,1.4,0"/>
+                                <Setter TargetName="TabBorder" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#00E5FF" BlurRadius="14" ShadowDepth="0" Opacity="0.65"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="TabText" Property="Foreground" Value="#00E5FF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="Background" Value="#66111827"/>
-            <Setter Property="Foreground" Value="#7A95BE"/>
-            <Setter Property="BorderBrush" Value="#3300E5FF"/>
         </Style>
 
+
+        <!-- Smokey Glass Neon Button Style met 100% volledig oppervlak hover -->
         <Style x:Key="CyberButtonStyle" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5" Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
+                        <Grid Background="#01000000">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="5"
+                                    Padding="{TemplateBinding Padding}">
+                                <Border.Effect>
+                                    <DropShadowEffect x:Name="GlowEffect"
+                                                      Color="{Binding BorderBrush.Color, RelativeSource={RelativeSource TemplatedParent}}"
+                                                      BlurRadius="6"
+                                                      ShadowDepth="0"
+                                                      Opacity="0.35"/>
+                                </Border.Effect>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Opacity" Value="1.0"/>
-                                <Setter TargetName="border" Property="Effect">
-                                    <Setter.Value>
-                                        <DropShadowEffect Color="#00E5FF" BlurRadius="14" ShadowDepth="0" Opacity="0.8"/>
-                                    </Setter.Value>
-                                </Setter>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard x:Name="PulseStoryboard">
+                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                        <DoubleAnimation Storyboard.TargetName="GlowEffect"
+                                                         Storyboard.TargetProperty="BlurRadius"
+                                                         From="8" To="26" Duration="0:0:0.65"/>
+                                        <DoubleAnimation Storyboard.TargetName="GlowEffect"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         From="0.45" To="1.0" Duration="0:0:0.65"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <StopStoryboard BeginStoryboardName="PulseStoryboard"/>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="GlowEffect"
+                                                         Storyboard.TargetProperty="BlurRadius"
+                                                         To="6" Duration="0:0:0.25"/>
+                                        <DoubleAnimation Storyboard.TargetName="GlowEffect"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.35" Duration="0:0:0.25"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.75"/>
                             </Trigger>
+
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="border" Property="Opacity" Value="0.30"/>
                             </Trigger>
@@ -62,6 +144,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
 
         <Style x:Key="NeonProgressBarStyle" TargetType="ProgressBar">
             <Setter Property="Template">
@@ -105,7 +188,7 @@
             <Border Grid.Row="0" BorderBrush="#00E5FF" BorderThickness="0,0,0,1" Padding="0,0,0,15" Margin="0,0,0,15">
                 <Grid>
                     <StackPanel HorizontalAlignment="Left">
-                        <TextBlock Text="PS2 // MULTI-ISO BATCH INJECTOR" FontSize="24" FontWeight="Bold" FontFamily="Consolas" Effect="{StaticResource TextGlow}">
+                        <TextBlock Text="PS2 // MULTI-ISO BATCH INJECTOR" FontSize="24" FontWeight="Bold" FontFamily="Global User Interface" Effect="{StaticResource TextGlow}">
                             <TextBlock.Foreground>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                     <GradientStop Color="#FF0C7FFF"/>
@@ -114,7 +197,11 @@
                                 </LinearGradientBrush>
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <TextBlock Text="READY FOR MULTI-THREADED DATA STACKING OVER TCP/IP..." Foreground="#FF08C8F9" FontSize="11" FontFamily="Georgia" Margin="0,4,0,0"/>
+                        <TextBlock Text="READY FOR MULTI-THREADED DATA STACKING OVER TCP/IP..." Foreground="#FF08C8F9" FontSize="11" FontFamily="Georgia" Margin="0,4,0,0">
+                            <TextBlock.Effect>
+                                <DropShadowEffect Color="White" Direction="0" BlurRadius="29"/>
+                            </TextBlock.Effect>
+                        </TextBlock>
                     </StackPanel>
                     <Border HorizontalAlignment="Right" VerticalAlignment="Center" Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="6" Padding="14,8">
                         <StackPanel>
@@ -140,25 +227,39 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- LEFT COLUMN: Controls -->
-                <StackPanel Grid.Column="0" VerticalAlignment="Top">
+                <StackPanel Grid.Column="0" VerticalAlignment="Top" Height="431">
                     <Border Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,12">
+                        <Border.Effect>
+                            <DropShadowEffect/>
+                        </Border.Effect>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="180"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="[ &#x26a1;TARGET_IP ]" Foreground="#00E5FF" FontFamily="Consolas" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBox x:Name="TxtIpAddress" Grid.Column="1" Text="192.168.0.103" Background="#88070A12" Foreground="#FFFFFF" BorderBrush="#00E5FF" CaretBrush="#00E5FF" Padding="6" FontSize="13" FontFamily="ROG Fonts" VerticalAlignment="Center"/>
+                            <TextBlock Text="⚡TARGET_IP" Foreground="#00E5FF" FontFamily="Consolas" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                            <TextBox x:Name="TxtIpAddress" Grid.Column="1" Text="192.168.0.103" Background="#88070A12" Foreground="#FFFFFF" BorderBrush="#00E5FF" CaretBrush="#00E5FF" Padding="6" FontSize="13" FontFamily="ROG Fonts" VerticalAlignment="Center" SelectionTextBrush="{x:Null}"/>
                             <Button x:Name="BtnConnect" Grid.Column="2" Style="{StaticResource CyberButtonStyle}" Content="CONNECT" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Margin="8,0,0,0" Padding="0,6" Background="#88111827" Foreground="#00FF66" BorderBrush="#00FF66" BorderThickness="1" Effect="{StaticResource GreenGlow}" Click="BtnConnect_Click"/>
                         </Grid>
                     </Border>
 
-                    <Border Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,12">
+                    <Border BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,12" Panel.ZIndex="1">
+
                         <StackPanel>
-                            <TextBlock Text="// SELECTED NODE EDITOR (QUEUE)" Foreground="#5A759E" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Margin="0,0,0,8"/>
+                            <StackPanel.Effect>
+                                <DropShadowEffect/>
+                            </StackPanel.Effect>
+                            <TextBlock Text="// SELECTED NODE EDITOR (QUEUE)" FontFamily="Consolas" FontWeight="Bold" FontSize="11" Margin="0,0,0,8" Panel.ZIndex="1">
+                                <TextBlock.Foreground>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FFA1C1AB"/>
+                                        <GradientStop Color="#FF09F558" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </TextBlock.Foreground>
+                            </TextBlock>
                             <TextBlock Text="DATA_LABEL:" Foreground="#FF00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,2,0,2"/>
-                            <TextBox x:Name="TxtGameTitle" Background="#88070A12" BorderBrush="#3300E5FF" Padding="5" FontFamily="Georgia" LostFocus="TxtGameTitle_LostFocus" FontSize="14">
+                            <TextBox x:Name="TxtGameTitle" BorderBrush="#FF00E5FF" Padding="5" FontFamily="Georgia" LostFocus="TxtGameTitle_LostFocus" FontSize="14" Background="{x:Null}">
                                 <TextBox.Foreground>
                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                         <GradientStop Color="#FF00F9FF"/>
@@ -167,7 +268,7 @@
                                 </TextBox.Foreground>
                             </TextBox>
                             <TextBlock Text="CORE_ID:" Foreground="#FF00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,8,0,2"/>
-                            <TextBox x:Name="TxtGameId" Background="#88070A12" BorderBrush="#3300E5FF" Padding="5" Width="180" HorizontalAlignment="Left" FontFamily="Consolas" FontWeight="Bold" LostFocus="TxtGameId_LostFocus">
+                            <TextBox x:Name="TxtGameId" BorderBrush="#FF00E5FF" Padding="5" Width="180" HorizontalAlignment="Left" FontFamily="Consolas" FontWeight="Bold" LostFocus="TxtGameId_LostFocus" Background="{x:Null}">
                                 <TextBox.Foreground>
                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                         <GradientStop Color="#FF00D6FF"/>
@@ -178,14 +279,36 @@
                         </StackPanel>
                     </Border>
 
-                    <Button x:Name="BtnBrowse" Style="{StaticResource CyberButtonStyle}" Content="[ + ] LOAD MULTIPLE ISO'S" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,8" Padding="0,12" Background="#99081F3E" Foreground="#00E5FF" BorderBrush="#FF08C1FF" BorderThickness="1" Click="BtnBrowse_Click" FontSize="13"/>
-                    <Button x:Name="BtnClearQueue" Style="{StaticResource CyberButtonStyle}" Content="[ X ] CLEAR QUEUE" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,8" Padding="0,8" Background="#991A1118" Foreground="#FF3C3C" BorderBrush="#FF3C3C" BorderThickness="1" Click="BtnClearQueue_Click" FontSize="11"/>
-                    <Button x:Name="BtnPowerOff" Style="{StaticResource CyberButtonStyle}" Content="[ ⏻ ] POWER OFF PS2 CONSOLE" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,8" Padding="0,9" Background="#991F1209" Foreground="#FF9900" BorderBrush="#FF9900" BorderThickness="1" Click="BtnPowerOff_Click" FontSize="11"/>
-                    <Button Style="{StaticResource CyberButtonStyle}" Content="[ ESC ] EXIT PROGRAM" FontFamily="Consolas" FontWeight="Bold" Padding="0,8" Background="#99141414" Foreground="#FFFFD306" BorderBrush="#FFF3CA09" BorderThickness="1" Click="Button_Click" FontSize="11"/>
+                    <Button x:Name="BtnBrowse" Style="{StaticResource CyberButtonStyle}" Content="[ + ] LOAD MULTIPLE ISO'S" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,10" Padding="0,12" Foreground="#00E5FF" BorderBrush="#00E5FF" BorderThickness="1.2" Click="BtnBrowse_Click" FontSize="13" Background="{x:Null}">
+                        <Button.Effect>
+                            <DropShadowEffect Color="#00E5FF" ShadowDepth="0" BlurRadius="12" Opacity="0.45"/>
+                        </Button.Effect>
+                    </Button>
+
+                    <Button x:Name="BtnClearQueue" Style="{StaticResource CyberButtonStyle}" Content="[ X ] CLEAR QUEUE" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,10" Padding="0,9" Background="{x:Null}" Foreground="#FF3C3C" BorderBrush="#FF3C3C" BorderThickness="1.2" Click="BtnClearQueue_Click" FontSize="11">
+                        <Button.Effect>
+                            <DropShadowEffect Color="#FF3C3C" ShadowDepth="0" BlurRadius="12" Opacity="0.45"/>
+                        </Button.Effect>
+                    </Button>
+
+                    <Button x:Name="BtnPowerOff" Style="{StaticResource CyberButtonStyle}" Content="[ ⏻ ] POWER OFF PS2 CONSOLE" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,10" Padding="0,9" Background="{x:Null}" Foreground="#FF9900" BorderBrush="#FF9900" BorderThickness="1.2" Click="BtnPowerOff_Click" FontSize="11">
+                        <Button.Effect>
+                            <DropShadowEffect Color="#FF9900" ShadowDepth="0" BlurRadius="12" Opacity="0.45"/>
+                        </Button.Effect>
+                    </Button>
+
+                    <Button Style="{StaticResource CyberButtonStyle}" Content="[ ESC ] EXIT PROGRAM" FontFamily="Consolas" FontWeight="Bold" Padding="0,9" Background="{x:Null}" Foreground="#FFD306" BorderBrush="#FFD306" BorderThickness="1.2" Click="Button_Click" FontSize="11" Height="35">
+                        <Button.Effect>
+                            <DropShadowEffect Color="#FFD306" ShadowDepth="0" BlurRadius="12" Opacity="0.45"/>
+                        </Button.Effect>
+                    </Button>
                 </StackPanel>
 
                 <!-- RIGHT COLUMN: Tabs -->
-                <TabControl Grid.Column="2" Background="#66070A12" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1">
+                <TabControl x:Name="MainTabs" Grid.Column="2" Background="#66070A12" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1">
+                    <TabControl.Effect>
+                        <DropShadowEffect/>
+                    </TabControl.Effect>
                     <TabItem Header=" &#x25b6; BATCH UPLOAD QUEUE  " Background="{x:Null}" FontSize="14">
                         <TabItem.Foreground>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -194,12 +317,16 @@
                             </LinearGradientBrush>
                         </TabItem.Foreground>
                         <Grid>
+                            <Grid.Effect>
+                                <DropShadowEffect/>
+                            </Grid.Effect>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <ListView x:Name="LvQueue" Grid.Row="0" BorderThickness="0" FontFamily="Georgia" SelectionChanged="LvQueue_SelectionChanged" AllowDrop="True" DragOver="LvQueue_DragOver" Drop="LvQueue_Drop" Margin="5" Background="#01000000" FontSize="14">
+                            <ListView x:Name="LvQueue" Grid.Row="0" Background="Transparent" BorderThickness="0" FontFamily="Georgia" SelectionChanged="LvQueue_SelectionChanged" AllowDrop="True" DragOver="LvQueue_DragOver" Drop="LvQueue_Drop" Margin="5" FontSize="14">
+
                                 <ListView.Foreground>
                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                         <GradientStop Color="#FF00F9FF"/>
@@ -212,6 +339,12 @@
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding Status}" FontWeight="Bold">
+                                                        <TextBlock.Foreground>
+                                                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                                <GradientStop Color="#FF323531"/>
+                                                                <GradientStop Color="#FF53FF08" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </TextBlock.Foreground>
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock">
                                                                 <Setter Property="Foreground" Value="#5A759E"/>
@@ -223,7 +356,7 @@
                                                                         <Setter Property="Foreground" Value="#A0A0AA"/>
                                                                     </DataTrigger>
                                                                     <DataTrigger Binding="{Binding Status}" Value="UPLOADING...">
-                                                                        <Setter Property="Foreground" Value="#FFFF00"/>
+                                                                        <Setter Property="Foreground" Value="{StaticResource TerminalTextBrush}"/>
                                                                     </DataTrigger>
                                                                     <DataTrigger Binding="{Binding Status}" Value="DONE">
                                                                         <Setter Property="Foreground" Value="#00FF66"/>
@@ -245,7 +378,7 @@
                                 </ListView.View>
                             </ListView>
 
-                            <Border Grid.Row="1" Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="0,1,0,0" Padding="10,7">
+                            <Border Grid.Row="1" Background="{StaticResource GlassCardBg}"  BorderBrush="{StaticResource GlassBorder}" BorderThickness="0,1,0,0" Padding="10,7">
                                 <CheckBox x:Name="ChkOverwriteDuplicates" Content="OVERWRITE EXISTING GAMES ON PS2 (Unchecked = Skip duplicates already installed)" Foreground="#00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
@@ -265,7 +398,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <ListView x:Name="LvPs2Disk" Grid.Row="0" Background="Transparent" BorderThickness="0" FontFamily="Consolas" Margin="5" SelectionChanged="LvPs2Disk_SelectionChanged" FontSize="16">
+                            <ListView x:Name="LvPs2Disk" Grid.Row="0" BorderThickness="0" FontFamily="Consolas" Margin="5" SelectionChanged="LvPs2Disk_SelectionChanged" FontSize="16" Background="Black">
                                 <ListView.Foreground>
                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                         <GradientStop Color="#FF00F9FF"/>
@@ -338,20 +471,15 @@
             </Grid>
 
             <!-- ROW 2: Log Terminal -->
-            <Border Grid.Row="2" Background="#66050811" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="10" Margin="0,0,0,15">
+            <Border Grid.Row="2" Background="#CC050811" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="4" Padding="10" Margin="0,0,0,15">
                 <DockPanel>
                     <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
                         <TextBlock Text="[ LOG MATRIX TERMINAL // AUTO-SAVING TO \LOGS ]" Foreground="#5A759E" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
                         <Button x:Name="BtnSaveLog" Style="{StaticResource CyberButtonStyle}" Content="[ 💾 ] SAVE LOG AS..." HorizontalAlignment="Right" Padding="10,3" Background="#880A192F" Foreground="#00E5FF" BorderBrush="#00E5FF" BorderThickness="1" FontFamily="Consolas" FontSize="10" FontWeight="Bold" Click="BtnSaveLog_Click"/>
                     </Grid>
-                    <TextBox x:Name="TxtLog" Background="Transparent" BorderThickness="0" FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True">
-                        <TextBox.Foreground>
-                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="#FF00FFE2"/>
-                                <GradientStop Color="#FF122BFF" Offset="1"/>
-                            </LinearGradientBrush>
-                        </TextBox.Foreground>
-                    </TextBox>
+                    <ScrollViewer x:Name="LogScrollViewer" VerticalScrollBarVisibility="Auto" Background="Transparent">
+                        <TextBlock x:Name="TxtLog" Background="Transparent" Foreground="#00FFE2" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap"/>
+                    </ScrollViewer>
                 </DockPanel>
             </Border>
 
