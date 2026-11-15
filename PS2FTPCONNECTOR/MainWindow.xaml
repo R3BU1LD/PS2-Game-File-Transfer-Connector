@@ -596,14 +596,28 @@
                     <ProgressBar x:Name="MyProgressBar" Style="{StaticResource NeonProgressBarStyle}" Height="16" Minimum="0" Maximum="100" Value="0"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
-                    <Button x:Name="BtnStopBatch" Style="{StaticResource CyberButtonStyle}" Content="[ ⏹ ] SAFE STOP" Padding="18,0" Height="50" Margin="0,0,10,0" Background="#88261014" Foreground="#FF9900" BorderBrush="#FF9900" BorderThickness="1.2" FontFamily="Consolas" FontSize="12" FontWeight="Bold" IsEnabled="False" Click="BtnStopBatch_Click"/>
-                    <Button x:Name="BtnInstall" Style="{StaticResource CyberButtonStyle}" Content="[ &#x25b6; EXECUTE BATCH STREAM ]" Padding="24,0" Width="260" Height="50" Background="#00E5FF" Foreground="#070A12" FontFamily="Consolas" FontSize="14" FontWeight="Bold" BorderThickness="0" Effect="{StaticResource NeonGlow}" Click="BtnInstall_Click"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Bottom">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button x:Name="BtnStopBatch" Style="{StaticResource CyberButtonStyle}" Content="[ ⏹ ] SAFE STOP" Padding="18,0" Height="50" Margin="0,0,10,0" Background="#88261014" Foreground="#FF9900" BorderBrush="#FF9900" BorderThickness="1.2" FontFamily="Consolas" FontSize="12" FontWeight="Bold" IsEnabled="False" Click="BtnStopBatch_Click"/>
+                        <Button x:Name="BtnInstall" Style="{StaticResource CyberButtonStyle}" Content="[ &#x25b6; EXECUTE BATCH STREAM ]" Padding="24,0" Width="260" Height="50" Background="#00E5FF" Foreground="#070A12" FontFamily="Consolas" FontSize="14" FontWeight="Bold" BorderThickness="0" Effect="{StaticResource NeonGlow}" Click="BtnInstall_Click"/>
+                    </StackPanel>
+                    <TextBlock Text="Build By R3BU1LD &amp; GEMINI Ai 2026" FontFamily="Consolas" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,10,2,-14">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="White" Direction="3" BlurRadius="23"/>
+                        </TextBlock.Effect>
+                        <TextBlock.Foreground>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="White"/>
+                                <GradientStop Color="#FF02BFFF" Offset="1"/>
+                            </LinearGradientBrush>
+                        </TextBlock.Foreground>
+                    </TextBlock>
                 </StackPanel>
             </Grid>
         </Grid>
     </Border>
 </Window>
+
 
 
             
