@@ -11,6 +11,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="image_152b9099.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="image_152b9099.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentFTP" Version="55.1.0" />
   </ItemGroup>
 

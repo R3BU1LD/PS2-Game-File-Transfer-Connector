@@ -1,0 +1,97 @@
+﻿<Window x:Class="PS2FTPCONNECTOR.SplashWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PS2FTPCONNECTOR"
+        mc:Ignorable="d"
+        Title="Loading PS2FTPCONNECTOR..."
+        Height="540" Width="960"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True">
+
+    <Border CornerRadius="16" BorderBrush="#8800E5FF" BorderThickness="1.8" Margin="16">
+        <Border.Background>
+            <ImageBrush ImageSource="/image_152b9099.jpg" Stretch="UniformToFill"/>
+        </Border.Background>
+        <Border.Effect>
+            <DropShadowEffect Color="#00E5FF" BlurRadius="26" ShadowDepth="0" Opacity="0.70"/>
+        </Border.Effect>
+
+        <Grid Margin="38">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="R3BU1LD // PLAYSTATION 2 SUITE" FontFamily="Consolas" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,4">
+                               <TextBlock.Foreground>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#00E5FF" Offset="0.0"/>
+                            <GradientStop Color="#00FFCC" Offset="0.5"/>
+                            <GradientStop Color="#3B82F6" Offset="1.0"/>
+                            </LinearGradientBrush>
+                            </TextBlock.Foreground>
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="#00E5FF" BlurRadius="11" ShadowDepth="0" Opacity="1"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+
+                <TextBlock Text="PS2FTPCONNECTOR" FontFamily="Consolas" FontSize="56" FontWeight="Bold" HorizontalAlignment="Center">
+                    <TextBlock.Foreground>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#00E5FF" Offset="0.0"/>
+                            <GradientStop Color="#00FFCC" Offset="0.5"/>
+                            <GradientStop Color="#3B82F6" Offset="1.0"/>
+                        </LinearGradientBrush>
+                    </TextBlock.Foreground>
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="#00E5FF" BlurRadius="11" ShadowDepth="0" Opacity="1"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                <TextBlock Text="MULTI-ISO BATCH INJECTOR &amp; HDD TELEMETRY ENGINE" FontFamily="Arial Black" FontSize="13" HorizontalAlignment="Center">
+                    <TextBlock.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FF1DF1D9"/>
+                            <GradientStop Color="#3EFFFFFF" Offset="1"/>
+                        </LinearGradientBrush>
+                    </TextBlock.Background>
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="#FF00FFD6" ShadowDepth="5" Direction="0" BlurRadius="17"/>
+                    </TextBlock.Effect>
+                    <TextBlock.Foreground>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FF0033FF" Offset="1"/>
+                            <GradientStop Color="#FF469A9C" Offset="0"/>
+                        </LinearGradientBrush>
+                    </TextBlock.Foreground>
+                </TextBlock>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1">
+                <TextBlock x:Name="TxtSplashStatus" Text=">> INITIALIZING TCP/IP SOCKET MATRIX..." Foreground="#00E5FF" FontFamily="Consolas" FontSize="11" Margin="0,0,0,6">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="#FF1DCAE0" Direction="0" BlurRadius="7" RenderingBias="Quality" ShadowDepth="2"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+                <ProgressBar x:Name="SplashProgress" Height="6" Minimum="0" Maximum="100" Value="0" Background="#44070A12" Foreground="#00E5FF" BorderBrush="#4400E5FF" BorderThickness="1">
+                    <ProgressBar.Effect>
+                        <DropShadowEffect Color="#00E5FF" BlurRadius="22" ShadowDepth="0" Opacity="0.65"/>
+                    </ProgressBar.Effect>
+                </ProgressBar>
+                <TextBlock Text="Built By R3BU1LD &amp; GEMINI AI 2026" FontFamily="Consolas" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <TextBlock.Foreground>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="White"/>
+                            <GradientStop Color="#FF02BFFF" Offset="1"/>
+                        </LinearGradientBrush>
+                    </TextBlock.Foreground>
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
