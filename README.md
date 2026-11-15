@@ -7,11 +7,14 @@
 
 ---
 
+<img width="943" height="529" alt="Schermafbeelding 2026-11-15 231737" src="https://github.com/user-attachments/assets/23e5a07a-7753-4ca4-aa33-2b1862579efa" />
+
+---
 <img width="1119" height="858" alt="Schermafbeelding 2026-11-15 200645" src="https://github.com/user-attachments/assets/0488dd4d-1d53-4a02-9900-1968fcc93f1b" />
 
 ---
 
-<img width="1583" height="1042" alt="Schermafbeelding 2026-11-15 231432" src="https://github.com/user-attachments/assets/16532bae-c81b-4fbc-867a-0aaf20f2bb87" />
+<img width="1718" height="1090" alt="Schermafbeelding 2026-11-15 231856" src="https://github.com/user-attachments/assets/db75910e-0911-4faf-8557-f7330dd107ed" />
 
 ---
 
