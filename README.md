@@ -7,7 +7,7 @@
 
 ---
 
-<img width="943" height="529" alt="Schermafbeelding 2026-11-15 231737" src="https://github.com/user-attachments/assets/23e5a07a-7753-4ca4-aa33-2b1862579efa" />
+<img width="1775" height="1102" alt="Schermafbeelding 2026-11-16 000217" src="https://github.com/user-attachments/assets/9622ec90-1b1e-4396-ad07-0634beb2985b" />
 
 ---
 <img width="1713" height="1093" alt="Schermafbeelding 2026-11-15 232216" src="https://github.com/user-attachments/assets/a7f98171-1416-4cff-bb06-57c481fcf691" />
