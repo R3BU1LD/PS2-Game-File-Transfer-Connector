@@ -725,9 +725,33 @@ namespace PS2FTPCONNECTOR
             RefreshDuplicateHighlights();
         }
 
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (!BtnInstall.IsEnabled)
+            {
+                bool forceExit = ConfirmDialog.Ask(
+                    this,
+                    "// ACTIVE STREAM WARNING",
+                    "An ISO transfer is currently in progress!\n\nExiting now may corrupt the active partition on your PS2 HDD. Use 'SAFE STOP' to finish cleanly.\n\nForce exit anyway?",
+                    isWarning: true);
+
+                if (!forceExit) return;
+            }
+            else
+            {
+                bool confirm = ConfirmDialog.Ask(
+                    this,
+                    "// SYSTEM EXIT CONFIRMATION",
+                    "Are you sure you want to terminate PS2FTPCONNECTOR?",
+                    isWarning: false);
+
+                if (!confirm) return;
+            }
+
+            _streamer.Disconnect();
             this.Close();
         }
+
     }
 }
