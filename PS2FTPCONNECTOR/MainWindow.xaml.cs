@@ -36,6 +36,12 @@ namespace PS2FTPCONNECTOR
 
         // Onze nieuwe netwerk-engine!
         private readonly HdlStreamer _streamer = new HdlStreamer();
+        private readonly string _autoLogPath = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "Logs",
+            $"PS2FTP_Session_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log");
+        private readonly object _logFileLock = new object();
+        private volatile bool _stopBatchRequested = false;
 
         public MainWindow()
         {
@@ -54,24 +60,37 @@ namespace PS2FTPCONNECTOR
 
         private void LogWrite(string text)
         {
+            string logLine = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {text}";
+
+            // 1. Automatisch opslaan op schijf (thread-safe, ook tijdens background uploads)
+            try
+            {
+                lock (_logFileLock)
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(_autoLogPath)!);
+                    File.AppendAllText(_autoLogPath, logLine + Environment.NewLine);
+                }
+            }
+            catch
+            {
+                // Voorkom crash als logbestand tijdelijk vergrendeld is
+            }
+
+            // 2. Toon direct in de UI terminal
             Dispatcher.Invoke(() =>
             {
                 TxtLog.AppendText($"[{DateTime.Now:HH:mm:ss}] {text}\n");
                 TxtLog.ScrollToEnd();
             });
         }
-
-        private void UpdateProgressUi(double percentage, double speed, string eta)
+        private void BtnStopBatch_Click(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
-            {
-                MyProgressBar.Value = percentage;
-                PercentageText.Text = $"{percentage:F1}%";
-                TxtSpeed.Text = $"{speed:F2} MB/s";
-                TxtEta.Text = eta;
-            });
+            _stopBatchRequested = true;
+            BtnStopBatch.IsEnabled = false;
+            BtnStopBatch.Content = "[ ⏳ ] STOPPING...";
+            StatusText.Text = ">> SAFE STOP REQUESTED: FINISHING CURRENT ISO BEFORE HALTING...";
+            LogWrite(">> [OPERATOR] Safe Stop aangevraagd. Wachtrij stopt zodra huidige game klaar is!");
         }
-
         private async void BtnConnect_Click(object sender, RoutedEventArgs e)
         {
             // ALS WE AL VERBONDEN ZIJN: Verbreek de verbinding (DISCONNECT)
@@ -204,7 +223,7 @@ namespace PS2FTPCONNECTOR
                 }
             }
         }
-    
+
 
 
 
@@ -213,11 +232,24 @@ namespace PS2FTPCONNECTOR
             string ip = TxtIpAddress.Text.Trim();
             if (string.IsNullOrEmpty(ip) || GameQueue.Count == 0) { MessageBox.Show("Geen doel-IP of wachtrij aanwezig."); return; }
 
-            BtnInstall.IsEnabled = false; BtnBrowse.IsEnabled = false; BtnClearQueue.IsEnabled = false;
+            _stopBatchRequested = false;
+            BtnInstall.IsEnabled = false;
+            BtnBrowse.IsEnabled = false;
+            BtnClearQueue.IsEnabled = false;
+            BtnStopBatch.IsEnabled = true;
+            BtnStopBatch.Content = "[ ⏹ ] SAFE STOP";
+
             LogWrite(">> INITIATING BATCH DATA INJECTION STREAM...");
 
             for (int i = 0; i < GameQueue.Count; i++)
             {
+                if (_stopBatchRequested)
+                {
+                    LogWrite(">> [PAUSED] Batch netjes gepauzeerd op verzoek van operator. Geen corrupte data!");
+                    StatusText.Text = ">> BATCH SAFELY PAUSED. READY TO RESUME.";
+                    break;
+                }
+
                 var job = GameQueue[i];
                 if (job.Status == "DONE") continue;
 
@@ -241,12 +273,21 @@ namespace PS2FTPCONNECTOR
                 }
             }
 
-            LogWrite(">> BATCH PROCESS TERMINATED.");
-            StatusText.Text = ">> BATCH STREAM PROCESS COMPLETED.";
-            UpdateProgressUi(100, 0, "00:00:00");
-            BtnInstall.IsEnabled = true; BtnBrowse.IsEnabled = true; BtnClearQueue.IsEnabled = true;
+            if (!_stopBatchRequested)
+            {
+                LogWrite(">> BATCH PROCESS TERMINATED.");
+                StatusText.Text = ">> BATCH STREAM PROCESS COMPLETED.";
+                UpdateProgressUi(100, 0, "00:00:00");
+            }
+
+            BtnStopBatch.IsEnabled = false;
+            BtnStopBatch.Content = "[ ⏹ ] SAFE STOP";
+            BtnInstall.IsEnabled = true;
+            BtnBrowse.IsEnabled = true;
+            BtnClearQueue.IsEnabled = true;
             UpdateQueueStatusHeader();
         }
+
         private async void BtnReloadGames_Click(object sender, RoutedEventArgs e)
         {
             if (!_streamer.IsConnected)
@@ -346,6 +387,16 @@ namespace PS2FTPCONNECTOR
             BtnDeleteGame.IsEnabled = true;
             BtnReloadGames.IsEnabled = true;
         }
+        private void UpdateProgressUi(double percentage, double speed, string eta)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                MyProgressBar.Value = percentage;
+                PercentageText.Text = $"{percentage:F1}%";
+                TxtSpeed.Text = $"{speed:F2} MB/s";
+                TxtEta.Text = eta;
+            });
+        }
         private void BtnPowerOff_Click(object sender, RoutedEventArgs e)
         {
             if (!_streamer.IsConnected)
@@ -414,6 +465,46 @@ namespace PS2FTPCONNECTOR
             BtnSaveGameSettings.IsEnabled = _streamer.IsConnected && LvPs2Disk.SelectedItem == selectedGame;
         }
 
+        private void BtnSaveLog_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog
+            {
+                Filter = "Log Bestanden (*.log;*.txt)|*.log;*.txt|Alle bestanden (*.*)|*.*",
+                FileName = $"PS2FTP_Report_{DateTime.Now:yyyy-MM-dd_HH-mm}.log"
+            };
+
+            if (saveDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    var sb = new System.Text.StringBuilder();
+                    sb.AppendLine("==========================================================");
+                    sb.AppendLine($" PS2FTPCONNECTOR // TRANSFER REPORT ({DateTime.Now:yyyy-MM-dd HH:mm:ss})");
+                    sb.AppendLine("==========================================================");
+                    sb.AppendLine();
+
+                    if (GameQueue.Count > 0)
+                    {
+                        sb.AppendLine("--- BATCH QUEUE STATUS OVERZICHT ---");
+                        foreach (var job in GameQueue)
+                        {
+                            sb.AppendLine($"[{job.Status,-12}] [{job.GameId}] {job.Title}");
+                        }
+                        sb.AppendLine();
+                    }
+
+                    sb.AppendLine("--- VOLLEDIGE TERMINAL LOG ---");
+                    sb.AppendLine(TxtLog.Text);
+
+                    File.WriteAllText(saveDialog.FileName, sb.ToString());
+                    LogWrite($">> LOG SAVED MANUALLY TO: {saveDialog.FileName}");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Kon logbestand niet opslaan: {ex.Message}", "Opslaan mislukt", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
         private void LvPs2Disk_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (LvPs2Disk.SelectedItem is Ps2GameJob selectedGame)

@@ -230,6 +230,8 @@
                     <Button x:Name="BtnPowerOff" Style="{StaticResource CyberButtonStyle}" Content="[ ⏻ ] POWER OFF PS2 CONSOLE" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,0,8" Padding="0,9" Background="#991F1209" Foreground="#FF9900" BorderBrush="#FF9900" BorderThickness="1" Click="BtnPowerOff_Click" FontSize="11"/>
                     <Button Style="{StaticResource CyberButtonStyle}" Content="[ ESC ] EXIT PROGRAM" FontFamily="Consolas" FontWeight="Bold" Padding="0,8" Background="#99141414" Foreground="#FFFFD306" BorderBrush="#FFF3CA09" BorderThickness="1" Click="Button_Click" FontSize="11"/>
                 </StackPanel>
+                
+                
 
                 <!-- RECHTERKOLOM: Tabbladen -->
                 <TabControl Grid.Column="2" Background="#66070A12" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1">
@@ -382,7 +384,10 @@
                     <DropShadowEffect/>
                 </Border.Effect>
                 <DockPanel>
-                    <TextBlock Text="[ LOG MATRIX TERMINAL ]" DockPanel.Dock="Top" Foreground="#5A759E" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Margin="0,0,0,6"/>
+                    <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
+                        <TextBlock Text="[ LOG MATRIX TERMINAL // AUTO-SAVING TO \LOGS ]" Foreground="#5A759E" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <Button x:Name="BtnSaveLog" Style="{StaticResource CyberButtonStyle}" Content="[ 💾 ] SAVE LOG AS..." HorizontalAlignment="Right" Padding="10,3" Background="#880A192F" Foreground="#00E5FF" BorderBrush="#00E5FF" BorderThickness="1" FontFamily="Consolas" FontSize="10" FontWeight="Bold" Click="BtnSaveLog_Click"/>
+                    </Grid>
                     <TextBox x:Name="TxtLog" Background="Transparent" BorderThickness="0" FontFamily="Consolas" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True">
                         <TextBox.Foreground>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -421,7 +426,10 @@
                     <ProgressBar x:Name="MyProgressBar" Style="{StaticResource NeonProgressBarStyle}" Height="16" Minimum="0" Maximum="100" Value="0"/>
                 </StackPanel>
 
-                <Button x:Name="BtnInstall" Grid.Column="1" Style="{StaticResource CyberButtonStyle}" Content="[ &#x25b6; EXECUTE BATCH STREAM ]" Padding="30,0" Width="280" Height="50" Background="#00E5FF" Foreground="#070A12" FontFamily="Consolas" FontSize="14" FontWeight="Bold" BorderThickness="0" Effect="{StaticResource NeonGlow}" Click="BtnInstall_Click" VerticalAlignment="Bottom"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                    <Button x:Name="BtnStopBatch" Style="{StaticResource CyberButtonStyle}" Content="[ ⏹ ] SAFE STOP" Padding="18,0" Height="50" Margin="0,0,10,0" Background="#88261014" Foreground="#FF9900" BorderBrush="#FF9900" BorderThickness="1.2" FontFamily="Consolas" FontSize="12" FontWeight="Bold" IsEnabled="False" Click="BtnStopBatch_Click"/>
+                    <Button x:Name="BtnInstall" Style="{StaticResource CyberButtonStyle}" Content="[ &#x25b6; EXECUTE BATCH STREAM ]" Padding="24,0" Width="260" Height="50" Background="#00E5FF" Foreground="#070A12" FontFamily="Consolas" FontSize="14" FontWeight="Bold" BorderThickness="0" Effect="{StaticResource NeonGlow}" Click="BtnInstall_Click"/>
+                </StackPanel>
             </Grid>
         </Grid>
     </Border>
