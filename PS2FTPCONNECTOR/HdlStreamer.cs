@@ -375,7 +375,7 @@ namespace PS2FTPCONNECTOR
                 dataListener.Start();
                 OnLog?.Invoke(">> PORT 45062 LISTENING FOR PS2 BACKUP STREAM...");
 
-                // Bouw IOInitReq struct (4 bytes sectors + 4 bytes offset + 33 bytes partition = 41 bytes)
+                // Built IOInitReq struct (4 bytes sectors + 4 bytes offset + 33 bytes partition = 41 bytes)
                 byte[] req = new byte[41];
                 BitConverter.GetBytes(job.Sectors).CopyTo(req, 0);
                 BitConverter.GetBytes((uint)0).CopyTo(req, 4);
