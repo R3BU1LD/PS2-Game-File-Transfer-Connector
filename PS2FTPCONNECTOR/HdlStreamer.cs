@@ -211,7 +211,7 @@ namespace PS2FTPCONNECTOR
                 dataListener.Start();
                 OnLog?.Invoke(">> PORT 45062 LISTENING FOR PS2 CALLBACK...");
 
-                // Exact 198-byte HDLGameInfo structuur (inclusief nul-bytes op 160, 171 en 185)
+                // Exact 198-byte HDLGameInfo structure (including null bytes at 160, 171, and 185)
                 byte[] gameInfo = new byte[198];
                 byte[] titleBytes = Encoding.UTF8.GetBytes(job.Title);
                 Array.Copy(titleBytes, 0, gameInfo, 0, Math.Min(titleBytes.Length, 160));
@@ -248,7 +248,7 @@ namespace PS2FTPCONNECTOR
                     return false;
                 }
 
-                // Stabiele 256 KB NetworkStream voor urenlange marathon-batches
+                // Stable 256 KB NetworkStream for hours-long marathon batches
                 using (TcpClient ps2Data = acceptTask.Result)
                 using (NetworkStream dataStream = ps2Data.GetStream())
                 using (FileStream fs = new FileStream(job.IsoPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 262144, FileOptions.SequentialScan))
@@ -298,13 +298,13 @@ namespace PS2FTPCONNECTOR
                 OnLog?.Invoke($">> CLOSE STATUS: {closeRes}");
 
                 InstallDefaultOsdResources(cleanDiscId, job.Title);
-                Thread.Sleep(400); // Korte adempauze zodat de PS2 ATA-controller zijn cache flusht
+                Thread.Sleep(400); // Brief pause to allow the PS2 ATA controller to flush its cache
                 return true;
             }
             catch (Exception ex)
             {
                 OnLog?.Invoke($"[STREAM_EXCEPTION] {ex.Message}");
-                Disconnect(); // Voorkomt verschoven TCP-antwoorden bij de volgende game
+                Disconnect(); // Prevents shifted TCP responses in the next game
                 return false;
             }
             finally

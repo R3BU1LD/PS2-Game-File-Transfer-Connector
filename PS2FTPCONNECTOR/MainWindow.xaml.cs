@@ -375,7 +375,8 @@ namespace PS2FTPCONNECTOR
                     {
                         job.Status = "FAILED";
                         LogWrite($">> CRITICAL INTERRUPT: Transfer failed for {job.Title}.");
-                        if (MessageBox.Show($"Stream interrupted for '{job.Title}'. Do you want to continue with the rest?", "Stream Error", MessageBoxButton.YesNo) == MessageBoxResult.No) break;
+                        if (!ConfirmDialog.Ask(this, "// STREAM INTERRUPTED", $"Stream interrupted for '{job.Title}'.\n\nDo you want to continue with the remaining games in the queue?", isWarning: true)) break;
+
                     }
                 }
 
@@ -390,7 +391,8 @@ namespace PS2FTPCONNECTOR
             {
                 LogWrite($">> [ERROR] Batch stopped unexpectedly: {ex.Message}");
                 StatusText.Text = ">> BATCH STOPPED DUE TO AN UNEXPECTED ERROR.";
-                MessageBox.Show($"The batch could not be completed: {ex.Message}", "Batch fout", MessageBoxButton.OK, MessageBoxImage.Error);
+                ConfirmDialog.Notify(this, "// BATCH STREAM ERROR", $"The batch could not be completed:\n{ex.Message}", isWarning: true);
+
             }
             finally
             {
@@ -438,7 +440,8 @@ namespace PS2FTPCONNECTOR
 
             if (LvPs2Disk.SelectedItem is not Ps2GameJob selectedGame)
             {
-                MessageBox.Show("Selecteer eerst een game in de lijst om te verwijderen.", "No selection");
+                ConfirmDialog.Notify(this, "// NO SELECTION", "Please select a game in the list first to remove it.");
+
                 return;
             }
 
@@ -463,7 +466,7 @@ namespace PS2FTPCONNECTOR
             }
             else
             {
-                LogWrite($">> ERROR: Verwijderen van '{selectedGame.Title}' mislukt.");
+                LogWrite($">> ERROR: Removing '{selectedGame.Title}' mislukt.");
                 ConfirmDialog.Notify(this, "// GAME DELETION ERROR", "Unable to remove the game from the PS2.", isWarning: true);
 
             }
@@ -502,13 +505,13 @@ namespace PS2FTPCONNECTOR
 
             if (success)
             {
-                LogWrite($">> BACKUP COMPLETED: Opgeslagen als {saveDialog.FileName}");
+                LogWrite($">> BACKUP COMPLETED: Saved As {saveDialog.FileName}");
                 StatusText.Text = ">> BACKUP STREAM COMPLETED.";
                 UpdateProgressUi(100, 0, "00:00:00");
             }
             else
             {
-                LogWrite(">> [ERROR] Backup afgebroken of mislukt.");
+                LogWrite(">> [ERROR] Backup aborted or failed.");
                 StatusText.Text = ">> BACKUP FAILED.";
             }
 
@@ -606,7 +609,7 @@ namespace PS2FTPCONNECTOR
         {
             SaveFileDialog saveDialog = new SaveFileDialog
             {
-                Filter = "Log Bestanden (*.log;*.txt)|*.log;*.txt|Alle bestanden (*.*)|*.*",
+                Filter = "Log Files(*.log;*.txt)|*.log;*.txt|All files (*.*)|*.*",
                 FileName = $"PS2FTP_Report_{DateTime.Now:yyyy-MM-dd_HH-mm}.log"
             };
 
@@ -692,7 +695,8 @@ namespace PS2FTPCONNECTOR
         {
             if (LvQueue.SelectedItem is not Ps2GameJob selectedJob)
             {
-                MessageBox.Show("First, select a game in the queue to remove.", "No selection");
+                ConfirmDialog.Notify(this, "// NO QUEUE SELECTION", "Please select a game in the batch queue first to remove it.");
+
                 return;
             }
 

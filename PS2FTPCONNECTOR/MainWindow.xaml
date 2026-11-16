@@ -29,7 +29,7 @@
         <SolidColorBrush x:Key="GlassCardBg" Color="#550D1424"/>
         <SolidColorBrush x:Key="GlassBorder" Color="#4400E5FF"/>
 
-        <!-- Moderne Sci-Fi TabItem Stijl -->
+        <!-- Moderne Sci-Fi TabItem Style -->
         <Style TargetType="TabItem">
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
@@ -54,14 +54,14 @@
                         </Grid>
 
                         <ControlTemplate.Triggers>
-                            <!-- Hover effect op niet-actieve tab -->
+                            <!-- Hover effect on inactive tab -->
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="TabBorder" Property="Background" Value="#880E172A"/>
                                 <Setter TargetName="TabBorder" Property="BorderBrush" Value="#8800E5FF"/>
                                 <Setter TargetName="TabText" Property="Foreground" Value="#B8E8FF"/>
                             </Trigger>
 
-                            <!-- Actieve tab licht op in neon cyaan -->
+                            <!-- Active tab lights up in neon cyan -->
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="TabBorder" Property="Background" Value="#CC0D1B30"/>
                                 <Setter TargetName="TabBorder" Property="BorderBrush" Value="#00E5FF"/>
@@ -80,7 +80,7 @@
         </Style>
 
 
-        <!-- Smokey Glass Neon Button Style met haarscherpe tekst + pulserende glow -->
+        <!-- Smokey Glass Neon Button Style with razor-sharp text + pulsating glow -->
         <Style x:Key="CyberButtonStyle" TargetType="Button">
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
@@ -91,7 +91,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid Background="#01000000">
-                            <!-- Aparte gloeiende achtergrondlaag (zodat tekst nooit geblurred wordt!) -->
+                            <!-- Separate glowing background layer (so that text never gets blurred!) -->
                             <Border x:Name="GlowLayer"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
@@ -106,7 +106,7 @@
                                 </Border.Effect>
                             </Border>
 
-                            <!-- Haarscherpe tekstlaag bovenop zonder effect -->
+                            <!-- Razor-sharp text layer on top, with no effects applied -->
                             <Border Padding="{TemplateBinding Padding}">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
@@ -174,7 +174,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!-- 3D Neon-Gradient ScrollBar Stijl -->
+        <!-- 3D Neon-Gradient ScrollBar Style-->
         <Style TargetType="ScrollBar">
             <Setter Property="Width" Value="10"/>
             <Setter Property="Background" Value="#44050811"/>
@@ -189,7 +189,7 @@
                                             <ControlTemplate TargetType="Thumb">
                                                 <Border CornerRadius="4" BorderBrush="#8800FFFF" BorderThickness="1" Margin="1">
                                                     <Border.Background>
-                                                        <!-- 3D Cilinder-gradient van cyaan naar diepblauw -->
+                                                        <!-- 3D cylinder gradient from cyan to deep blue -->
                                                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                                                             <GradientStop Color="#FF0066FF" Offset="0.0"/>
                                                             <GradientStop Color="#FF00E5FF" Offset="0.45"/>
@@ -244,14 +244,14 @@
                     </StackPanel>
 
                     <StackPanel HorizontalAlignment="Right">
-                        <!-- Vensterknoppen rechtsbovenin: Minimaliseren, Fullscreen/Restore, Veilig Afsluiten -->
+                        <!-- Window buttons in the top-right corner: Minimize, Fullscreen/Restore, Safe Exit -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,-6,0,8">
                             <Button x:Name="BtnMinimize" Style="{StaticResource CyberButtonStyle}" Content="—" Width="32" Height="24" Margin="0,0,5,0" Background="#660D1424" Foreground="#00E5FF" BorderBrush="#4400E5FF" BorderThickness="1" FontFamily="Consolas" FontSize="12" FontWeight="Bold" ToolTip="Minimize Window" Click="BtnMinimize_Click"/>
                             <Button x:Name="BtnMaximizeRestore" Style="{StaticResource CyberButtonStyle}" Content="□" Width="32" Height="24" Margin="0,0,5,0" Background="#660D1424" Foreground="#00E5FF" BorderBrush="#4400E5FF" BorderThickness="1" FontFamily="Consolas" FontSize="12" FontWeight="Bold" ToolTip="Maximize / Restore Window" Click="BtnMaximizeRestore_Click"/>
                             <Button x:Name="BtnTopClose" Style="{StaticResource CyberButtonStyle}" Content="✕" Width="32" Height="24" Background="#66260B10" Foreground="#FF3C3C" BorderBrush="#66FF3C3C" BorderThickness="1" FontFamily="Consolas" FontSize="11" FontWeight="Bold" ToolTip="Safe Exit" Click="Button_Click"/>
                         </StackPanel>
 
-                        <!-- Bestaande Queue & Free Space Statuskaart -->
+                        <!-- Existing Queue & Free Space Status Card -->
                         <Border Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="6" Padding="14,8">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,3">
@@ -397,7 +397,7 @@
                                                         <GridViewRowPresenter VerticalAlignment="Center"/>
                                                     </Border>
                                                     <ControlTemplate.Triggers>
-                                                        <!-- Als IsDuplicate = True: Rode neon border + zachte rode gloed -->
+                                                        <!-- If IsDuplicate = True: Red neon border + soft red glow -->
                                                         <DataTrigger Binding="{Binding IsDuplicate}" Value="True">
                                                             <Setter TargetName="RowBorder" Property="BorderBrush" Value="#FF3C3C"/>
                                                             <Setter TargetName="RowBorder" Property="BorderThickness" Value="1.4"/>
@@ -470,7 +470,7 @@
                                 </ListView.View>
                             </ListView>
 
-                            <!-- Onderste balk in de wachtrij: Overwrite vinkje + Verwijderknoppen -->
+                            <!-- Bottom bar in the queue: Overwrite checkbox + Delete buttons -->
                             <Border Grid.Row="1" Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="0,1,0,0" Padding="10,7">
                                 <Grid>
                                     <CheckBox x:Name="ChkOverwriteDuplicates" Content="OVERWRITE EXISTING GAMES" Foreground="#00E5FF" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>

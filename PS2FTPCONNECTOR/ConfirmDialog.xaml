@@ -33,12 +33,12 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Titelbalk -->
+            <!-- Title bar -->
             <Border BorderBrush="#3300E5FF" BorderThickness="0,0,0,1" Padding="0,0,0,10" Margin="0,0,0,12">
                 <TextBlock x:Name="TxtTitle" Text="// SYSTEM CONFIRMATION" Foreground="#00E5FF" FontFamily="Consolas" FontSize="14" FontWeight="Bold"/>
             </Border>
 
-            <!-- Berichttekst -->
+            <!-- Message text -->
             <TextBlock x:Name="TxtMessage" Grid.Row="1" Text="Are you sure?" FontFamily="Georgia" FontSize="16" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock.Foreground>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -48,7 +48,7 @@
                 </TextBlock.Foreground>
             </TextBlock>
 
-            <!-- Knoppen YES / NO -->
+            <!-- YES / NO buttons -->
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0" Width="340">
                 <Button x:Name="BtnNo" Content="[ ESC ] CANCEL" Width="130" Height="36" Margin="0,0,10,0" Background="#88111827" Foreground="#A0B8D8" BorderBrush="#5A759E" BorderThickness="1" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Cursor="Hand" Click="BtnNo_Click"/>
                 <Button x:Name="BtnYes" Content="[ ✓ ] CONFIRM" Width="140" Height="36" Background="#00E5FF" Foreground="#070A12" BorderBrush="#00E5FF" BorderThickness="1" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Cursor="Hand" Click="BtnYes_Click"/>

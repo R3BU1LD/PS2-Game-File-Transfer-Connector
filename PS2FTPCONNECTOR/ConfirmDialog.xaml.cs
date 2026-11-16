@@ -5,13 +5,13 @@ namespace PS2FTPCONNECTOR
 {
     public partial class ConfirmDialog : Window
     {
-        public ConfirmDialog(string title, string message, bool isWarning = false)
+        public ConfirmDialog(string title, string message, bool isWarning = false, string yesButtonText = "[ ✓ ] CONFIRM")
         {
             InitializeComponent();
             TxtTitle.Text = title;
             TxtMessage.Text = message;
+            BtnYes.Content = yesButtonText;
 
-            // Als het een gevaarlijke waarschuwing is, kleurt de hele popup neon-oranje/rood!
             if (isWarning)
             {
                 var warnColor = Color.FromRgb(255, 60, 60);
@@ -22,7 +22,7 @@ namespace PS2FTPCONNECTOR
                 BtnYes.Background = warnBrush;
                 BtnYes.BorderBrush = warnBrush;
                 BtnYes.Foreground = Brushes.White;
-                BtnYes.Content = "[ ! ] FORCE EXIT";
+                if (yesButtonText == "[ ✓ ] CONFIRM") BtnYes.Content = "[ ! ] PROCEED";
             }
         }
 
@@ -38,13 +38,13 @@ namespace PS2FTPCONNECTOR
             Close();
         }
 
-        // Handige hulpmethode die je overal met 1 regel kunt aanroepen!
+        // A handy helper method that you can call from anywhere with just a single line of code!
         public static bool Ask(Window owner, string title, string message, bool isWarning = false)
         {
             var dlg = new ConfirmDialog(title, message, isWarning) { Owner = owner };
             return dlg.ShowDialog() == true;
         }
-        // Handige 1-knops melding in dezelfde Sci-Fi stijl (vervangt alle gewone MessageBox.Show meldingen!)
+        // A convenient one-button notification in the same sci-fi style (replaces all standard MessageBox.Show alerts!)
         public static void Notify(Window owner, string title, string message, bool isWarning = false)
         {
             var dlg = new ConfirmDialog(title, message, isWarning) { Owner = owner };
