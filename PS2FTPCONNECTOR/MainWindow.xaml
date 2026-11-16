@@ -230,8 +230,8 @@
             <!-- ROW 0: Header -->
             <Border Grid.Row="0" BorderBrush="#00E5FF" BorderThickness="0,0,0,1" Padding="0,0,0,15" Margin="0,0,0,15">
                 <Grid>
-                    <StackPanel HorizontalAlignment="Left">
-                        <TextBlock Text="PS2 // MULTI-ISO BATCH INJECTOR" FontSize="24" FontWeight="Bold" FontFamily="Global User Interface" Effect="{StaticResource TextGlow}">
+                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <TextBlock Text="PS2 // MULTI-ISO BATCH INJECTOR" FontSize="26" FontWeight="Bold" FontFamily="Consolas" Effect="{StaticResource TextGlow}">
                             <TextBlock.Foreground>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                     <GradientStop Color="#FF0C7FFF"/>
@@ -240,27 +240,35 @@
                                 </LinearGradientBrush>
                             </TextBlock.Foreground>
                         </TextBlock>
-                        <TextBlock Text="READY FOR MULTI-THREADED DATA STACKING OVER TCP/IP..." Foreground="#FF08C8F9" FontSize="11" FontFamily="Georgia" Margin="0,4,0,0">
-                            <TextBlock.Effect>
-                                <DropShadowEffect Color="White" Direction="0" BlurRadius="29"/>
-                            </TextBlock.Effect>
-                        </TextBlock>
+                        <TextBlock Text="READY FOR MULTI-THREADED DATA STACKING OVER TCP/IP..." Foreground="#FF08C8F9" FontSize="11" FontFamily="Georgia" Margin="0,3,0,0"/>
                     </StackPanel>
-                    <Border HorizontalAlignment="Right" VerticalAlignment="Center" Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="6" Padding="14,8">
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,4">
-                                <TextBlock Text="● " Foreground="#00FF66" FontFamily="Consolas" FontSize="12" Effect="{StaticResource GreenGlow}"/>
-                                <TextBlock x:Name="TxtQueueStatus" Text="QUEUE: 0 GAMES LOADED" Foreground="#00FF66" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Effect="{StaticResource GreenGlow}"/>
-                            </StackPanel>
-                            <Separator Background="#3300E5FF" Margin="0,1,0,3"/>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <TextBlock Text="HDD_STORAGE // " Foreground="#7A95BE" FontFamily="Consolas" FontSize="12" FontWeight="Bold"/>
-                                <TextBlock x:Name="TxtFreeSpace" Text="PS2 FREE SPACE: -- GB" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" Effect="{StaticResource TextGlow}"/>
-                            </StackPanel>
+
+                    <StackPanel HorizontalAlignment="Right">
+                        <!-- Vensterknoppen rechtsbovenin: Minimaliseren, Fullscreen/Restore, Veilig Afsluiten -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,-6,0,8">
+                            <Button x:Name="BtnMinimize" Style="{StaticResource CyberButtonStyle}" Content="—" Width="32" Height="24" Margin="0,0,5,0" Background="#660D1424" Foreground="#00E5FF" BorderBrush="#4400E5FF" BorderThickness="1" FontFamily="Consolas" FontSize="12" FontWeight="Bold" ToolTip="Minimize Window" Click="BtnMinimize_Click"/>
+                            <Button x:Name="BtnMaximizeRestore" Style="{StaticResource CyberButtonStyle}" Content="□" Width="32" Height="24" Margin="0,0,5,0" Background="#660D1424" Foreground="#00E5FF" BorderBrush="#4400E5FF" BorderThickness="1" FontFamily="Consolas" FontSize="12" FontWeight="Bold" ToolTip="Maximize / Restore Window" Click="BtnMaximizeRestore_Click"/>
+                            <Button x:Name="BtnTopClose" Style="{StaticResource CyberButtonStyle}" Content="✕" Width="32" Height="24" Background="#66260B10" Foreground="#FF3C3C" BorderBrush="#66FF3C3C" BorderThickness="1" FontFamily="Consolas" FontSize="11" FontWeight="Bold" ToolTip="Safe Exit" Click="Button_Click"/>
                         </StackPanel>
-                    </Border>
+
+                        <!-- Bestaande Queue & Free Space Statuskaart -->
+                        <Border Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="1" CornerRadius="6" Padding="14,8">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,3">
+                                    <TextBlock Text="● " Foreground="#00FF66" FontFamily="Consolas" FontSize="12" Effect="{StaticResource GreenGlow}"/>
+                                    <TextBlock x:Name="TxtQueueStatus" Text="QUEUE: 0 GAMES LOADED" Foreground="#00FF66" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Effect="{StaticResource GreenGlow}"/>
+                                </StackPanel>
+                                <Separator Background="#3300E5FF" Margin="0,2,0,3"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <TextBlock Text="HDD_STORAGE // " Foreground="#7A95BE" FontFamily="Consolas" FontSize="12" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtFreeSpace" Text="PS2 FREE SPACE: -- GB" Foreground="#00E5FF" FontFamily="Consolas" FontSize="13" FontWeight="Bold" Effect="{StaticResource TextGlow}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
                 </Grid>
             </Border>
+
             <!-- ROW 1: Main Content -->
             <Grid Grid.Row="1" Margin="0,0,0,15">
                 <Grid.ColumnDefinitions>

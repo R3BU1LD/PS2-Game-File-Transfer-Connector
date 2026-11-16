@@ -742,6 +742,26 @@ namespace PS2FTPCONNECTOR
             RefreshDuplicateHighlights();
         }
 
+        private void BtnMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void BtnMaximizeRestore_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                this.WindowState = WindowState.Normal;
+                BtnMaximizeRestore.Content = "□";
+            }
+            else
+            {
+                this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+                this.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
+                this.WindowState = WindowState.Maximized;
+                BtnMaximizeRestore.Content = "❐";
+            }
+        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
