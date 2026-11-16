@@ -55,7 +55,7 @@ namespace PS2FTPCONNECTOR
                 var res = _cmdClient.BeginConnect(ip, 45061, null, null);
                 if (!res.AsyncWaitHandle.WaitOne(2500) || !_cmdClient.Connected)
                 {
-                    OnLog?.Invoke("[TIMEOUT] Kon poort 45061 niet bereiken.");
+                    OnLog?.Invoke("[TIMEOUT] Unable to reach KPN port 45061.");
                     return false;
                 }
 
@@ -64,7 +64,7 @@ namespace PS2FTPCONNECTOR
                 _cmdStream.ReadTimeout = 15000;
                 _cmdStream.WriteTimeout = 15000;
 
-                // 1. Vraag versie op (12-byte pakket)
+                // 1. Request version (12-byte packet)
                 SendPacket(CMD_GET_VERSION, null);
                 var (hdrRes, payload) = GetResponse(4);
                 int serverVer = (payload != null && payload.Length >= 4) ? BitConverter.ToInt32(payload, 0) : hdrRes;
@@ -72,11 +72,11 @@ namespace PS2FTPCONNECTOR
                 OnLog?.Invoke($">> SERVER VERSION: 0x{serverVer:X2}");
                 if (serverVer != PROTOCOL_VERSION)
                 {
-                    OnLog?.Invoke("[ERROR] Ongeldige serverversie (verwacht 0x0C).");
+                    OnLog?.Invoke("[ERROR] Invalid server version (verwacht 0x0C).");
                     return false;
                 }
 
-                // 2. Stuur client versie terug
+                // 2. Send back client version
                 SendPacket(CMD_SEND_VERSION, BitConverter.GetBytes(PROTOCOL_VERSION));
                 var (ackRes, _) = GetResponse(0);
                 return ackRes == 0;
@@ -98,7 +98,7 @@ namespace PS2FTPCONNECTOR
             {
                 SendPacket(CMD_LOAD_GAME_LIST, null);
                 var (count, _) = GetResponse(0);
-                OnLog?.Invoke($">> PS2 HDD SCAN: {count} spellen gevonden.");
+                OnLog?.Invoke($">> PS2 HDD SCAN: {count} Games Found !");
 
                 if (count > 0)
                 {
@@ -225,7 +225,7 @@ namespace PS2FTPCONNECTOR
             }
         }
 
-        // Hulpmethode om C-strings (tot de eerste \0) schoon uit een byte-array te halen
+        // Helper method to cleanly extract C-strings (up to the first \0) from a byte array
         private string ExtractCleanString(byte[] buffer, int offset, int maxLength, Encoding encoding)
         {
             int length = 0;
@@ -248,12 +248,12 @@ namespace PS2FTPCONNECTOR
                 uint totalSectors = (uint)(totalBytes / 2048);
                 double totalMegabytes = totalBytes / (1024.0 * 1024.0);
 
-                // 1. Open poort 45062 op de PC voor PS2 callback
+                // 1. Open port 45062 on the PC for PS2 callback
                 dataListener = new TcpListener(IPAddress.Any, 45062);
                 dataListener.Start();
                 OnLog?.Invoke(">> PORT 45062 LISTENING FOR PS2 CALLBACK...");
 
-                // 2. Bouw de exacte 197-byte HDLGameInfo struct
+                // 2. Build the exact 197-byte HDLGameInfo struct
                 byte[] gameInfo = new byte[198];
                 byte[] titleBytes = Encoding.UTF8.GetBytes(job.Title);
                 Array.Copy(titleBytes, 0, gameInfo, 0, Math.Min(titleBytes.Length, 160));
@@ -271,7 +271,7 @@ namespace PS2FTPCONNECTOR
                 BitConverter.GetBytes((uint)0).CopyTo(gameInfo, 191);
                 gameInfo[195] = 0;    // CompatibilityFlags
                 gameInfo[196] = 0x40; // ATA_XFER_MODE_UDMA (4)
-                // Let op: TRMode (197) hoort bij 198 bytes totaal, laten we die voor zekerheid checken:
+                // Note: TRMode (197) corresponds to a total of 198 bytes; let’s check that to be sure:
                 Array.Resize(ref gameInfo, 198);
                 gameInfo[197] = 4;
 
@@ -283,16 +283,16 @@ namespace PS2FTPCONNECTOR
                     return false;
                 }
 
-                OnLog?.Invoke(">> PARTITION READY! Wachten op PS2 verbinding op 45062...");
+                OnLog?.Invoke(">> PARTITION READY! Waiting for PS2 connection on 45062...");
 
                 var acceptTask = dataListener.AcceptTcpClientAsync();
                 if (!acceptTask.Wait(20000))
                 {
-                    OnLog?.Invoke("[TIMEOUT] PS2 verbond niet terug op 45062. Controleer Windows Firewall!");
+                    OnLog?.Invoke("[TIMEOUT] PS2 failed to reconnect on 45062. Check Windows Firewall!");
                     return false;
                 }
 
-                // 3. Stuur de ISO data (Exacte 1MB DMA-blokken zoals sp193 HDLGManClient voor 7.4+ MB/s)
+                // 3. Send the ISO data (Exact 1MB DMA blocks, similar to sp193’s HDLGManClient, for 7.4+ MB/s)
                 using (TcpClient ps2Data = acceptTask.Result)
                 {
                     Socket sock = ps2Data.Client;
@@ -302,7 +302,7 @@ namespace PS2FTPCONNECTOR
                     using (FileStream fs = new FileStream(job.IsoPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 1024 * 1024, FileOptions.SequentialScan))
                     {
                         OnLog?.Invoke(">> DATA STREAM ACTIVE! Direct 1MB DMA-aligned socket transfer...");
-                        byte[] buffer = new byte[1024 * 1024]; // Exact 1 MB (512 PS2-sectoren)
+                        byte[] buffer = new byte[1024 * 1024]; // Exactly 1 MB (512 PS2 sectors)
                         int bytesRead;
                         long totalSent = 0;
                         Stopwatch timer = Stopwatch.StartNew();
@@ -340,13 +340,13 @@ namespace PS2FTPCONNECTOR
                     }
                 }
 
-                // 4. Sluit de game op de PS2
+                // 4. Close the game on the PS2
                 OnLog?.Invoke(">> CLOSING GAME PARTITION ON PS2 (0x14)...");
                 SendPacket(CMD_CLOSE_GAME, null);
                 var (closeRes, _) = GetResponse(0);
                 OnLog?.Invoke($">> CLOSE STATUS: {closeRes}");
 
-                // 5. Installeer verplichte PS2 OSD-iconen (zodat het spel zichtbaar is)
+                // 5. Install mandatory PS2 OSD icons (so that the game is visible)
                 InstallDefaultOsdResources(cleanDiscId, job.Title);
 
                 return true;
@@ -390,11 +390,11 @@ namespace PS2FTPCONNECTOR
                     return false;
                 }
 
-                OnLog?.Invoke(">> READ READY! Wachten op PS2 data-verbinding...");
+                OnLog?.Invoke(">> READ READY! Waiting for PS2 data connection....");
                 var acceptTask = dataListener.AcceptTcpClientAsync();
                 if (!acceptTask.Wait(20000))
                 {
-                    OnLog?.Invoke("[TIMEOUT] PS2 verbond niet terug op 45062.");
+                    OnLog?.Invoke("[TIMEOUT] PS2 did not reconnect on 45062.");
                     return false;
                 }
 
@@ -402,7 +402,7 @@ namespace PS2FTPCONNECTOR
                 using (NetworkStream dataStream = ps2Data.GetStream())
                 using (FileStream fs = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
-                    OnLog?.Invoke($">> BACKUP ACTIVE: Opslaan naar {Path.GetFileName(savePath)}...");
+                    OnLog?.Invoke($">> BACKUP ACTIVE: Save to{Path.GetFileName(savePath)}...");
                     byte[] buffer = new byte[1024 * 256];
                     long totalReceived = 0;
                     Stopwatch timer = Stopwatch.StartNew();
@@ -458,7 +458,7 @@ namespace PS2FTPCONNECTOR
                 var (partRes, partData) = GetResponse(33);
                 if (partRes < 0 || partData == null) return;
 
-                // Bouw OSDResourceInitReq (4 + 65 + 65 + 11 + 33 = 178 bytes)
+                // Construct OSDResourceInitReq (4 + 65 + 65 + 11 + 33 = 178 bytes)
                 byte[] osdReq = new byte[178];
                 BitConverter.GetBytes(0).CopyTo(osdReq, 0); // UseSaveData = 0
 
@@ -479,7 +479,7 @@ namespace PS2FTPCONNECTOR
             }
             catch (Exception ex)
             {
-                OnLog?.Invoke($"[OSD_WARN] Kon iconen niet schrijven: {ex.Message}");
+                OnLog?.Invoke($"[OSD_WARN] Could not write icons: {ex.Message}");
             }
         }
 
@@ -523,7 +523,7 @@ namespace PS2FTPCONNECTOR
             while (offset < count)
             {
                 int read = _cmdStream.Read(buffer, offset, count - offset);
-                if (read <= 0) throw new Exception("Verbinding verbroken door PS2.");
+                if (read <= 0) throw new Exception("Connection terminated by PS2.");
                 offset += read;
             }
             return buffer;
@@ -550,7 +550,7 @@ namespace PS2FTPCONNECTOR
             {
                 if (_cmdClient != null && _cmdClient.Connected)
                 {
-                    // Stuur een netjes TCP-afsluitsignaal (SD_BOTH) zodat de PS2 direct de poort vrijgeeft
+                    // Send a clean TCP shutdown signal (SD_BOTH) so that the PS2 releases the port immediately
                     _cmdClient.Client.Shutdown(SocketShutdown.Both);
                 }
                 _cmdStream?.Close();

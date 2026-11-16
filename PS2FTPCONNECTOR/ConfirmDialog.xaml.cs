@@ -44,5 +44,13 @@ namespace PS2FTPCONNECTOR
             var dlg = new ConfirmDialog(title, message, isWarning) { Owner = owner };
             return dlg.ShowDialog() == true;
         }
+        // Handige 1-knops melding in dezelfde Sci-Fi stijl (vervangt alle gewone MessageBox.Show meldingen!)
+        public static void Notify(Window owner, string title, string message, bool isWarning = false)
+        {
+            var dlg = new ConfirmDialog(title, message, isWarning) { Owner = owner };
+            dlg.BtnNo.Visibility = Visibility.Collapsed;
+            dlg.BtnYes.Content = "[ ✓ ] ACKNOWLEDGE";
+            dlg.ShowDialog();
+        }
     }
 }

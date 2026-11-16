@@ -48,7 +48,7 @@ namespace PS2FTPCONNECTOR
         public ObservableCollection<Ps2GameJob> GameQueue { get; set; } = new ObservableCollection<Ps2GameJob>();
         public ObservableCollection<Ps2GameJob> InstalledGames { get; set; } = new ObservableCollection<Ps2GameJob>();
 
-        // Onze nieuwe netwerk-engine!
+        // Our new network engine!
         private readonly HdlStreamer _streamer = new HdlStreamer();
         private readonly string _autoLogPath = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,
@@ -59,7 +59,7 @@ namespace PS2FTPCONNECTOR
 
         private void SetConsoleOperationControlsEnabled(bool enabled)
         {
-            // Vergrendel nooit MainTabs zelf (dat maakt WPF TabControl wit!), maar alleen de PS2-disk knoppen:
+            // Never lock the MainTabs themselves (doing so turns the WPF TabControl white!), only the PS2-disk buttons:
             BtnConnect.IsEnabled = enabled;
             BtnPowerOff.IsEnabled = enabled;
             BtnReloadGames.IsEnabled = enabled && _streamer.IsConnected;
@@ -77,7 +77,7 @@ namespace PS2FTPCONNECTOR
             this.MouseLeftButtonDown += (s, e) => { if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed) this.DragMove(); };
             if (File.Exists("ps2_ip.cfg")) TxtIpAddress.Text = File.ReadAllText("ps2_ip.cfg").Trim();
 
-            // Koppel de events van de streamer direct aan onze UI
+            // Link the streamer's events directly to our UI
             _streamer.OnLog += LogWrite;
             _streamer.OnProgress += UpdateProgressUi;
 
@@ -88,7 +88,7 @@ namespace PS2FTPCONNECTOR
         {
             string logLine = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {text}";
 
-            // 1. Automatisch opslaan op schijf (thread-safe, ook tijdens background uploads)
+            // 1. Automatically save to disk (thread-safe, even during background uploads)
             try
             {
                 lock (_logFileLock)
@@ -99,10 +99,10 @@ namespace PS2FTPCONNECTOR
             }
             catch
             {
-                // Voorkom crash als logbestand tijdelijk vergrendeld is
+                // Prevent a crash if the log file is temporarily locked
             }
 
-            // 2. Toon direct in de UI terminal
+            // 2. Display directly in the UI terminal
             Dispatcher.Invoke(() =>
             {
                 TxtLog.Text += $"[{DateTime.Now:HH:mm:ss}] {text}\n";
@@ -119,7 +119,7 @@ namespace PS2FTPCONNECTOR
         }
         private async void BtnConnect_Click(object sender, RoutedEventArgs e)
         {
-            // ALS WE AL VERBONDEN ZIJN: Verbreek de verbinding (DISCONNECT)
+            // IF ALREADY CONNECTED: Terminate connection (DISCONNECT)
             if (_streamer.IsConnected)
             {
                 _streamer.Disconnect();
@@ -131,7 +131,7 @@ namespace PS2FTPCONNECTOR
                 BtnDeleteGame.IsEnabled = false;
                 TxtFreeSpace.Text = "PS2 FREE SPACE: -- GB";
 
-                // Zet de knop weer terug naar CONNECT (Groen)
+                // Set the button back to CONNECT (Green)
                 BtnConnect.Content = "CONNECT";
                 BtnConnect.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 255, 102));
                 BtnConnect.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 255, 102));
@@ -141,7 +141,7 @@ namespace PS2FTPCONNECTOR
                 return;
             }
 
-            // ALS WE NOG NIET VERBONDEN ZIJN: Maak verbinding (CONNECT)
+            // IF NOT YET CONNECTED: Establish connection (CONNECT)
             string ip = TxtIpAddress.Text.Trim();
             if (string.IsNullOrEmpty(ip)) { MessageBox.Show("Vul een geldig IP-adres in."); return; }
 
@@ -156,12 +156,12 @@ namespace PS2FTPCONNECTOR
             if (isServerAlive)
             {
                 TxtNoConnection.Visibility = Visibility.Collapsed;
-                TxtIpAddress.IsEnabled = false; // Vergrendel IP-veld tijdens actieve sessie
+                TxtIpAddress.IsEnabled = false; // Lock IP field during an active session
                 BtnReloadGames.IsEnabled = true;
                 StatusText.Text = ">> CONNECTION ESTABLISHED TO HDL NODE!";
                 LogWrite($">> SUCCESS: Connected to HDLGameInstaller server on {ip}:45061.");
 
-                // Verander de knop naar DISCONNECT (Rood)
+                // Change the button to DISCONNECT (Red)
                 BtnConnect.Content = "DISCONNECT";
                 BtnConnect.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 60, 60));
                 BtnConnect.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 60, 60));
@@ -186,7 +186,7 @@ namespace PS2FTPCONNECTOR
             }
         }
 
-        // Zorg dat de PS2 ook netjes wordt vrijgegeven als je de hele PC-app afsluit
+        // Ensure that the PS2 is also properly released when the entire PC app is closed
         protected override void OnClosed(EventArgs e)
         {
             _streamer.Disconnect();
@@ -237,7 +237,7 @@ namespace PS2FTPCONNECTOR
 
                 foreach (string item in droppedItems)
                 {
-                    // Ondersteunt zowel losse .iso bestanden als volledige mappen met .iso bestanden!
+                    // Supports both individual .iso files and entire folders containing .iso files!
                     string[] filesToProcess = Directory.Exists(item)
                         ? Directory.GetFiles(item, "*.iso", SearchOption.AllDirectories)
                         : new[] { item };
@@ -264,7 +264,7 @@ namespace PS2FTPCONNECTOR
                 }
                 else
                 {
-                    LogWrite(">> [WARN] Geen geldige .iso bestanden herkend bij Drag & Drop.");
+                    LogWrite(">> [WARN] No valid .iso files recognized when using Drag & Drop.");
                 }
             }
         }
@@ -305,7 +305,7 @@ namespace PS2FTPCONNECTOR
         private async void BtnInstall_Click(object sender, RoutedEventArgs e)
         {
             string ip = TxtIpAddress.Text.Trim();
-            if (string.IsNullOrEmpty(ip) || GameQueue.Count == 0) { MessageBox.Show("Geen doel-IP of wachtrij aanwezig."); return; }
+            if (string.IsNullOrEmpty(ip) || GameQueue.Count == 0) { MessageBox.Show("No destination IP or queue present."); return; }
 
             bool overwriteDuplicates = ChkOverwriteDuplicates.IsChecked == true;
             _stopBatchRequested = false;
@@ -325,7 +325,7 @@ namespace PS2FTPCONNECTOR
                 {
                     if (_stopBatchRequested)
                     {
-                        LogWrite(">> [PAUSED] Batch netjes gepauzeerd op verzoek van operator. Geen corrupte data!");
+                        LogWrite(">> [PAUSED] Batch neatly paused at the operator's request. No corrupted data!");
                         StatusText.Text = ">> BATCH SAFELY PAUSED. READY TO RESUME.";
                         break;
                     }
@@ -333,7 +333,7 @@ namespace PS2FTPCONNECTOR
                     var job = GameQueue[i];
                     if (job.Status == "DONE" || job.Status == "SKIPPED") continue;
 
-                    // Controleer of de game al op de PS2 staat
+                    // Check whether the game is already on the PS2
                     var existingGame = FindInstalledDuplicate(job);
                     if (existingGame != null)
                     {
@@ -375,7 +375,7 @@ namespace PS2FTPCONNECTOR
                     {
                         job.Status = "FAILED";
                         LogWrite($">> CRITICAL INTERRUPT: Transfer failed for {job.Title}.");
-                        if (MessageBox.Show($"Stream afgebroken bij '{job.Title}'. Wilt u doorgaan met de rest?", "Stream Fout", MessageBoxButton.YesNo) == MessageBoxResult.No) break;
+                        if (MessageBox.Show($"Stream interrupted for '{job.Title}'. Do you want to continue with the rest?", "Stream Error", MessageBoxButton.YesNo) == MessageBoxResult.No) break;
                     }
                 }
 
@@ -390,7 +390,7 @@ namespace PS2FTPCONNECTOR
             {
                 LogWrite($">> [ERROR] Batch stopped unexpectedly: {ex.Message}");
                 StatusText.Text = ">> BATCH STOPPED DUE TO AN UNEXPECTED ERROR.";
-                MessageBox.Show($"De batch kon niet worden afgerond: {ex.Message}", "Batch fout", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"The batch could not be completed: {ex.Message}", "Batch fout", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -408,7 +408,8 @@ namespace PS2FTPCONNECTOR
         {
             if (!_streamer.IsConnected)
             {
-                MessageBox.Show("Maak eerst verbinding met de PS2 voordat je de lijst ververst.", "Geen verbinding");
+                ConfirmDialog.Notify(this, "// NO CONNECTION", "Connect to the PS2 first before refreshing the list.");
+
                 return;
             }
 
@@ -437,12 +438,16 @@ namespace PS2FTPCONNECTOR
 
             if (LvPs2Disk.SelectedItem is not Ps2GameJob selectedGame)
             {
-                MessageBox.Show("Selecteer eerst een game in de lijst om te verwijderen.", "Geen selectie");
+                MessageBox.Show("Selecteer eerst een game in de lijst om te verwijderen.", "No selection");
                 return;
             }
 
-            var confirm = MessageBox.Show($"Weet je zeker dat je '{selectedGame.Title}' ({selectedGame.GameId}) definitief van je PS2 harde schijf wilt verwijderen?", "Game Verwijderen", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (confirm != MessageBoxResult.Yes) return;
+            bool confirm = ConfirmDialog.Ask(
+                 this,
+                 "// DELETE PARTITION WARNING",
+                 $"Permanently delete '{selectedGame.Title}' ({selectedGame.GameId}) [{selectedGame.SizeText}] from your PlayStation 2 hard drive?\n\nThis action cannot be undone!",
+                 isWarning: true);
+             if (!confirm) return;
 
             BtnDeleteGame.IsEnabled = false;
             BtnReloadGames.IsEnabled = false;
@@ -453,13 +458,14 @@ namespace PS2FTPCONNECTOR
             if (deleted)
             {
                 InstalledGames.Remove(selectedGame);
-                LogWrite($">> SUCCESS: '{selectedGame.Title}' verwijderd van PS2 HDD.");
+                LogWrite($">> SUCCESS: '{selectedGame.Title}' Removed from the PS2 HDD.");
                 TxtFreeSpace.Text = "PS2 FREE SPACE: " + await Task.Run(() => _streamer.GetFreeSpaceFormatted());
             }
             else
             {
                 LogWrite($">> ERROR: Verwijderen van '{selectedGame.Title}' mislukt.");
-                MessageBox.Show("Kon de game niet verwijderen van de PS2.", "Fout", MessageBoxButton.OK, MessageBoxImage.Error);
+                ConfirmDialog.Notify(this, "// GAME DELETION ERROR", "Unable to remove the game from the PS2.", isWarning: true);
+
             }
 
             BtnBackupGame.IsEnabled = true;
@@ -472,7 +478,8 @@ namespace PS2FTPCONNECTOR
 
             if (LvPs2Disk.SelectedItem is not Ps2GameJob selectedGame)
             {
-                MessageBox.Show("Selecteer eerst een game in de lijst om te backuppen.", "Geen selectie");
+                ConfirmDialog.Notify(this, "// NO BACKUP SELECTION", "Please select an installed game from the PS2 list first before starting a backup.");
+
                 return;
             }
 
@@ -523,11 +530,17 @@ namespace PS2FTPCONNECTOR
         {
             if (!_streamer.IsConnected)
             {
-                MessageBox.Show("Maak eerst verbinding met de PS2 om hem uit te schakelen.", "Niet verbonden");
+                ConfirmDialog.Notify(this, "// CONSOLE OFFLINE", "Please connect to your PlayStation 2 console first before sending a power-off command.");
+
                 return;
             }
 
-            if (MessageBox.Show("Weet je zeker dat je de PlayStation 2 nu wilt uitschakelen?", "PS2 Uitschakelen", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            bool powerConfirm = ConfirmDialog.Ask(
+                 this,
+                 "// CONSOLE SHUTDOWN",
+                 "Are you sure you want to send the remote power-off command to your PlayStation 2?",
+                 isWarning: false);
+            if (powerConfirm)
             {
                 if (_streamer.PowerOffPs2())
                 {
@@ -552,7 +565,8 @@ namespace PS2FTPCONNECTOR
         {
             if (!_streamer.IsConnected || LvPs2Disk.SelectedItem is not Ps2GameJob selectedGame)
             {
-                MessageBox.Show("Selecteer een geïnstalleerde game terwijl de PS2 verbonden is.", "Geen selectie");
+                ConfirmDialog.Notify(this, "// NO CONSOLE SELECTION", "Please select an installed game while connected to the PS2 console.");
+
                 return;
             }
 
@@ -581,7 +595,8 @@ namespace PS2FTPCONNECTOR
             else
             {
                 LogWrite($">> [ERROR] Could not save settings for [{selectedGame.GameId}].");
-                MessageBox.Show("De instellingen konden niet op de PS2 worden opgeslagen.", "Opslaan mislukt", MessageBoxButton.OK, MessageBoxImage.Error);
+                ConfirmDialog.Notify(this, "// SETTINGS SYNC ERROR", "Could not save game compatibility settings to the PS2 hard drive.", isWarning: true);
+
             }
 
             BtnSaveGameSettings.IsEnabled = _streamer.IsConnected && LvPs2Disk.SelectedItem == selectedGame;
@@ -607,7 +622,7 @@ namespace PS2FTPCONNECTOR
 
                     if (GameQueue.Count > 0)
                     {
-                        sb.AppendLine("--- BATCH QUEUE STATUS OVERZICHT ---");
+                        sb.AppendLine("--- BATCH QUEUE STATUS OVERVIEW ---");
                         foreach (var job in GameQueue)
                         {
                             sb.AppendLine($"[{job.Status,-12}] [{job.GameId}] {job.Title}");
@@ -615,7 +630,7 @@ namespace PS2FTPCONNECTOR
                         sb.AppendLine();
                     }
 
-                    sb.AppendLine("--- VOLLEDIGE TERMINAL LOG ---");
+                    sb.AppendLine("--- FULL TERMINAL LOG ---");
                     sb.AppendLine(TxtLog.Text);
 
                     File.WriteAllText(saveDialog.FileName, sb.ToString());
@@ -623,7 +638,8 @@ namespace PS2FTPCONNECTOR
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Kon logbestand niet opslaan: {ex.Message}", "Opslaan mislukt", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ConfirmDialog.Notify(this, "// LOG EXPORT ERROR", $"Could not save log file:\n{ex.Message}", isWarning: true);
+
                 }
             }
         }
@@ -676,13 +692,14 @@ namespace PS2FTPCONNECTOR
         {
             if (LvQueue.SelectedItem is not Ps2GameJob selectedJob)
             {
-                MessageBox.Show("Selecteer eerst een game in de wachtrij om te verwijderen.", "Geen selectie");
+                MessageBox.Show("First, select a game in the queue to remove.", "No selection");
                 return;
             }
 
             if (selectedJob.Status == "UPLOADING...")
             {
-                MessageBox.Show("Je kunt een game niet verwijderen terwijl deze actief wordt geüpload.", "Upload actief");
+                ConfirmDialog.Notify(this, "// ACTIVE STREAM LOCK", "Cannot remove a game while it is actively uploading to the PS2.", isWarning: true);
+
                 return;
             }
 
@@ -716,7 +733,7 @@ namespace PS2FTPCONNECTOR
             }
             else
             {
-                MessageBox.Show("Er staan op dit moment geen duplicaten in de wachtrij.", "Geen duplicaten");
+                ConfirmDialog.Notify(this, "// QUEUE STATUS", "There are currently no duplicates in the batch queue.");
             }
         }
         private void UpdateQueueStatusHeader()
