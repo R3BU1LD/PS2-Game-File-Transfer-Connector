@@ -564,6 +564,68 @@
                             </Grid.RowDefinitions>
 
                             <ListView x:Name="LvPs2Disk" Grid.Row="0" BorderThickness="0" FontFamily="Consolas" Margin="5" SelectionChanged="LvPs2Disk_SelectionChanged" FontSize="16" Background="Black">
+                                <ListView.Resources>
+                                    <Style TargetType="GridViewColumnHeader">
+                                        <Setter Property="Foreground" Value="#00E5FF"/>
+                                        <Setter Property="FontFamily" Value="Consolas"/>
+                                        <Setter Property="FontSize" Value="11"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                        <Setter Property="Padding" Value="10,7"/>
+                                        <Setter Property="Cursor" Value="Hand"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="GridViewColumnHeader">
+                                                    <Grid>
+                                                        <Border x:Name="HeaderBorder" CornerRadius="4" Margin="1,1,2,3" BorderThickness="1,1.5,1,2">
+                                                            <Border.Background>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                    <GradientStop Color="#CC1A2B4A" Offset="0.0"/>
+                                                                    <GradientStop Color="#DD0D1629" Offset="0.45"/>
+                                                                    <GradientStop Color="#EE070B16" Offset="1.0"/>
+                                                                </LinearGradientBrush>
+                                                            </Border.Background>
+                                                            <Border.BorderBrush>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                    <GradientStop Color="#8800E5FF" Offset="0.0"/>
+                                                                    <GradientStop Color="#3300E5FF" Offset="0.5"/>
+                                                                    <GradientStop Color="#CC02040A" Offset="1.0"/>
+                                                                </LinearGradientBrush>
+                                                            </Border.BorderBrush>
+                                                            <Border.Effect>
+                                                                <DropShadowEffect Color="#000000" BlurRadius="6" ShadowDepth="2" Direction="270" Opacity="0.85"/>
+                                                            </Border.Effect>
+                                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}"/>
+                                                        </Border>
+                                                        <Thumb x:Name="PART_HeaderGripper" HorizontalAlignment="Right" Width="4" Cursor="SizeWE">
+                                                            <Thumb.Style>
+                                                                <Style TargetType="Thumb">
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="Thumb">
+                                                                                <Border Background="Transparent" BorderBrush="#4400E5FF" BorderThickness="0,0,1,0" Margin="0,4"/>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </Thumb.Style>
+                                                        </Thumb>
+                                                    </Grid>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="#00E5FF"/>
+                                                            <Setter Property="Foreground" Value="#FFFFFF"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter TargetName="HeaderBorder" Property="Margin" Value="1,2,2,2"/>
+                                                            <Setter TargetName="HeaderBorder" Property="Opacity" Value="0.85"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListView.Resources>
                                 <ListView.Foreground>
                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                         <GradientStop Color="#FF00F9FF"/>
