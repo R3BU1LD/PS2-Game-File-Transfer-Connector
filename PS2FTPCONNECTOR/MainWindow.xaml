@@ -246,9 +246,12 @@
                     <StackPanel HorizontalAlignment="Right">
                         <!-- Window buttons in the top-right corner: Minimize, Fullscreen/Restore, Safe Exit -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,-6,0,8">
+                            <Button x:Name="BtnToggleLang" Style="{StaticResource CyberButtonStyle}" Content="🌐 EN" Width="62" Height="24" Margin="0,0,8,0" Background="#660D1424" Foreground="#00FF66" BorderBrush="#6600FF66" BorderThickness="1" FontFamily="Consolas" FontSize="11" FontWeight="Bold" ToolTip="Switch Language (EN / NL)" Click="BtnToggleLang_Click"/>
+
                             <Button x:Name="BtnMinimize" Style="{StaticResource CyberButtonStyle}" Content="—" Width="32" Height="24" Margin="0,0,5,0" Background="#660D1424" Foreground="#00E5FF" BorderBrush="#4400E5FF" BorderThickness="1" FontFamily="Consolas" FontSize="12" FontWeight="Bold" ToolTip="Minimize Window" Click="BtnMinimize_Click"/>
                             <Button x:Name="BtnMaximizeRestore" Style="{StaticResource CyberButtonStyle}" Content="□" Width="32" Height="24" Margin="0,0,5,0" Background="#660D1424" Foreground="#00E5FF" BorderBrush="#4400E5FF" BorderThickness="1" FontFamily="Consolas" FontSize="12" FontWeight="Bold" ToolTip="Maximize / Restore Window" Click="BtnMaximizeRestore_Click"/>
                             <Button x:Name="BtnTopClose" Style="{StaticResource CyberButtonStyle}" Content="✕" Width="32" Height="24" Background="#66260B10" Foreground="#FF3C3C" BorderBrush="#66FF3C3C" BorderThickness="1" FontFamily="Consolas" FontSize="11" FontWeight="Bold" ToolTip="Safe Exit" Click="Button_Click"/>
+                            
                         </StackPanel>
 
                         <!-- Existing Queue & Free Space Status Card -->
@@ -377,6 +380,72 @@
                             </Grid.RowDefinitions>
 
                             <ListView x:Name="LvQueue" Grid.Row="0" Background="Transparent" BorderThickness="0" FontFamily="Georgia" SelectionChanged="LvQueue_SelectionChanged" AllowDrop="True" DragOver="LvQueue_DragOver" Drop="LvQueue_Drop" Margin="5" FontSize="14">
+                                <ListView.Resources>
+                                    <!-- 3D Raised Sci-Fi Glass Bar for ListView Column Headers -->
+                                    <Style TargetType="GridViewColumnHeader">
+                                        <Setter Property="Foreground" Value="#00E5FF"/>
+                                        <Setter Property="FontFamily" Value="Consolas"/>
+                                        <Setter Property="FontSize" Value="11"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                        <Setter Property="Padding" Value="10,7"/>
+                                        <Setter Property="Cursor" Value="Hand"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="GridViewColumnHeader">
+                                                    <Grid>
+                                                        <!-- 3D Bevel Background with top light highlight and bottom shadow -->
+                                                        <Border x:Name="HeaderBorder" CornerRadius="4" Margin="1,1,2,3" BorderThickness="1,1.5,1,2">
+                                                            <Border.Background>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                    <GradientStop Color="#CC1A2B4A" Offset="0.0"/>
+                                                                    <GradientStop Color="#DD0D1629" Offset="0.45"/>
+                                                                    <GradientStop Color="#EE070B16" Offset="1.0"/>
+                                                                </LinearGradientBrush>
+                                                            </Border.Background>
+                                                            <Border.BorderBrush>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                    <GradientStop Color="#8800E5FF" Offset="0.0"/>
+                                                                    <GradientStop Color="#3300E5FF" Offset="0.5"/>
+                                                                    <GradientStop Color="#CC02040A" Offset="1.0"/>
+                                                                </LinearGradientBrush>
+                                                            </Border.BorderBrush>
+                                                            <Border.Effect>
+                                                                <DropShadowEffect Color="#000000" BlurRadius="6" ShadowDepth="2" Direction="270" Opacity="0.85"/>
+                                                            </Border.Effect>
+                                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}"/>
+                                                        </Border>
+
+                                                        <!-- Subtle 3D divider line + column resize grip -->
+                                                        <Thumb x:Name="PART_HeaderGripper" HorizontalAlignment="Right" Width="4" Cursor="SizeWE">
+                                                            <Thumb.Style>
+                                                                <Style TargetType="Thumb">
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="Thumb">
+                                                                                <Border Background="Transparent" BorderBrush="#4400E5FF" BorderThickness="0,0,1,0" Margin="0,4"/>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </Thumb.Style>
+                                                        </Thumb>
+                                                    </Grid>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="HeaderBorder" Property="BorderBrush" Value="#00E5FF"/>
+                                                            <Setter Property="Foreground" Value="#FFFFFF"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter TargetName="HeaderBorder" Property="Margin" Value="1,2,2,2"/>
+                                                            <Setter TargetName="HeaderBorder" Property="Opacity" Value="0.85"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListView.Resources>
                                 <ListView.ItemContainerStyle>
                                     <Style TargetType="ListViewItem">
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -388,12 +457,7 @@
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="ListViewItem">
-                                                    <Border x:Name="RowBorder"
-                                                            Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                                            CornerRadius="4"
-                                                            Padding="{TemplateBinding Padding}">
+                                                    <Border x:Name="RowBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" Padding="{TemplateBinding Padding}">
                                                         <GridViewRowPresenter VerticalAlignment="Center"/>
                                                     </Border>
                                                     <ControlTemplate.Triggers>
@@ -417,7 +481,6 @@
                                         </Setter>
                                     </Style>
                                 </ListView.ItemContainerStyle>
-
 
                                 <ListView.Foreground>
                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -463,12 +526,13 @@
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
-                                        <GridViewColumn Header="&#x1f525;CORE_ID" DisplayMemberBinding="{Binding GameId}" Width="110"/>
+                                        <GridViewColumn Header="&#x1f525;CORE__ID" DisplayMemberBinding="{Binding GameId}" Width="110"/>
                                         <GridViewColumn Header="&#x1f4be;SIZE" DisplayMemberBinding="{Binding SizeText}" Width="85"/>
                                         <GridViewColumn Header="&#x2699;DATA_LABEL (CLICK TO EDIT)" DisplayMemberBinding="{Binding Title}" Width="280"/>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
+
 
                             <!-- Bottom bar in the queue: Overwrite checkbox + Delete buttons -->
                             <Border Grid.Row="1" Background="{StaticResource GlassCardBg}" BorderBrush="{StaticResource GlassBorder}" BorderThickness="0,1,0,0" Padding="10,7">

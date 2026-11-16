@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PS2FTPCONNECTOR"
         mc:Ignorable="d"
         Title="Confirmation"
-        Height="250" Width="480"
+        Height="320" Width="500"
         WindowStartupLocation="CenterOwner"
         WindowStyle="None"
         AllowsTransparency="True"

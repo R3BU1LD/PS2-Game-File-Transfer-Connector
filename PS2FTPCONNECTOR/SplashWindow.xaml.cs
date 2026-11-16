@@ -29,7 +29,8 @@ namespace PS2FTPCONNECTOR
                 else if (i == 65) TxtSplashStatus.Text = steps[2];
                 else if (i == 90) TxtSplashStatus.Text = steps[3];
 
-                await Task.Delay(1700);
+                  await Task.Delay(100);
+                //await Task.Delay(1700);
             }
 
             MainWindow main = new MainWindow();
